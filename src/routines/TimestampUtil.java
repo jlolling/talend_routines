@@ -1245,4 +1245,21 @@ public class TimestampUtil {
     	}
     }
 
+	private static Date scdEndDate = null;
+    /**
+     * Returns the SCD end date: 2999-01-01
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Date
+     * 
+     * {example} getSCDEndDate().
+     */
+    public static Date getSCDEndDate() {
+    	if (scdEndDate == null) {
+    		scdEndDate = getIntAsDate(29990101);
+    	}
+    	return scdEndDate;
+    }
+
 }
