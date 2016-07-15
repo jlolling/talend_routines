@@ -22,6 +22,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.StringTokenizer;
 
 public class StringUtil {
 
@@ -848,4 +849,57 @@ public class StringUtil {
 		return text;
 	}
 
+	/**
+	 * creates an SQL in clause including the needed column name
+	 * @param separatedValueList list of values separated
+	 * @param delimiter separator 
+	 * @param columnName database column name to apply
+	 * @param numbers values are numbers
+	 * @return SQL in clause
+	 * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String("listvalues") separatedValueList
+     * {param} String(";") delimiter
+     * {param} String("name") columnName
+     * {param} Boolean(false) numbers
+     * 
+     * {example} getSQLInList("listvalues", ";", "name", true) 
+	 */
+	public static String buildSQLInListClause(String separatedValueList, String delimiter, String columnName, boolean numbers) {
+		StringBuilder sb = new StringBuilder();
+		StringTokenizer st = new StringTokenizer(separatedValueList, delimiter);
+		boolean firstLoop = true;
+		while (st.hasMoreTokens()) {
+			String token = st.nextToken();
+			token = token.trim();
+			if (token != null && token.isEmpty() == false) {
+				if (firstLoop) {
+					firstLoop = false;
+					sb.append(" ");
+					sb.append(columnName);
+					sb.append(" in (");
+				} else {
+					sb.append(",");
+				}
+				if (numbers) {
+					sb.append(token);
+				} else {
+					sb.append("'");
+					sb.append(token);
+					sb.append("'");
+				}
+			}
+		}
+		if (firstLoop) {
+			// there was no entry in the list
+			sb.append(" 1=0 ");
+		} else {
+			sb.append(")");
+		}
+		return sb.toString();
+	}
+	
 }

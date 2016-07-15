@@ -25,9 +25,7 @@ public class TestRoutines {
 	 */
 	public static void main(String[] args) {
 		try {
-			testGetTimeAsSeconds();
-			test_getTimeDateByMinuteAndSeconds();
-			test_getTimeDateByMinute();
+			test_getSQLInList();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -250,6 +248,16 @@ public class TestRoutines {
 		int minutes = 90;
 		System.out.println(TimestampUtil.format(TimestampUtil.getTimeDateByMinute(minutes), "HH:mm:ss"));
 		System.out.println(TimestampUtil.getTimeDateByMinute(minutes).getTime());
+	}
+	
+	public static void test_getSQLInList() {
+		String test = "abc;def;xyz;;";
+		String columnName = "name";
+		String del = ";";
+		System.out.println(StringUtil.buildSQLInListClause(test, del, columnName, false));
+		System.out.println(StringUtil.buildSQLInListClause(test, del, columnName, true));
+		System.out.println(StringUtil.buildSQLInListClause("  ", ".", columnName, false));
+		
 	}
 
 }
