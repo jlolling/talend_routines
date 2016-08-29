@@ -155,7 +155,7 @@ public class GlobalMapUtil {
 			}
     	} else {
         	for (Map.Entry<String, Object> entry : globalMap.entrySet()) {
-        		if (entry.getKey().endsWith("_DIE_CODE")) {
+        		if (entry.getKey().endsWith("DIE_CODE")) {
         			if (entry.getValue() instanceof Integer) {
         				Integer code = (Integer) entry.getValue();
         				if (code.intValue() != 0) {
@@ -184,7 +184,7 @@ public class GlobalMapUtil {
 		StringBuilder message = new StringBuilder();
 		for (Map.Entry<String, Object> entry : globalMap.entrySet()) {
 			String key = entry.getKey();
-			if (key.endsWith("_ERROR_MESSAGE")) {
+			if (key.endsWith("ERROR_MESSAGE")) {
 				if (entry.getValue() instanceof String) {
 					message.append((String) entry.getValue());
 					break; 
