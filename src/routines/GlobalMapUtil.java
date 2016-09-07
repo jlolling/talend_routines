@@ -155,7 +155,7 @@ public class GlobalMapUtil {
 			}
     	} else {
         	for (Map.Entry<String, Object> entry : globalMap.entrySet()) {
-        		if (entry.getKey().endsWith("_DIE_CODE")) {
+        		if (entry.getKey().endsWith("DIE_CODE")) {
         			if (entry.getValue() instanceof Integer) {
         				Integer code = (Integer) entry.getValue();
         				if (code.intValue() != 0) {
