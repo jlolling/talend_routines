@@ -15,6 +15,7 @@
  */
 package routines;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Locale;
@@ -654,6 +655,40 @@ public class NumberUtil {
 		return value.intValue();
 	}
 	
+	/**
+     * compares 2 numbers
+     * @param n1 number 1
+     * @param n2 number 2
+     * @return true if equals
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} int
+     * 
+     * {param} Number(10)
+     * {param} Number(20) 
+     * 
+     * {example} equals(10, 20) result: current value
+     * 
+     */
+	public static boolean equals(Number n1, Number n2) {
+		long l1 = 0l;
+		double d1 = 0d;
+		BigDecimal b1 = new BigDecimal("0");
+		long l2 = 0l;
+		double d2 = 0d;
+		BigDecimal b2 = new BigDecimal("0");
+		if (n1 != null && n2 != null) {
+			l1 = n1.longValue();
+			d1 = n1.doubleValue();
+			b1 = new BigDecimal(n1.toString());
+			l2 = n2.longValue();
+			d2 = n2.doubleValue();
+			b2 = new BigDecimal(n2.toString());
+			return l1 == l2 && d1 == d2 && b1.equals(b2);
+		} else {
+			return false;
+		}
+	}
 
-	
 }

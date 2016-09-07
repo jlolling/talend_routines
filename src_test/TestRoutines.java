@@ -25,7 +25,8 @@ public class TestRoutines {
 	 */
 	public static void main(String[] args) {
 		try {
-			test_getSQLInList();
+			System.out.println(String.valueOf(123456789));
+			//testNumberEquals();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -260,4 +261,10 @@ public class TestRoutines {
 		
 	}
 
+	public static void testNumberEquals() {
+		BigDecimal i1 = new BigDecimal(3);
+		Long i2 = 1l;
+		System.out.println(NumberUtil.equals(i1, i2));
+	}
+	
 }
