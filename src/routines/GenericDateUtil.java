@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Jan Lolling jan.lolling@gmail.com
+ * Copyright 2016, Jan Lolling, jan.lolling@cimt-ag.de
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,14 +27,14 @@ import java.util.List;
  * by testing a number of common pattern
  * This class is thread save.
  * 
- * @author jan.lolling@gmail.com
+ * @author jan.lolling@cimt-ag.de
  */
 public class GenericDateUtil {
 	
 	private static ThreadLocal<DateParser> threadLocal = new ThreadLocal<DateParser>();
 	
 	public static Date parseDate(String source) throws ParseException {
-		return parseDate(source, null);
+		return parseDate(source, (String[]) null);
 	}
 
     /**
@@ -51,7 +51,7 @@ public class GenericDateUtil {
      * 
      * {example} parseDate(dateString, suggestedPattern).
      */
-	public static Date parseDate(String source, String suggestedPattern) throws ParseException {
+	public static Date parseDate(String source, String ...suggestedPattern) throws ParseException {
 		DateParser p = threadLocal.get();
 		if (p == null) {
 			p = new DateParser();
@@ -60,11 +60,34 @@ public class GenericDateUtil {
 		return p.parseDate(source, suggestedPattern);
 	}
 	
+    /**
+     * parseTime: returns the Date from the given text representation which consists only the time part
+     * Tolerates if the content does not fit to the given pattern and retries it
+     * with build in patterns
+     * 
+     * {Category} GenericDateUtil
+     * 
+     * {talendTypes} Date
+     * 
+     * {param} String(timeString)
+     * {param} String(suggestedPattern)
+     * 
+     * {example} parseTime(timeString, suggestedPattern).
+     */
+	public static Date parseTime(String timeString, String ...suggestedPattern) throws ParseException {
+		DateParser p = threadLocal.get();
+		if (p == null) {
+			p = new DateParser();
+			threadLocal.set(p);
+		}
+		return p.parseTime(timeString, suggestedPattern);
+	}
+
 	static class DateParser {
 		
 		private List<String> datePatternList = null;
 		private List<String> timePatternList = null;
-
+		
 		DateParser() {
 			datePatternList = new ArrayList<String>();
 			datePatternList.add("yyyy-MM-dd");
@@ -86,20 +109,30 @@ public class GenericDateUtil {
 			datePatternList.add("dd-MM-yy");
 			datePatternList.add("dd-MMM-yyyy");
 			datePatternList.add("d-M-yy");
+			datePatternList.add("yyyyMM");
+			datePatternList.add("yyyy");
 			timePatternList = new ArrayList<String>();
-			timePatternList.add(" HHmmss");
-			timePatternList.add(" HH:mm:ss");
-			timePatternList.add(" HH:mm:ss.SSS");
 			timePatternList.add("'T'HH:mm:ss.SSSZ");
+			timePatternList.add(" HHmmss");
+			timePatternList.add(" HH'h'mm'm'ss's'");
+			timePatternList.add(" HH'h' mm'm' ss's'");
+			timePatternList.add(" HH:mm:ss.SSS");
+			timePatternList.add(" HH:mm:ss");
+			timePatternList.add(" mm'′'ss'\"'");
+			timePatternList.add(" HH'h'mm'm'");
+			timePatternList.add(" HH'h' mm'm'");
 		}
 		
-		public Date parseDate(String text, String userPattern) throws ParseException {
+		public Date parseDate(String text, String ... userPattern) throws ParseException {
 			if (text != null) {
 				SimpleDateFormat sdf = new SimpleDateFormat();
 				Date dateValue = null;
-				if (userPattern != null && userPattern.isEmpty() == false) {
-					if (datePatternList.contains(userPattern) == false) {
-						datePatternList.add(0, userPattern);
+				if (userPattern != null) {
+					for (String pattern : userPattern) {
+						if (datePatternList.contains(pattern)) {
+							datePatternList.remove(pattern);
+						}
+						datePatternList.add(0, pattern);
 					}
 				}
 				for (String pattern : datePatternList) {
@@ -139,6 +172,37 @@ public class GenericDateUtil {
 			} else {
 				return null;
 			}
+		}
+
+		public Date parseTime(String text, String ... userPattern) throws ParseException {
+			SimpleDateFormat sdf = new SimpleDateFormat();
+			Date timeValue = null;
+			if (userPattern != null) {
+				for (String pattern : userPattern) {
+					if (timePatternList.contains(pattern)) {
+						timePatternList.remove(pattern);
+					}
+					timePatternList.add(0, pattern);
+				}
+			}
+			for (String pattern : timePatternList) {
+				sdf.applyPattern(pattern.trim());
+				try {
+					timeValue = sdf.parse(text);
+					// if we continue here the pattern fits
+					// set this pattern at the top of the list to shorten the next attempt
+					int pos = timePatternList.indexOf(pattern);
+					if (pos > 0) {
+						timePatternList.remove(pos);
+					}
+					timePatternList.add(0, pattern);
+					return timeValue;
+				} catch (ParseException e) {
+					// the pattern obviously does not work
+					continue;
+				}
+			}
+			throw new ParseException("The value: " + text + " could not be parsed to a Date (only with time).", 0);
 		}
 
 	}
