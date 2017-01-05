@@ -128,11 +128,11 @@ public class GenericDateUtil {
 				SimpleDateFormat sdf = new SimpleDateFormat();
 				Date dateValue = null;
 				if (userPattern != null) {
-					for (String pattern : userPattern) {
-						if (datePatternList.contains(pattern)) {
-							datePatternList.remove(pattern);
+					for (int i = userPattern.length - 1; i >= 0; i--) {
+						if (datePatternList.contains(userPattern[i])) {
+							datePatternList.remove(userPattern[i]);
 						}
-						datePatternList.add(0, pattern);
+						datePatternList.add(0, userPattern[i]);
 					}
 				}
 				for (String pattern : datePatternList) {
@@ -156,12 +156,6 @@ public class GenericDateUtil {
 								}
 							}
 						}
-						// set this pattern at the top of the list to shorten the next attempt
-						int pos = datePatternList.indexOf(pattern);
-						if (pos > 0) {
-							datePatternList.remove(pos);
-						}
-						datePatternList.add(0, pattern);
 						return dateValue;
 					} catch (ParseException e) {
 						// the pattern obviously does not work
@@ -176,13 +170,14 @@ public class GenericDateUtil {
 
 		public Date parseTime(String text, String ... userPattern) throws ParseException {
 			SimpleDateFormat sdf = new SimpleDateFormat();
+			sdf.setTimeZone(getUTCTimeZone());
 			Date timeValue = null;
 			if (userPattern != null) {
-				for (String pattern : userPattern) {
-					if (timePatternList.contains(pattern)) {
-						timePatternList.remove(pattern);
+				for (int i = userPattern.length - 1; i >= 0; i--) {
+					if (timePatternList.contains(userPattern[i])) {
+						timePatternList.remove(userPattern[i]);
 					}
-					timePatternList.add(0, pattern);
+					timePatternList.add(0, userPattern[i]);
 				}
 			}
 			for (String pattern : timePatternList) {
@@ -190,12 +185,6 @@ public class GenericDateUtil {
 				try {
 					timeValue = sdf.parse(text);
 					// if we continue here the pattern fits
-					// set this pattern at the top of the list to shorten the next attempt
-					int pos = timePatternList.indexOf(pattern);
-					if (pos > 0) {
-						timePatternList.remove(pos);
-					}
-					timePatternList.add(0, pattern);
 					return timeValue;
 				} catch (ParseException e) {
 					// the pattern obviously does not work
@@ -207,4 +196,13 @@ public class GenericDateUtil {
 
 	}
 	
+    private static java.util.TimeZone utcTimeZone = null;
+
+    private static java.util.TimeZone getUTCTimeZone() {
+    	if (utcTimeZone == null) {
+    		utcTimeZone = java.util.TimeZone.getTimeZone("UTC");
+    	}
+    	return utcTimeZone;
+    }
+    
 }

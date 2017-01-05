@@ -85,7 +85,7 @@ public class TimestampUtil {
     	java.util.Calendar c = java.util.Calendar.getInstance();
     	c.setTime(timestamp);
     	// cut time
-    	c.set(java.util.Calendar.MINUTE, (int)(c.get(Calendar.MINUTE)/framelength)*framelength);
+    	c.set(java.util.Calendar.MINUTE, c.get(Calendar.MINUTE)/framelength*framelength);
     	c.set(java.util.Calendar.SECOND, 0);
     	c.set(java.util.Calendar.MILLISECOND, 0);
     	return c.getTime();
@@ -1245,7 +1245,32 @@ public class TimestampUtil {
     	}
     }
 
-	private static Date scdEndDate = null;
+    /**
+     * Returns the seconds of the time without date
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Long
+     * 
+     * {param} Date(today): The timestamp within a timeframe.
+     * 
+     * {example} getTimeAsMilliSeconds(new Date()).
+     */
+    public static Long getTimeAsMilliSeconds(Date dateTime) {
+    	if (dateTime != null) {
+        	java.util.Calendar c = java.util.Calendar.getInstance(Locale.GERMAN);
+        	c.setTime(dateTime);
+        	c.setTimeZone(getUTCTimeZone());
+        	// cut minutes and seconds
+        	c.set(java.util.Calendar.YEAR, 1970);
+        	c.set(java.util.Calendar.DAY_OF_YEAR, 1);
+        	return c.getTime().getTime();
+    	} else {
+    		return null;
+    	}
+    }
+
+    private static Date scdEndDate = null;
     /**
      * Returns the SCD end date: 2999-01-01
      * 
