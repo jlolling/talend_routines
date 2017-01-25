@@ -1,8 +1,10 @@
 package routines.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.junit.Test;
@@ -69,6 +71,33 @@ public class TestGenericDateUtil {
 		Long actual = GenericDateUtil.parseDate(s, "yyyy-MM-dd HH:mm:ss").getTime();
 		Long expected = 1481459171000l;
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testDateYearAndFull() throws Exception {
+		String s1 = "2011";
+		String s2 = "03.04.2011";
+		Date date1 = GenericDateUtil.parseDate(s1, "dd.MM.yyyy");
+		Date date2 = GenericDateUtil.parseDate(s2, "dd.MM.yyyy");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		System.out.println("date1: " + sdf.format(date1));
+		System.out.println("date2: " + sdf.format(date2));
+		assertTrue(date1.before(date2));
+		s1 = "01.01.2011";
+		date1 = GenericDateUtil.parseDate(s1, "dd.MM.yyyy");
+		System.out.println("date1: " + sdf.format(date1));
+		System.out.println("date2: " + sdf.format(date2));
+		assertTrue(date1.before(date2));
+		s1 = "2011-01-01";
+		date1 = GenericDateUtil.parseDate(s1, "dd.MM.yyyy");
+		System.out.println("date1: " + sdf.format(date1));
+		System.out.println("date2: " + sdf.format(date2));
+		assertTrue(date1.before(date2));
+		s1 = "01/14/2011";
+		date1 = GenericDateUtil.parseDate(s1, "dd.MM.yyyy");
+		System.out.println("date1: " + sdf.format(date1));
+		System.out.println("date2: " + sdf.format(date2));
+		assertTrue(date1.before(date2));
 	}
 
 }
