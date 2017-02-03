@@ -131,6 +131,7 @@ public class GlobalMapUtil {
     	int inputCount = getInt(globalMap, inputComponent + "_NB_LINE", inputComponent + "_NB_FILE");
     	return inputCount - insertCount;
     }
+
     /**
      * returns the errorCode from tDie component (not zero) even if there is a post job 
      * 
@@ -146,7 +147,6 @@ public class GlobalMapUtil {
      * 
      */
     public static Integer getErrorCode(Map<String, Object> globalMap, Integer errorCode) {
-//    	Integer errorCodeFromTDie = errorCode == null ? 1 : errorCode;
     	Integer errorCodeFromTDie = errorCode;
     	if (globalMap.containsKey(OVERRIDE_DIE_CODE_KEY)) {
     		Integer code = (Integer) globalMap.get(OVERRIDE_DIE_CODE_KEY);
@@ -199,6 +199,41 @@ public class GlobalMapUtil {
 	}
 
     /**
+     * returns the stack traces from tRunJob components
+     * 
+     * {Category} GlobalMapUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(globalMap) globalMap: reference to globalMap.
+     * 
+     * {example} getTRunJobStackTraces(globalMap) result: 123 ...
+     * 
+     */
+	public static String getTRunJobStackTraces(Map<String, Object> globalMap) {
+		StringBuilder message = new StringBuilder();
+		for (Map.Entry<String, Object> entry : globalMap.entrySet()) {
+			String key = entry.getKey();
+			if (key.endsWith("_CHILD_EXCEPTION_STACKTRACE")) {
+				if (entry.getValue() instanceof String) {
+					int pos = key.length() - "_CHILD_EXCEPTION_STACKTRACE".length();
+					String compName = key.substring(0, pos);
+					message.append(compName);
+					message.append(": \n");
+					message.append((String) entry.getValue());
+					message.append("\n");
+					break; 
+				}
+			}
+		}
+		if (message.length() > 0) {
+			return message.toString();
+		} else {
+			return null;
+		}
+	}
+
+	/**
      * return sum of all inserted lines for components
      * 
      * {Category} GlobalMapUtil
@@ -318,7 +353,7 @@ public class GlobalMapUtil {
 			if (s == null || s.isEmpty()) {
 				return 0;
 			}
-			return Integer.parseInt((String) s);
+			return Integer.parseInt(s);
 		} else {
 			return 0;
 		}
