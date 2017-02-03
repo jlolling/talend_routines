@@ -778,7 +778,30 @@ public class TimestampUtil {
     	}
     }
 
-    /**
+	/**
+     * getWeek: returns the week of the date
+     * @param today any day
+     * @return year
+     * 
+     * {talendTypes} Integer
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {param} date today: any day.
+     * 
+     * {example} getWeek(today).
+     */
+	public static Integer getWeek(java.util.Date today) {
+    	if (today != null) {
+        	java.util.Calendar c = java.util.Calendar.getInstance(Locale.GERMANY);
+        	c.setTime(today);
+    		return c.get(Calendar.WEEK_OF_YEAR);
+    	} else {
+    		return null;
+    	}
+    }
+
+	/**
      * getMonth: returns the year of the date
      * @param today any day
      * @return year

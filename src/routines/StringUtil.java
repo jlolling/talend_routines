@@ -131,8 +131,11 @@ public class StringUtil {
 	 * {example} toUpperCase("abc") # "ABC"
 	 */
 	public static String toUpperCase(String input) {
-		String s = getNullSaveStr(input);
-		return s.toUpperCase();
+		if (input == null) {
+			return null;
+		} else {
+			return input.toUpperCase();
+		}
 	}
 
 	/**
@@ -145,8 +148,11 @@ public class StringUtil {
 	 * {example} toLowerCase("AbC") # "abc"
 	 */
 	public static String toLowerCase(String input) {
-		String s = getNullSaveStr(input);
-		return s.toLowerCase();
+		if (input == null) {
+			return null;
+		} else {
+			return input.toLowerCase();
+		}
 	}
 
 	/**
