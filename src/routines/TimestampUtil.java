@@ -40,7 +40,7 @@ public class TimestampUtil {
     	c.set(java.util.Calendar.MINUTE, 0);
     	c.set(java.util.Calendar.SECOND, 0);
     	c.set(java.util.Calendar.MILLISECOND, 0);
-    	c.add(java.util.Calendar.HOUR, 24);
+    	c.add(java.util.Calendar.DATE, 1);
     	return c.getTime();
     }
     

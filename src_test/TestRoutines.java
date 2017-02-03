@@ -1,14 +1,14 @@
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.net.MalformedURLException;
 import java.security.NoSuchAlgorithmException;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
+
+import org.junit.Test;
 
 import routines.GenericDateUtil;
 import routines.NumberUtil;
@@ -16,7 +16,6 @@ import routines.RegexUtil;
 import routines.StringCrypt;
 import routines.StringUtil;
 import routines.TimestampUtil;
-
 
 public class TestRoutines {
 
@@ -74,6 +73,29 @@ public class TestRoutines {
 		System.out.println(TimestampUtil.getDateAsInt(d3));
 	}
 	
+	@Test
+	public void testGetNextDay() throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date test1 = sdf.parse("2002-01-01");
+		Date result1 = sdf.parse("2002-01-02");
+		assertEquals(result1, TimestampUtil.getNextDay(test1));
+
+		Date test2 = sdf.parse("2002-12-31");
+		Date result2 = sdf.parse("2003-01-01");
+		assertEquals(result2, TimestampUtil.getNextDay(test2));
+
+		// Start of DST in CEST
+		Date test3 = sdf.parse("2016-03-27");
+		Date result3 = sdf.parse("2016-03-28");
+		assertEquals(result3, TimestampUtil.getNextDay(test3));
+
+		// End of DST in CEST
+		Date test4 = sdf.parse("2016-10-30");
+		Date result4 = sdf.parse("2016-10-31");
+		assertEquals(result4, TimestampUtil.getNextDay(test4));
+	}
+
 	public static void testRemoveMultipleSpaces() {
 		String test = "\nJan Lolling  has spaces    X ";
 		System.out.println(StringUtil.reduceMultipleSpacesToOne(test));
