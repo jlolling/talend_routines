@@ -14,4 +14,5 @@ To use them in your studio follow these steps:
 * GenericDateUtil: a tolerant parser for date/time
 * GlobalMapUtil: extracting useful values from the globalMap
 * TimestampUtil: functions to transform date/time or extracting parts of it
+
 ... check the routine package in the source! All of them have comments
