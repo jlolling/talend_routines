@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Utility class to parse a String into a Date 
@@ -39,11 +40,6 @@ public class GenericDateUtil {
      * 
      * @param source the formatted time as String
      * @return Date object representing the duration
-     * 
-     * {Category} GenericDateUtil
-     * {talendTypes} Date
-     * {param} String(source) source
-     * {example} parseDuration(source)
      */
 	public static Date parseDuration(String source) throws ParseException {
 		return parseDuration(source, (String[]) null);
@@ -56,12 +52,6 @@ public class GenericDateUtil {
      * @param source the formatted time as String
      * @param suggestedPattern an array of suggested patterns
      * @return Date object representing the duration
-     * 
-     * {Category} GenericDateUtil
-     * {talendTypes} Date
-     * {param} String(source) source
-     * {param} String(suggestedPattern) suggestedPattern
-     * {example} parseDuration(source, suggestedPattern)
      */
 	public static Date parseDuration(String source, String ...suggestedPattern) throws ParseException {
 		return getDateParser().parseDuration(source, suggestedPattern);
@@ -73,11 +63,6 @@ public class GenericDateUtil {
      * with build in patterns
      * @param source date or time as Double in which a 1 is one day
      * @return Long object representing the duration
-     * 
-     * {Category} GenericDateUtil
-     * {talendTypes} Long
-     * {param} Double(source) source
-     * {example} parseDuration(source)
      */
 	public static Long parseDuration(Double source) {
 		return getDateParser().getDuration(source);
@@ -89,11 +74,6 @@ public class GenericDateUtil {
      * 
      * @param source the formatted date as String
      * @return Date object representing the Date
-     * 
-     * {Category} GenericDateUtil
-     * {talendTypes} Date
-     * {param} String(source) source
-     * {example} parseDate(source)
      */
 	public static Date parseDate(String source) throws ParseException {
 		return parseDate(source, (String[]) null);
@@ -107,17 +87,24 @@ public class GenericDateUtil {
      * @param source the formatted time as String
      * @param suggestedPattern an array of suggested patterns
      * @return Date object representing the Date
-     * 
-     * {Category} GenericDateUtil
-     * {talendTypes} Date
-     * {param} String(source) source
-     * {param} String(suggestedPattern) suggestedPattern
-     * {example} parseDate(source, suggestedPattern)
      */
 	public static Date parseDate(String source, String ...suggestedPattern) throws ParseException {
-		return getDateParser().parseDate(source, suggestedPattern);
+		return getDateParser().parseDate(source, null, suggestedPattern);
 	}
 	
+	/**
+     * parseDate: returns the Date from the given text representation
+     * Tolerates if the content does not fit to the given pattern and retries it
+     * with build in patterns
+     * 
+     * @param source the formatted time as String
+     * @param suggestedPattern an array of suggested patterns
+     * @return Date object representing the Date
+     */
+	public static Date parseDate(String source, Locale locale, String ...suggestedPattern) throws ParseException {
+		return getDateParser().parseDate(source, locale, suggestedPattern);
+	}
+
 	private static DateParser getDateParser() {
 		DateParser p = threadLocal.get();
 		if (p == null) {
@@ -158,6 +145,10 @@ public class GenericDateUtil {
 			datePatternList.add("MMM dd'th' yyyy");
 			datePatternList.add("dd'th' MMMM yyyy");
 			datePatternList.add("dd'th' MMM yyyy");
+			datePatternList.add("'KW' w/yyyy");
+			datePatternList.add("'w/c' w.yyyy");
+			datePatternList.add("'CW' w.yyyy");
+			datePatternList.add("MMMM yyyy");
 			datePatternList.add("dd-MM-yyyy");
 			datePatternList.add("dd-MM-yy");
 			datePatternList.add("dd-MMM-yyyy");
@@ -180,7 +171,7 @@ public class GenericDateUtil {
 			timePatternList.add(" mmss");
 		}
 		
-		private Date parseDate(String text, String ... userPattern) throws ParseException {
+		private Date parseDate(String text, Locale locale, String ... userPattern) throws ParseException {
 			if (text != null && text.trim().isEmpty() == false) {
 				Date dateValue = null;
 				if (userPattern != null) {
@@ -191,7 +182,10 @@ public class GenericDateUtil {
 						datePatternList.add(0, userPattern[i]);
 					}
 				}
-				SimpleDateFormat sdf = new SimpleDateFormat();
+				if (locale == null) {
+					locale = Locale.ENGLISH;
+				}
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", locale);
 				for (String pattern : datePatternList) {
 					if (pattern != null) {
 						sdf.applyPattern(pattern.trim());
