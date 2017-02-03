@@ -8,7 +8,7 @@ To use them in your studio follow these steps:
 
 3. replace the entire example code of your new created routine with the code you have choosen in this project.
 
-4. Save it and is it - have a lot of fun.
+4. Save it and that it - have a lot of fun.
 
 ##Following routines are available:
 * FileUtil: useful methods to handle files
