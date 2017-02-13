@@ -22,7 +22,7 @@ public class TestGenericDateUtil {
 		System.out.println("(1) Time in ms: " + actual);
 		assertEquals(expected, actual);
 		s = "4'55\""; // 4'55"
-		result = GenericDateUtil.parseDuration(s, null); 
+		result = GenericDateUtil.parseDuration(s, (String) null); 
 		actual = result.getTime();
 		System.out.println("(2) Time in ms: " + actual);
 		assertEquals(expected, actual);
@@ -49,17 +49,17 @@ public class TestGenericDateUtil {
 		System.out.println("(6) Time in ms: " + actual);
 		assertEquals(expected, actual);
 		s = "4′ 55″";
-		result = GenericDateUtil.parseDuration(s, null); 
+		result = GenericDateUtil.parseDuration(s, (String) null); 
 		actual = result.getTime();
 		System.out.println("(7) Time in ms: " + actual);
 		assertEquals(expected, actual);
 		s = "0455";
-		result = GenericDateUtil.parseDuration(s, null); 
+		result = GenericDateUtil.parseDuration(s, (String) null); 
 		actual = result.getTime();
 		System.out.println("(8) Time in ms: " + actual);
 		assertEquals(expected, actual);
 		s = "000455";
-		result = GenericDateUtil.parseDuration(s, null); 
+		result = GenericDateUtil.parseDuration(s, (String) null); 
 		actual = result.getTime();
 		System.out.println("(9) Time in ms: " + actual);
 		assertEquals(expected, actual);

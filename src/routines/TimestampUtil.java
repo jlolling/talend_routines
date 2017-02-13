@@ -15,6 +15,7 @@
  */
 package routines;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -1294,6 +1295,7 @@ public class TimestampUtil {
     }
 
     private static Date scdEndDate = null;
+    
     /**
      * Returns the SCD end date: 2999-01-01
      * 
@@ -1308,6 +1310,77 @@ public class TimestampUtil {
     		scdEndDate = getIntAsDate(29990101);
     	}
     	return scdEndDate;
+    }
+    
+    /**
+     * Returns the seconds of the time without date
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Boolean
+     * 
+     * {param} String(dateRange1Start): Start of date range 1
+     * {param} String(dateRange1End): End of date range 1
+     * {param} String(dateRange2Start): Start of date range 2
+     * {param} String(dateRange2End): End of date range 2
+     * 
+     * {example} isOverlapping(dateRange1Start, dateRange1End, dateRange2Start, dateRange2End).
+     * @throws ParseException 
+     */
+    public static boolean isOverlapping(String dateRange1Start, String dateRange1End, String dateRange2Start, String dateRange2End) throws ParseException {
+    	if (dateRange1Start == null || dateRange1Start.trim().isEmpty()) {
+    		throw new IllegalArgumentException("dateRange1Start cannot be null or empty");
+    	}
+    	if (dateRange1End == null || dateRange1End.trim().isEmpty()) {
+    		throw new IllegalArgumentException("dateRange1End cannot be null or empty");
+    	}
+    	if (dateRange2Start == null || dateRange2Start.trim().isEmpty()) {
+    		throw new IllegalArgumentException("dateRange2Start cannot be null or empty");
+    	}
+    	if (dateRange2End == null || dateRange2End.trim().isEmpty()) {
+    		throw new IllegalArgumentException("dateRange2End cannot be null or empty");
+    	}
+    	Date dr1s = GenericDateUtil.parseDate(dateRange1Start);
+    	Date dr1e = GenericDateUtil.parseDate(dateRange1End);
+    	Date dr2s = GenericDateUtil.parseDate(dateRange2Start);
+    	Date dr2e = GenericDateUtil.parseDate(dateRange2End);
+    	return isOverlapping(dr1s, dr1e, dr2s, dr2e);
+    }
+    
+    /**
+     * Returns the seconds of the time without date
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Boolean
+     * 
+     * {param} Date(dateRange1Start): Start of date range 1
+     * {param} Date(dateRange1End): End of date range 1
+     * {param} Date(dateRange2Start): Start of date range 2
+     * {param} Date(dateRange2End): End of date range 2
+     * 
+     * {example} isOverlapping(dateRange1Start, dateRange1End, dateRange2Start, dateRange2End).
+     */
+    public static boolean isOverlapping(Date dateRange1Start, Date dateRange1End, Date dateRange2Start, Date dateRange2End) {
+    	if (dateRange1Start == null) {
+    		throw new IllegalArgumentException("dateRange1Start cannot be null");
+    	}
+    	if (dateRange1End == null) {
+    		throw new IllegalArgumentException("dateRange1End cannot be null");
+    	}
+    	if (dateRange2Start == null) {
+    		throw new IllegalArgumentException("dateRange2Start cannot be null");
+    	}
+    	if (dateRange2End == null) {
+    		throw new IllegalArgumentException("dateRange2End cannot be null");
+    	}
+    	boolean isOverlapping = false;
+    	if (dateRange1End.after(dateRange2Start) && dateRange2End.after(dateRange1Start)) {
+    		isOverlapping = true;
+    	} else if (dateRange2End.after(dateRange1Start) && dateRange1End.after(dateRange2Start)) {
+    		isOverlapping = true;
+    	}
+    	return isOverlapping;
     }
 
 }
