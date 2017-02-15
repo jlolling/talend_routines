@@ -140,6 +140,7 @@ public class GenericDateUtil {
 			datePatternList.add("dd/MM/yy");
 			datePatternList.add("dd/MMM/yyyy");
 			datePatternList.add("dd. MMMM yyyy");
+			datePatternList.add("dd. MMM. yyyy");
 			datePatternList.add("dd. MMM yyyy");
 			datePatternList.add("MMMM dd'th' yyyy");
 			datePatternList.add("MMM dd'th' yyyy");
@@ -157,8 +158,12 @@ public class GenericDateUtil {
 			datePatternList.add("yyyyMM");
 			datePatternList.add("yyyy");
 			timePatternList = new ArrayList<String>();
-			timePatternList.add(" mm'′'ss'″'");
 			timePatternList.add(" mm''ss'\"'");
+			timePatternList.add(" mm''ss'“'");
+			timePatternList.add(" mm''ss'”'");
+			timePatternList.add(" mm'‘'ss'“'");
+			timePatternList.add(" mm'’'ss'”'");
+			timePatternList.add(" mm'′'ss'″'");
 			timePatternList.add(" HH'h'mm'm'ss's'");
 			timePatternList.add(" HH'h'mm'm'");
 			timePatternList.add(" mm'm'ss's'");

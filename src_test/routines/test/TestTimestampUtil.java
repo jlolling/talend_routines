@@ -1,6 +1,7 @@
 package routines.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.text.ParseException;
@@ -9,6 +10,7 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import routines.GenericDateUtil;
 import routines.TimestampUtil;
 
 public class TestTimestampUtil {
@@ -40,6 +42,21 @@ public class TestTimestampUtil {
 		dr1e = "2016-01-17";
 		actual = TimestampUtil.isOverlapping(dr1s, dr1e, dr2s, dr2e);
 		assertTrue("Include failed", actual);
+	}
+
+	@Test
+	public void testgetOverlappingRange() throws ParseException {
+		System.out.println("#### testgetOverlappingRange");
+		String dr1s = "2016-01-01";
+		String dr1e = "2016-02-01";
+		String dr2s = "2016-01-15";
+		String dr2e = "2016-02-15";
+		Date[] range = TimestampUtil.getOverlappingRange(dr1s, dr1e, dr2s, dr2e);
+		assertNotNull(range);
+		Date expectedRangeStart = GenericDateUtil.parseDate("2016-01-15");
+		Date expectedRangeEnd = GenericDateUtil.parseDate("2016-02-01");
+		assertEquals(expectedRangeStart, range[0]);
+		assertEquals(expectedRangeEnd, range[1]);
 	}
 
 	@Test

@@ -1374,13 +1374,94 @@ public class TimestampUtil {
     	if (dateRange2End == null) {
     		throw new IllegalArgumentException("dateRange2End cannot be null");
     	}
-    	boolean isOverlapping = false;
     	if (dateRange1End.after(dateRange2Start) && dateRange2End.after(dateRange1Start)) {
-    		isOverlapping = true;
-    	} else if (dateRange2End.after(dateRange1Start) && dateRange1End.after(dateRange2Start)) {
-    		isOverlapping = true;
+    		return true;
+    	} else {
+    		return false;
     	}
-    	return isOverlapping;
+    }
+
+    /**
+     * Returns an array with the start and end date of the overlapping date interval
+     * or null if there is no overlapping
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Boolean
+     * 
+     * {param} String(dateRange1Start): Start of date range 1
+     * {param} String(dateRange1End): End of date range 1
+     * {param} String(dateRange2Start): Start of date range 2
+     * {param} String(dateRange2End): End of date range 2
+     * 
+     * {example} getOverlappingRange(dateRange1Start, dateRange1End, dateRange2Start, dateRange2End).
+     */
+    public static Date[] getOverlappingRange(String dateRange1Start, String dateRange1End, String dateRange2Start, String dateRange2End) throws ParseException {
+    	if (dateRange1Start == null || dateRange1Start.trim().isEmpty()) {
+    		throw new IllegalArgumentException("dateRange1Start cannot be null or empty");
+    	}
+    	if (dateRange1End == null || dateRange1End.trim().isEmpty()) {
+    		throw new IllegalArgumentException("dateRange1End cannot be null or empty");
+    	}
+    	if (dateRange2Start == null || dateRange2Start.trim().isEmpty()) {
+    		throw new IllegalArgumentException("dateRange2Start cannot be null or empty");
+    	}
+    	if (dateRange2End == null || dateRange2End.trim().isEmpty()) {
+    		throw new IllegalArgumentException("dateRange2End cannot be null or empty");
+    	}
+    	Date dr1s = GenericDateUtil.parseDate(dateRange1Start);
+    	Date dr1e = GenericDateUtil.parseDate(dateRange1End);
+    	Date dr2s = GenericDateUtil.parseDate(dateRange2Start);
+    	Date dr2e = GenericDateUtil.parseDate(dateRange2End);
+    	return getOverlappingRange(dr1s, dr1e, dr2s, dr2e);
+    }
+
+    /**
+     * Returns an array with the start and end date of the overlapping date interval
+     * or null if there is no overlapping
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Date[]
+     * 
+     * {param} Date(dateRange1Start): Start of date range 1
+     * {param} Date(dateRange1End): End of date range 1
+     * {param} Date(dateRange2Start): Start of date range 2
+     * {param} Date(dateRange2End): End of date range 2
+     * 
+     * {example} getOverlappingRange(dateRange1Start, dateRange1End, dateRange2Start, dateRange2End).
+     */
+    public static Date[] getOverlappingRange(Date dateRange1Start, Date dateRange1End, Date dateRange2Start, Date dateRange2End) {
+    	if (dateRange1Start == null) {
+    		throw new IllegalArgumentException("dateRange1Start cannot be null");
+    	}
+    	if (dateRange1End == null) {
+    		throw new IllegalArgumentException("dateRange1End cannot be null");
+    	}
+    	if (dateRange2Start == null) {
+    		throw new IllegalArgumentException("dateRange2Start cannot be null");
+    	}
+    	if (dateRange2End == null) {
+    		throw new IllegalArgumentException("dateRange2End cannot be null");
+    	}
+    	Date[] overlappingRange = null;
+    	if (dateRange1End.after(dateRange2Start) && dateRange2End.after(dateRange1Start)) {
+    		overlappingRange = new Date[2];
+    		// there are overlapping
+    		// set as value 0 the latest start
+    		if (dateRange1Start.after(dateRange2Start)) {
+    			overlappingRange[0] = dateRange1Start;
+    		} else {
+    			overlappingRange[0] = dateRange2Start;
+    		}
+    		// set as value 1 the earliest end
+    		if (dateRange1End.before(dateRange2End)) {
+    			overlappingRange[1] = dateRange1End;
+    		} else {
+    			overlappingRange[1] = dateRange2End;
+    		}
+    	}
+    	return overlappingRange;
     }
 
 }

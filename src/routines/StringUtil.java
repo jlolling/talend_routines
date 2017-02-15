@@ -15,7 +15,6 @@
  */
 package routines;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.security.MessageDigest;
@@ -152,95 +151,6 @@ public class StringUtil {
 			return null;
 		} else {
 			return input.toLowerCase();
-		}
-	}
-
-	/**
-	 * Returns the relative path from a full path based on a base path
-	 * 
-	 * {Category} StringUtil
-	 * 
-	 * {param} string(fullPath) fullPath: String.
-	 * 
-	 * {param} string(basePath) basePath: String.
-	 * 
-	 * {example} getRelativePath(basePath, fullPath) # ""
-	 */
-	public static String getRelativePath(String fullPath, String basePath) {
-		if (fullPath == null || fullPath.trim().isEmpty()) {
-			return null;
-		}
-		if (basePath == null || basePath.trim().isEmpty()) {
-			return fullPath;
-		}
-		// normalize path
-		fullPath = fullPath.replaceAll("\\\\", "/").trim();
-		basePath = basePath.replaceAll("\\\\", "/").trim();
-		fullPath = fullPath.replaceAll("[/]{2,}", "/").trim();
-		fullPath = fullPath.replaceAll("/./", "/").trim();
-		basePath = basePath.replaceAll("[/]{2,}", "/").trim();
-		basePath = basePath.replaceAll("/./", "/").trim();
-		if (basePath.endsWith("/")) {
-			basePath = basePath.substring(0, basePath.length() - 1);
-		}
-		int pos = fullPath.indexOf(basePath);
-		if (pos == -1) {
-			throw new IllegalArgumentException(
-					"fullPath does not contains basePath!");
-		}
-		return fullPath.substring(pos + basePath.length() + 1);
-	}
-
-	/**
-	 * Returns the name of file without path
-	 * 
-	 * {Category} StringUtil
-	 * 
-	 * {param} string(fullPath) fullPath: String.
-	 * 
-	 * {example} getFileName(fullPath) # ""
-	 */
-	public static String getFileName(String filePath) {
-		File f = new File(filePath);
-		return f.getName();
-	}
-
-	/**
-	 * Returns the name of file without path and extension
-	 * 
-	 * {Category} StringUtil
-	 * 
-	 * {param} string(fullPath) fullPath: String.
-	 * 
-	 * {example} getFileNameWithoutExt(fullPath) # ""
-	 */
-	public static String getFileNameWithoutExt(String filePath) {
-		File f = new File(filePath);
-		String name = f.getName();
-		int pos = name.lastIndexOf('.');
-		if (pos > 0) {
-			return name.substring(0, pos);
-		} else {
-			return name;
-		}
-	}
-
-	/**
-	 * Returns the directory of the file
-	 * 
-	 * {Category} StringUtil
-	 * 
-	 * {param} string(fullPath) fullPath: String.
-	 * 
-	 * {example} getFileDir(fullPath) # ""
-	 */
-	public static String getFileDir(String filePath) {
-		File f = new File(filePath);
-		String parent = f.getParent();
-		if (parent != null) {
-			return parent;
-		} else {
-			return "";
 		}
 	}
 
@@ -530,50 +440,6 @@ public class StringUtil {
 			pos = text.indexOf("  ");
 		}
 		return text;
-	}
-
-	/**
-	 * returns true if the string points to an archive file
-	 * 
-	 * {Category} StringUtil
-	 * 
-	 * {talendTypes} boolean
-	 * 
-	 * {param} String(file) strings: String.
-	 * 
-	 * {example} isArchiveFile(context.currentFile) # 2323133_18
-	 */
-	public static boolean isArchiveFile(String file) {
-		if (file != null) {
-			return file.toLowerCase().endsWith(".zip")
-					|| file.toLowerCase().endsWith(".gz");
-		} else {
-			return false;
-		}
-	}
-
-	/**
-	 * returns a modified name
-	 * 
-	 * {Category} StringUtil
-	 * 
-	 * {talendTypes} String
-	 * 
-	 * {param} String(fileName) fileName: String. {param} String(somethingToAdd)
-	 * somethingToAdd: String.
-	 * 
-	 * {example} addNamePartBeforeExtension(context.currentFile, str) #
-	 */
-	public static String addNamePartBeforeExtension(String fileName,
-			String somethingToAdd) {
-		int pos = fileName.lastIndexOf(".");
-		if (pos != -1 && pos < fileName.length()) {
-			String name = fileName.substring(0, pos);
-			String ext = fileName.substring(pos);
-			return name + somethingToAdd + ext;
-		} else {
-			return fileName + somethingToAdd;
-		}
 	}
 
 	/**

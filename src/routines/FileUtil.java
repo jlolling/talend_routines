@@ -186,5 +186,49 @@ public class FileUtil {
 		File file = new File(dirPath, fileName);
 		return file.exists();
 	}
-	
+
+	/**
+	 * returns a modified name
+	 * 
+	 * {Category} FileUtil
+	 * 
+	 * {talendTypes} String
+	 * 
+	 * {param} String(fileName) fileName: String. {param} String(somethingToAdd)
+	 * somethingToAdd: String.
+	 * 
+	 * {example} addNamePartBeforeExtension(context.currentFile, str) #
+	 */
+	public static String addNamePartBeforeExtension(String fileName,
+			String somethingToAdd) {
+		int pos = fileName.lastIndexOf(".");
+		if (pos != -1 && pos < fileName.length()) {
+			String name = fileName.substring(0, pos);
+			String ext = fileName.substring(pos);
+			return name + somethingToAdd + ext;
+		} else {
+			return fileName + somethingToAdd;
+		}
+	}
+
+	/**
+	 * returns true if the string points to an archive file
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} boolean
+	 * 
+	 * {param} String(file) strings: String.
+	 * 
+	 * {example} isArchiveFile(context.currentFile) # 2323133_18
+	 */
+	public static boolean isArchiveFile(String file) {
+		if (file != null) {
+			return file.toLowerCase().endsWith(".zip")
+					|| file.toLowerCase().endsWith(".gz");
+		} else {
+			return false;
+		}
+	}
+
 }
