@@ -1,5 +1,5 @@
 
-public class TestHttpRequest {
+public class PlayWithHttpRequest {
 
 	/**
 	 * @param args

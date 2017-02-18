@@ -45,8 +45,8 @@ public class TestTimestampUtil {
 	}
 
 	@Test
-	public void testgetOverlappingRange() throws ParseException {
-		System.out.println("#### testgetOverlappingRange");
+	public void testGetOverlappingRange() throws ParseException {
+		System.out.println("#### testGetOverlappingRange");
 		String dr1s = "2016-01-01";
 		String dr1e = "2016-02-01";
 		String dr2s = "2016-01-15";
@@ -83,4 +83,18 @@ public class TestTimestampUtil {
 		assertEquals(result4, TimestampUtil.getNextDay(test4));
 	}
 
+	@Test
+	public void testBetween() throws Exception {
+		System.out.println("#### testBetween");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date start = sdf.parse("2015-03-31");
+		Date end = sdf.parse("2015-04-01");
+		Date test = sdf.parse("2015-03-31");
+		boolean actual = TimestampUtil.between(test, start, end);
+		assertTrue(actual);
+		test = sdf.parse("2015-05-31");
+		actual = TimestampUtil.between(test, start, end);
+		assertTrue(actual == false);
+	}
+	
 }

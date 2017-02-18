@@ -1,23 +1,16 @@
-import static org.junit.Assert.assertEquals;
-
-import java.io.File;
-import java.io.FileFilter;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.junit.Test;
-
-import routines.GenericDateUtil;
 import routines.NumberUtil;
 import routines.RegexUtil;
 import routines.StringCrypt;
 import routines.StringUtil;
 import routines.TimestampUtil;
 
-public class TestRoutines {
+public class PlayWithRoutines {
 
 	/**
 	 * @param args
@@ -36,30 +29,6 @@ public class TestRoutines {
 		System.out.println(TimestampUtil.getTimeDateByMinute(120));
 	}
 	
-	public static void testCleanXML() {
-		StringBuilder test = new StringBuilder(); 
-		test.append("Hello World. ");
-		test.append('\u0004');
-		System.out.println(test);
-		System.out.println(test.length());
-		String test2 = StringUtil.stripNonValidXMLCharacters(test.toString());
-		System.out.println(test2);
-		System.out.println(test2.length());
-	}
-	
-	public static void testBetween() {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date test = new Date();
-		try {
-			Date start = sdf.parse("2015-03-31");
-			Date end = sdf.parse("2015-04-01");
-			System.out.println(TimestampUtil.between(test, start, end));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
 	public static void testGetDateAsInt() {
 		Date date = new Date();
 		System.out.println(TimestampUtil.getDateAsInt(date));
@@ -71,40 +40,6 @@ public class TestRoutines {
 		System.out.println(d2);
 		Date d3 = TimestampUtil.getIntAsDate(d2);
 		System.out.println(TimestampUtil.getDateAsInt(d3));
-	}
-	
-	@Test
-	public void testGetNextDay() throws ParseException {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-		Date test1 = sdf.parse("2002-01-01");
-		Date result1 = sdf.parse("2002-01-02");
-		assertEquals(result1, TimestampUtil.getNextDay(test1));
-
-		Date test2 = sdf.parse("2002-12-31");
-		Date result2 = sdf.parse("2003-01-01");
-		assertEquals(result2, TimestampUtil.getNextDay(test2));
-
-		// Start of DST in CEST
-		Date test3 = sdf.parse("2016-03-27");
-		Date result3 = sdf.parse("2016-03-28");
-		assertEquals(result3, TimestampUtil.getNextDay(test3));
-
-		// End of DST in CEST
-		Date test4 = sdf.parse("2016-10-30");
-		Date result4 = sdf.parse("2016-10-31");
-		assertEquals(result4, TimestampUtil.getNextDay(test4));
-	}
-
-	public static void testRemoveMultipleSpaces() {
-		String test = "\nJan Lolling  has spaces    X ";
-		System.out.println(StringUtil.reduceMultipleSpacesToOne(test));
-	}
-	
-	public static void testFillPadding() {
-		String test = "1XXXXY";
-		System.out.println(StringUtil.fillLeftPadding(test, 5, '0'));
-		System.out.println(StringUtil.fillRightPadding(test, 5, '0'));
 	}
 	
 	public static void testExtractRegexGroup1() {
@@ -177,29 +112,6 @@ public class TestRoutines {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	public static void testGenericDateUtil() {
-		String test1 = "01. Jan 2014";
-		try {
-			Date date = GenericDateUtil.parseDate(test1);
-			System.out.println(date);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
-	public static void testFileList() {
-		File dir = new File("/var/testdata/many_files");
-		dir.listFiles(new FileFilter() {
-			
-			@Override
-			public boolean accept(File pathname) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-		});
 	}
 	
 	public static void testHttp() throws Exception {

@@ -6,7 +6,7 @@ import java.util.List;
 import routines.DateRangeBuilder;
 
 
-public class TestDateRangeBuilder {
+public class PlayWithDateRangeBuilder {
 
 	/**
 	 * @param args
