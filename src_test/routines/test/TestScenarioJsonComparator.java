@@ -32,7 +32,24 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 			    + "      \"valid_to\" : \"2999-01-01\",\n"
 			    + "      \"region_include\" : [ 7391, 7393, 7394, 7395, 7396 ],\n"
 			    + "      \"usage_include\" : [ 10406, 10435 ]\n"
-			    + "    } ]\n"
+			    + "    }, \n"
+			    + "    {\n"
+			    + "      \"rights_ownership_id\" : 137107912,\n"
+			    + "      \"tu_id\" : 1156,\n"
+			    + "      \"valid_from\" : \"2016-01-01\",\n"
+			    + "      \"valid_to\" : \"2999-01-01\",\n"
+			    + "      \"region_include\" : [1234],\n"
+			    + "      \"usage_include\" : [ 10406, 10435 ]\n"
+			    + "    }, \n"
+			    + "    {\n"
+			    + "      \"rights_ownership_id\" : 137107913,\n"
+			    + "      \"tu_id\" : 1156,\n"
+			    + "      \"valid_from\" : \"2016-01-01\",\n"
+			    + "      \"valid_to\" : \"2999-01-01\",\n"
+			    + "      \"region_include\" : [7393],\n"
+			    + "      \"usage_include\" : [ 10406 ]\n"
+			    + "    }\n"
+			    + "    ]\n"
 			    + "  }, {\n"
 			    + "    \"product_id\" : 137106628,\n"
 			    + "    \"source\" : \"navi\",\n"
@@ -105,19 +122,19 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 										.getNode(nodeProduct2RO, "region_include");
 								ArrayNode nodeProduct2RO_usage_include = (ArrayNode) doc
 										.getNode(nodeProduct2RO, "usage_include");
-								boolean inConflict = false;
+								boolean inConflict = true;
 								JsonNode nodeInterSectRegions = null;
 								JsonNode nodeInterSectUsages = null;
 								if (nodeProduct1RO_region_include != null && nodeProduct2RO_region_include != null) {
 									nodeInterSectRegions = comp.intersect(nodeProduct1RO_region_include, nodeProduct2RO_region_include);
-									if (nodeInterSectRegions.size() > 0) {
-										inConflict = true;
+									if (nodeInterSectRegions.size() == 0) {
+										inConflict = false;
 									}
 								}
 								if (nodeProduct1RO_usage_include != null && nodeProduct2RO_usage_include != null) {
 									nodeInterSectUsages = comp.intersect(nodeProduct1RO_usage_include, nodeProduct2RO_usage_include);
-									if (nodeInterSectUsages.size() > 0) {
-										inConflict = true;
+									if (nodeInterSectUsages.size() == 0) {
+										inConflict = false;
 									}
 								}
 								if (inConflict) {
@@ -129,7 +146,7 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 									conflictNode.put("conflict_from", TalendDate.formatDate("yyyy-MM-dd", dateOverlap[0]));
 									conflictNode.put("conflict_to", TalendDate.formatDate("yyyy-MM-dd", dateOverlap[1]));
 									conflictNode.set("region_include", nodeInterSectRegions);
-									conflictNode.set("region_include", nodeInterSectUsages);
+									conflictNode.set("usage_include", nodeInterSectUsages);
 									ObjectNode party1Node = doc.createEmptyNode();
 									party1Node.set("product_id", nodeProduct1.get("product_id"));
 									party1Node.set("rightsownership_id", nodeProduct1RO.get("rights_ownership_id"));
@@ -149,7 +166,7 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 		}
 
 		System.out.println(doc.getJsonString(true, false));
-		assertEquals(3, conflictsArrayNode.size());
+		assertEquals(5, conflictsArrayNode.size());
 	}
 
 }
