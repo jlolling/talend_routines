@@ -1,6 +1,7 @@
 package routines.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -37,6 +38,14 @@ public class TestStringUtil {
 		actual = StringUtil.fillRightPadding(test, 5, '0');
 		expected = "1XXY0";
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testInWithChain() {
+		String test = "xyz ";
+		String chain = "aaa|bbb|xyz |111";
+		boolean actual = StringUtil.inChain(test, '|', chain);
+		assertTrue(actual);
 	}
 	
 }

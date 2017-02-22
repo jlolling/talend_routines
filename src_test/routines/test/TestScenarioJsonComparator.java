@@ -2,6 +2,10 @@ package routines.test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,61 +24,8 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 	
 	@Before
 	public void setupInput() throws Exception {
-		String input = "{\n"
-			    + "  \"merge_source_product_id\" : 137106627,\n"
-			    + "  \"products\" : [ {\n"
-			    + "    \"product_id\" : 137106629,\n"
-			    + "    \"source\" : \"navi\",\n"
-			    + "    \"rightsownerships\" : [ {\n"
-			    + "      \"rights_ownership_id\" : 137107911,\n"
-			    + "      \"tu_id\" : 1156,\n"
-			    + "      \"valid_from\" : \"2016-01-01\",\n"
-			    + "      \"valid_to\" : \"2999-01-01\",\n"
-			    + "      \"region_include\" : [ 7391, 7393, 7394, 7395, 7396 ],\n"
-			    + "      \"usage_include\" : [ 10406, 10435 ]\n"
-			    + "    }, \n"
-			    + "    {\n"
-			    + "      \"rights_ownership_id\" : 137107912,\n"
-			    + "      \"tu_id\" : 1156,\n"
-			    + "      \"valid_from\" : \"2016-01-01\",\n"
-			    + "      \"valid_to\" : \"2999-01-01\",\n"
-			    + "      \"region_include\" : [1234],\n"
-			    + "      \"usage_include\" : [ 10406, 10435 ]\n"
-			    + "    }, \n"
-			    + "    {\n"
-			    + "      \"rights_ownership_id\" : 137107913,\n"
-			    + "      \"tu_id\" : 1156,\n"
-			    + "      \"valid_from\" : \"2016-01-01\",\n"
-			    + "      \"valid_to\" : \"2999-01-01\",\n"
-			    + "      \"region_include\" : [7393],\n"
-			    + "      \"usage_include\" : [ 10406 ]\n"
-			    + "    }\n"
-			    + "    ]\n"
-			    + "  }, {\n"
-			    + "    \"product_id\" : 137106628,\n"
-			    + "    \"source\" : \"navi\",\n"
-			    + "    \"rightsownerships\" : [ {\n"
-			    + "      \"rights_ownership_id\" : 137107909,\n"
-			    + "      \"tu_id\" : 1156,\n"
-			    + "      \"valid_from\" : \"2016-01-01\",\n"
-			    + "      \"valid_to\" : \"2999-01-01\",\n"
-			    + "      \"region_include\" : [ 7391, 7393, 7394, 7395, 7396 ],\n"
-			    + "      \"usage_include\" : [ 10406, 10435 ]\n"
-			    + "    } ]\n"
-			    + "  }, {\n"
-			    + "    \"product_id\" : 137106627,\n"
-			    + "    \"source\" : \"navi\",\n"
-			    + "    \"rightsownerships\" : [ {\n"
-			    + "      \"rights_ownership_id\" : 137107907,\n"
-			    + "      \"tu_id\" : 1156,\n"
-			    + "      \"valid_from\" : \"2016-01-01\",\n"
-			    + "      \"valid_to\" : \"2999-01-01\",\n"
-			    + "      \"region_include\" : [ 7391, 7393, 7394, 7395, 7396 ],\n"
-			    + "      \"usage_include\" : [ 10406, 10435 ]\n"
-			    + "    } ]\n"
-			    + "  } ]\n"
-			    + "}";
-		de.cimt.talendcomp.json.JsonDocument doc = new de.cimt.talendcomp.json.JsonDocument(input);
+		File testFile = new File("/var/testdata/json/cdh.json");
+		de.cimt.talendcomp.json.JsonDocument doc = new de.cimt.talendcomp.json.JsonDocument(testFile);
 		globalMap.put("tJSONDocOpen_1", doc);
 	}
 	
@@ -85,14 +36,32 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 		ObjectNode root = (ObjectNode) doc.getRootNode();
 		// prepare the result node
 		ArrayNode conflictsArrayNode = doc.createArrayNode("conflicts");
+		ArrayNode arrayNodeNewROStatusNavi = doc.createArrayNode("new_rightsownership_process_status_navi");
+		ArrayNode arrayNodeNewROStatusCore = doc.createArrayNode("new_rightsownership_process_status_core");
+		ArrayNode arrayNodeNewProductODStatusNavi = doc.createArrayNode("new_product_operational_data_status_navi");
+		ArrayNode arrayNodeNewProductODStatusCore = doc.createArrayNode("new_product_operational_data_status_core");
 		ArrayNode node_product_array = (ArrayNode) doc.getNode(root, "$.products");
 		// iterate over all products
+		List<JsonNode> listAllRO = new ArrayList<JsonNode>();
+		List<JsonNode> listROInConflicts = new ArrayList<JsonNode>();
+		List<JsonNode> listAllProducts = new ArrayList<JsonNode>();
+		List<JsonNode> listProductsInConflict = new ArrayList<JsonNode>();
 		for (int i1 = 0, n = node_product_array.size(); i1 < n; i1++) {
 			JsonNode nodeProduct1 = node_product_array.get(i1);
+			if (listAllProducts.contains(nodeProduct1) == false) {
+				listAllProducts.add(nodeProduct1);
+			}
 			// there is a reference product
 			ArrayNode nodeProduct1ROArray = (ArrayNode) doc.getNode(nodeProduct1, "rightsownerships");
 			// iterate over the rightsownerships
 			for (JsonNode nodeProduct1RO : nodeProduct1ROArray) {
+				if (listAllRO.contains(nodeProduct1RO) == false) {
+					listAllRO.add(nodeProduct1RO);
+				}
+				String ro1ProcessStatus = nodeProduct1RO.path("process_status").asText();
+				if ("rights_ownership_deactivated".equals(ro1ProcessStatus)) {
+					continue; // skip over this ro
+				}
 				String refValidFrom = nodeProduct1RO.path("valid_from").textValue();
 				String refValidTo = nodeProduct1RO.path("valid_to").textValue();
 				if (StringUtil.isEmpty(refValidFrom) || StringUtil.isEmpty(refValidTo)) {
@@ -104,17 +73,28 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 				// this way we get unique product combinations regardless in which order the products are in a pair
 				for (int i2 = i1 + 1; i2 < n; i2++) {
 					JsonNode nodeProduct2 = node_product_array.get(i2);
+					if (listAllProducts.contains(nodeProduct2) == false) {
+						listAllProducts.add(nodeProduct2);
+					}
 					// iterate over the products to compare
 					ArrayNode nodeProduct2ROArray = (ArrayNode) doc.getNode(nodeProduct2, "rightsownerships");
 					if (nodeProduct2ROArray != null) {
 						// iterate over the rightsownerships
 						for (JsonNode nodeProduct2RO : nodeProduct2ROArray) {
+							if (listAllRO.contains(nodeProduct2RO) == false) {
+								listAllRO.add(nodeProduct2RO);
+							}
+							String ro2ProcessStatus = nodeProduct2RO.path("process_status").textValue();
+							if ("rights_ownership_deactivated".equals(ro2ProcessStatus)) {
+								continue; // skip over this ro
+							}
 							// now check the valid date ranges
 							String compValidFrom = nodeProduct2RO.path("valid_from").textValue();
 							String compValidTo = nodeProduct2RO.path("valid_to").textValue();
 							if (StringUtil.isEmpty(compValidFrom) || StringUtil.isEmpty(compValidTo)) {
 								continue;
 							}
+							boolean inConflict = false;
 							if (TimestampUtil.isOverlapping(refValidFrom, refValidTo, compValidFrom, compValidTo)) {
 								// ok the valid date ranges are overlapping
 								// lets check the regions and usages
@@ -122,7 +102,7 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 										.getNode(nodeProduct2RO, "region_include");
 								ArrayNode nodeProduct2RO_usage_include = (ArrayNode) doc
 										.getNode(nodeProduct2RO, "usage_include");
-								boolean inConflict = true;
+								inConflict = true;
 								JsonNode nodeInterSectRegions = null;
 								JsonNode nodeInterSectUsages = null;
 								if (nodeProduct1RO_region_include != null && nodeProduct2RO_region_include != null) {
@@ -149,14 +129,29 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 									conflictNode.set("usage_include", nodeInterSectUsages);
 									ObjectNode party1Node = doc.createEmptyNode();
 									party1Node.set("product_id", nodeProduct1.get("product_id"));
-									party1Node.set("rightsownership_id", nodeProduct1RO.get("rights_ownership_id"));
+									party1Node.set("source", nodeProduct1.get("source"));
+									party1Node.set("rights_ownership_id", nodeProduct1RO.get("rights_ownership_id"));
 									party1Node.put("share_percent", 100);
 									conflictNode.withArray("conflict_parties").add(party1Node);
 									ObjectNode party2Node = doc.createEmptyNode();
 									party2Node.set("product_id", nodeProduct2.get("product_id"));
-									party2Node.set("rightsownership_id", nodeProduct2RO.get("rights_ownership_id"));
+									party2Node.set("source", nodeProduct2.get("source"));
+									party2Node.set("rights_ownership_id", nodeProduct2RO.get("rights_ownership_id"));
 									party2Node.put("share_percent", 100);
 									conflictNode.withArray("conflict_parties").add(party2Node);
+									// set product status
+									if (listProductsInConflict.contains(nodeProduct1) == false) {
+										listProductsInConflict.add(nodeProduct1);
+									}
+									if (listProductsInConflict.contains(nodeProduct2) == false) {
+										listProductsInConflict.add(nodeProduct2);
+									}
+									if (listROInConflicts.contains(nodeProduct1RO) == false) {
+										listROInConflicts.add(nodeProduct1RO);
+									}
+									if (listROInConflicts.contains(nodeProduct2RO) == false) {
+										listROInConflicts.add(nodeProduct2RO);
+									}
 								}
 							}
 						}
@@ -164,9 +159,71 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 				}
 			}
 		}
-
+		// now set the status for all ROs not in conflict
+		for (JsonNode ro : listAllRO) {
+			if (listROInConflicts.contains(ro)) {
+				ObjectNode status = doc.createEmptyNode();
+				status.set("rights_ownership_id", ro.get("rights_ownership_id"));
+				status.put("new_process_status", "rights_ownership_in_conflict");
+				status.set("prev_process_status", ro.get("process_status"));
+				status.set("source", ro.get("source"));
+				String source = ro.path("source").textValue();
+				if ("navi".equals(source)) {
+					arrayNodeNewROStatusNavi.add(status);
+				} else {
+					arrayNodeNewROStatusCore.add(status);
+				}
+			} else {
+				// this is a RO without any conflicts
+				String processStatus = ro.path("process_status").textValue();
+				if ("rights_ownership_in_conflict".equals(processStatus)) {
+					ObjectNode status = doc.createEmptyNode();
+					status.set("rightsownership_id", ro.get("rights_ownership_id"));
+					status.put("new_process_status", "rights_ownership_conflict_solved");
+					status.set("prev_process_status", ro.get("process_status"));
+					status.set("source", ro.get("source"));
+					String source = ro.path("source").textValue();
+					if ("navi".equals(source)) {
+						arrayNodeNewROStatusNavi.add(status);
+					} else {
+						arrayNodeNewROStatusCore.add(status);
+					}
+				} else if ("rights_ownership_created".equals(processStatus)) {
+					ObjectNode status = doc.createEmptyNode();
+					status.set("rightsownership_id", ro.get("rights_ownership_id"));
+					status.put("new_process_status", "rights_ownership_preliminarily_verified");
+					status.set("prev_process_status", ro.get("process_status"));
+					status.set("source", ro.get("source"));
+					String source = ro.path("source").textValue();
+					if ("navi".equals(source)) {
+						arrayNodeNewROStatusNavi.add(status);
+					} else {
+						arrayNodeNewROStatusCore.add(status);
+					}
+				}
+			}
+		}
+		for (JsonNode product : listAllProducts) {
+			ObjectNode status = doc.createEmptyNode();
+			status.set("product_id", product.get("product_id"));
+			if (listProductsInConflict.contains(product)) {
+				status.put("navi_process_status", "cdh_in_dispute");
+			} else {
+				status.put("navi_process_status", "navi_ready_for_merge");
+			}
+			String source = product.path("source").textValue();
+			if ("navi".equals(source)) {
+				arrayNodeNewProductODStatusNavi.add(status);
+			} else {
+				arrayNodeNewProductODStatusCore.add(status);
+			}
+		}
 		System.out.println(doc.getJsonString(true, false));
 		assertEquals(5, conflictsArrayNode.size());
+		assertEquals(5, arrayNodeNewROStatusNavi.size());
+		assertEquals(1, arrayNodeNewROStatusCore.size());
+		assertEquals(3, arrayNodeNewProductODStatusNavi.size());
+		assertEquals(1, arrayNodeNewProductODStatusCore.size());
 	}
 
 }

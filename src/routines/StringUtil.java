@@ -162,11 +162,40 @@ public class StringUtil {
 	 * 
 	 * {talendTypes} boolean | Boolean
 	 * 
+	 * {param} string("value") in: String.
+	 * {param} char('|') delimiter: char
+	 * {param} string("value1|value2|value3") valueChain: String.
+	 * 
+	 * {example} inChain(" test", '|', "value1|value2|test|value3") # true
+	 */
+	public static boolean inChain(String test, char delimiter, String valueChain) {
+		if (test != null && valueChain != null) {
+			StringTokenizer st = new StringTokenizer(valueChain, String.valueOf(delimiter));
+			while (st.hasMoreTokens()) {
+				String value = st.nextToken();
+				if (value != null && value.trim().isEmpty() == false) {
+					if (test.trim().equals(value.trim())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * checks if the first string is in the list of following strings (case
+	 * insensitive regardless of white spaces)
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} boolean | Boolean
+	 * 
 	 * {param} string("to_test") test: String.
 	 * 
 	 * {param} string("possibleValue") posibleValues: String.
 	 * 
-	 * {example} int(" test","hans"," TEST ","Tata") # true
+	 * {example} in(" test","hans"," TEST ","Tata") # true
 	 */
 	public static boolean in(String test, String... possibleValues) {
 		if (test != null) {
