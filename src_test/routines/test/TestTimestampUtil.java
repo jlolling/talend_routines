@@ -97,4 +97,14 @@ public class TestTimestampUtil {
 		assertTrue(actual == false);
 	}
 	
+	@Test
+	public void testGetTimeByLongTime() {
+		System.out.println("#### testGetTimeByLongTime");
+		Date d = TimestampUtil.getTimeByLongTime(178000l);
+		System.out.println(d);
+		String expected = "02:58";
+		String actual = TimestampUtil.format(d, "mm:ss");
+		System.out.println(actual);
+		assertEquals("Time wrong", expected, actual);
+	}
 }

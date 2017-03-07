@@ -35,11 +35,14 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 		JsonDocument doc = (JsonDocument) globalMap.get("tJSONDocOpen_1");
 		ObjectNode root = (ObjectNode) doc.getRootNode();
 		// prepare the result node
-		ArrayNode conflictsArrayNode = doc.createArrayNode("conflicts");
-		ArrayNode arrayNodeNewROStatusNavi = doc.createArrayNode("new_rightsownership_process_status_navi");
-		ArrayNode arrayNodeNewROStatusCore = doc.createArrayNode("new_rightsownership_process_status_core");
-		ArrayNode arrayNodeNewProductODStatusNavi = doc.createArrayNode("new_product_operational_data_status_navi");
-		ArrayNode arrayNodeNewProductODStatusCore = doc.createArrayNode("new_product_operational_data_status_core");
+		ObjectNode resultNode = doc.createObjectNode("result");
+		globalMap.put("result_node", resultNode);
+		ArrayNode conflictsArrayNode = resultNode.withArray("conflicts");
+		globalMap.put("conflicts_node", conflictsArrayNode);
+		ArrayNode arrayNodeNewROStatusNavi = resultNode.withArray("new_rightsownership_process_status_navi");
+		ArrayNode arrayNodeNewROStatusCore = resultNode.withArray("new_rightsownership_process_status_core");
+		ArrayNode arrayNodeNewProductODStatusNavi = resultNode.withArray("new_product_operational_data_status_navi");
+		ArrayNode arrayNodeNewProductODStatusCore = resultNode.withArray("new_product_operational_data_status_core");
 		ArrayNode node_product_array = (ArrayNode) doc.getNode(root, "$.products");
 		// iterate over all products
 		List<JsonNode> listAllRO = new ArrayList<JsonNode>();
@@ -59,7 +62,7 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 					listAllRO.add(nodeProduct1RO);
 				}
 				String ro1ProcessStatus = nodeProduct1RO.path("process_status").asText();
-				if ("rights_ownership_deactivated".equals(ro1ProcessStatus)) {
+				if ("rights_ownership_deactivated".equals(ro1ProcessStatus) || "rights_ownership_revoked".equals(ro1ProcessStatus)) {
 					continue; // skip over this ro
 				}
 				String refValidFrom = nodeProduct1RO.path("valid_from").textValue();
@@ -178,8 +181,8 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 				String processStatus = ro.path("process_status").textValue();
 				if ("rights_ownership_in_conflict".equals(processStatus)) {
 					ObjectNode status = doc.createEmptyNode();
-					status.set("rightsownership_id", ro.get("rights_ownership_id"));
-					status.put("new_process_status", "rights_ownership_conflict_solved");
+					status.set("rights_ownership_id", ro.get("rights_ownership_id"));
+					status.put("new_process_status", "rights_ownership_conflict_winner");
 					status.set("prev_process_status", ro.get("process_status"));
 					status.set("source", ro.get("source"));
 					String source = ro.path("source").textValue();
@@ -188,10 +191,10 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 					} else {
 						arrayNodeNewROStatusCore.add(status);
 					}
-				} else if ("rights_ownership_created".equals(processStatus)) {
+				} else {
 					ObjectNode status = doc.createEmptyNode();
-					status.set("rightsownership_id", ro.get("rights_ownership_id"));
-					status.put("new_process_status", "rights_ownership_preliminarily_verified");
+					status.set("rights_ownership_id", ro.get("rights_ownership_id"));
+					status.put("new_process_status", "rights_ownership_not_in_conflict");
 					status.set("prev_process_status", ro.get("process_status"));
 					status.set("source", ro.get("source"));
 					String source = ro.path("source").textValue();
@@ -220,7 +223,7 @@ public class TestScenarioJsonComparator extends TalendFakeJob {
 		}
 		System.out.println(doc.getJsonString(true, false));
 		assertEquals(5, conflictsArrayNode.size());
-		assertEquals(5, arrayNodeNewROStatusNavi.size());
+		assertEquals(7, arrayNodeNewROStatusNavi.size());
 		assertEquals(1, arrayNodeNewROStatusCore.size());
 		assertEquals(3, arrayNodeNewProductODStatusNavi.size());
 		assertEquals(1, arrayNodeNewProductODStatusCore.size());

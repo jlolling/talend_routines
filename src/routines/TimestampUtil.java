@@ -1464,4 +1464,29 @@ public class TimestampUtil {
     	return overlappingRange;
     }
 
+    /**
+     * Returns a date in UTC which holds the time
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Date
+     * 
+     * {param} Long(time)
+     * 
+     * {example} getTimeByLongTime(time).
+     */
+    public static Date getTimeByLongTime(Long time) {
+    	if (time == null) {
+    		return null;
+    	} else {
+        	java.util.Calendar c = java.util.Calendar.getInstance(Locale.GERMAN);
+        	c.setTimeZone(getUTCTimeZone());
+        	c.setTimeInMillis(time);
+        	c.set(java.util.Calendar.YEAR, 1970);
+        	c.set(java.util.Calendar.DAY_OF_YEAR, 1);
+        	c.set(java.util.Calendar.HOUR_OF_DAY, -1);
+        	return c.getTime();
+    	}
+    }
+    
 }
