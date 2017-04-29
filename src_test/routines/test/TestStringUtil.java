@@ -48,4 +48,16 @@ public class TestStringUtil {
 		assertTrue(actual);
 	}
 	
+	@Test
+	public void testLength() {
+		String test = null;
+		int expected = 0;
+		int actual = StringUtil.length(test);
+		assertEquals(expected, actual);
+		test = "äüö";
+		expected = 3;
+		actual = StringUtil.length(test);
+		assertEquals(expected, actual);
+	}
+
 }

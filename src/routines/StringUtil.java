@@ -817,4 +817,25 @@ public class StringUtil {
 		return sb.toString();
 	}
 	
+	/**
+	 * returns the length of a String null save
+	 * @param test list of values separated
+	 * @return length. In case of test is null it returns also 0
+	 * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(test)
+     * 
+     * {example} length(test) 
+	 */
+	public static int length(String test) {
+		if (test == null) {
+			return 0;
+		} else {
+			return test.length();
+		}
+	}
+	
 }
