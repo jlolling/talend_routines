@@ -63,6 +63,27 @@ public class TestGenericDateUtil {
 		actual = result.getTime();
 		System.out.println("(9) Time in ms: " + actual);
 		assertEquals(expected, actual);
+		s = "12:04:55 AM";
+		result = GenericDateUtil.parseDuration(s, (String) null); 
+		actual = result.getTime();
+		System.out.println("(9) Time in ms: " + actual);
+		assertEquals(expected, actual);
+		s = "00:04:55 AM";
+		result = GenericDateUtil.parseDuration(s, (String) null); 
+		actual = result.getTime();
+		System.out.println("(9) Time in ms: " + actual);
+		assertEquals(expected, actual);
+		s = "04:55";
+		result = GenericDateUtil.parseDuration(s, (String) null); 
+		actual = result.getTime();
+		System.out.println("(9) Time in ms: " + actual);
+		assertEquals(expected, actual);
+		s = "12:04:55 PM";
+		result = GenericDateUtil.parseDuration(s, (String) null); 
+		actual = result.getTime();
+		expected = 43495000l;
+		System.out.println("(9) Time in ms: " + actual);
+		assertEquals(expected, actual);
 	}
 	
 	@Test
