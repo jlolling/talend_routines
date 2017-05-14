@@ -289,8 +289,9 @@ public class GenericDateUtil {
 			return lenient;
 		}
 
-		public void setLenient(boolean lenient) {
+		public DateParser setLenient(boolean lenient) {
 			this.lenient = lenient;
+			return this;
 		}
 
 	}
