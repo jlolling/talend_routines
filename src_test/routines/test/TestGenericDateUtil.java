@@ -84,6 +84,12 @@ public class TestGenericDateUtil {
 		expected = 43495000l;
 		System.out.println("(9) Time in ms: " + actual);
 		assertEquals(expected, actual);
+		s = "00:55";
+		expected = 55000l;
+		result = GenericDateUtil.parseDuration(s, (String) null); 
+		actual = result.getTime();
+		System.out.println("(9) Time in ms: " + actual);
+		assertEquals(expected, actual);
 	}
 	
 	@Test
