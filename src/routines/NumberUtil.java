@@ -17,9 +17,13 @@ package routines;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /*
  * user specification: the function's comment should contain keys as follows: 1. write about the function's comment.but
@@ -83,7 +87,7 @@ public class NumberUtil {
 			if (s == null || s.isEmpty()) {
 				return 0;
 			}
-			return Long.parseLong((String) s);
+			return Long.parseLong(s);
 		} else {
 			return 0;
 		}
@@ -109,7 +113,7 @@ public class NumberUtil {
 			if (s == null || s.isEmpty()) {
 				return 0;
 			}
-			return Integer.parseInt((String) s);
+			return Integer.parseInt(s);
 		} else {
 			return 0;
 		}
@@ -140,7 +144,7 @@ public class NumberUtil {
 			if (s == null || s.isEmpty()) {
 				return 0;
 			}
-			return Integer.parseInt((String) s);
+			return Integer.parseInt(s);
 		} else {
 			return 0;
 		}
@@ -235,7 +239,7 @@ public class NumberUtil {
      */
 	public static double getNullSaveDoubleLocal(String input, Locale locale, String ...toRemoveString) {
 		if (input != null && input.isEmpty() == false) {
-			String s = (String) input;
+			String s = input;
 			if (toRemoveString != null) {
 				for (String r : toRemoveString) {
 					s = s.replace(r, "");
@@ -341,7 +345,7 @@ public class NumberUtil {
 			if (quotient.doubleValue() == 0) {
 				return 0;
 			} else {
-				return dividend.doubleValue() / (double) quotient.intValue();
+				return dividend.doubleValue() / quotient.intValue();
 			}
 		}
 	}
@@ -393,7 +397,7 @@ public class NumberUtil {
 			if (quotient.doubleValue() == 0) {
 				return 0;
 			} else {
-				return ((double) dividend.intValue()) / quotient.doubleValue();
+				return (dividend.intValue()) / quotient.doubleValue();
 			}
 		}
 	}
@@ -688,6 +692,51 @@ public class NumberUtil {
 			return l1 == l2 && d1 == d2 && b1.equals(b2);
 		} else {
 			return false;
+		}
+	}
+	
+	/**
+	 * sort a given list of long numbers given as string
+	 * @param listString list long numbers
+	 * @return list long numbers sorted numerical
+	 * @throws Exception
+	 * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String("2,5,3");
+     * 
+     * {example} sortLongNumberList("2,5,3") result: sorted list
+	 */
+	public static String sortLongNumberList(String listString) {
+		if (listString == null || listString.trim().isEmpty()) {
+			return listString;
+		}
+		try {
+			StringTokenizer st = new StringTokenizer(listString, ",");
+			List<Long> listNumbers = new ArrayList<Long>();
+			while (st.hasMoreTokens()) {
+				String token = st.nextToken();
+				if (token != null && token.trim().isEmpty() == false) {
+					listNumbers.add(Long.valueOf(token));
+				}
+			}
+			Collections.sort(listNumbers);
+			boolean firstLoop = true;
+			StringBuilder result = new StringBuilder();
+			for (Long value : listNumbers) {
+				if (firstLoop) {
+					firstLoop = false;
+				} else {
+					result.append(",");
+				}
+				result.append(value);
+			}
+			return result.toString();
+		} catch (NumberFormatException nfe) {
+			System.err.println("Could not convert text to Long: " + nfe.getMessage());
+			return listString;
 		}
 	}
 
