@@ -28,8 +28,7 @@ public class FileUtil {
 	 * {example} getFileExtension(filePath) # ""
 	 */
 	public static String getFileExtension(String filePath) {
-		File f = new File(filePath);
-		String name = f.getName();
+		String name = getFileName(filePath);
 		int pos = name.lastIndexOf('.');
 		if (pos >= 0 && pos < name.length() - 1) {
 			return name.substring(pos + 1);
@@ -48,6 +47,7 @@ public class FileUtil {
 	 * {example} getFileDir(fullPath) # ""
 	 */
 	public static String getFileDir(String filePath) {
+		filePath = filePath.replace('\\', '/');
 		File f = new File(filePath);
 		String parent = f.getParent();
 		if (parent != null) {
@@ -67,6 +67,10 @@ public class FileUtil {
 	 * {example} getFileName(fullPath) # ""
 	 */
 	public static String getFileName(String filePath) {
+		if (filePath == null) {
+			return null;
+		}
+		filePath = filePath.replace('\\', '/');
 		File f = new File(filePath);
 		return f.getName();
 	}
@@ -81,8 +85,7 @@ public class FileUtil {
 	 * {example} getFileNameWithoutExt(fullPath) # ""
 	 */
 	public static String getFileNameWithoutExt(String filePath) {
-		File f = new File(filePath);
-		String name = f.getName();
+		String name = getFileName(filePath);
 		int pos = name.lastIndexOf('.');
 		if (pos > 0) {
 			return name.substring(0, pos);
@@ -162,6 +165,7 @@ public class FileUtil {
 		if (filePath == null) {
 			return false;
 		}
+		filePath = filePath.replace('\\', '/');
 		File file = new File(filePath);
 		return file.exists();
 	}
@@ -183,6 +187,7 @@ public class FileUtil {
 		if (fileName == null || fileName.trim().isEmpty()) {
 			return false;
 		}
+		dirPath = dirPath.replace('\\', '/');
 		File file = new File(dirPath, fileName);
 		return file.exists();
 	}
@@ -229,6 +234,35 @@ public class FileUtil {
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * Delets a dir recursively deleting anything inside it.
+	 * @param dir The dir to delete
+	 * @return true if the dir was successfully deleted
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} boolean
+	 * 
+	 * {param} String(dir) strings: String.
+	 * 
+	 * {example} deleteDirectory(context.currentDir) # 2323133_18
+	 * 
+	 */
+	public static boolean deleteDirectory(File dir) {
+	    if (dir.exists() == false || dir.isDirectory() == false)    {
+	        return false;
+	    }
+	    String[] files = dir.list();
+	    for(int i = 0, len = files.length; i < len; i++)    {
+	        File f = new File(dir, files[i]);
+	        if (f.isDirectory()) {
+	            deleteDirectory(f);
+	        } else {
+	            f.delete();
+	        }
+	    }
+	    return dir.delete();
 	}
 
 }

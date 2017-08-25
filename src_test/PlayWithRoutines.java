@@ -16,13 +16,8 @@ public class PlayWithRoutines {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		try {
-			System.out.println(String.valueOf(123456789));
-			//testNumberEquals();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		System.out.println(233 % 10);
+		
 	}
 	
 	public static void testTimestampUtil() {

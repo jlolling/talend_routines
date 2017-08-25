@@ -44,5 +44,12 @@ public class TestFileUtil {
 		expected = false;
 		assertTrue("Missing file check (ful path) failed", (actual == expected));
 	}
-	
+
+	@Test
+	public void testFileUtilGetName() throws Exception {
+		String actual = FileUtil.getFileName("\\path\\to\\file");
+		String expected = "file";
+		assertEquals("Existing file check (ful path) failed", expected, actual);
+	}
+
 }

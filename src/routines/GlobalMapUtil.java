@@ -182,7 +182,7 @@ public class GlobalMapUtil {
      */
 	public static String getErrorMessage(Map<String, Object> globalMap) {
 		StringBuilder message = new StringBuilder();
-		for (Map.Entry<String, Object> entry : globalMap.entrySet()) {
+		for (java.util.Map.Entry<String, Object> entry : globalMap.entrySet()) {
 			String key = entry.getKey();
 			if (key.endsWith("ERROR_MESSAGE")) {
 				if (entry.getValue() instanceof String) {
