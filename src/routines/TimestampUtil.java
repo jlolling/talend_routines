@@ -1118,6 +1118,35 @@ public class TimestampUtil {
     }
 
     /**
+     * getDatetimeAsLong: returns the current day as long
+     * 
+     * {talendTypes} Long
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {param} Date(date) date : date to format
+     * 
+     * {example} getDatetimeAsLong(date) # 20150403123344
+     */
+    public static Long getDatetimeAsLong(java.util.Date date) {
+    	if (date != null) {
+        	java.util.Calendar c = java.util.Calendar.getInstance();
+        	c.setTime(date);
+        	// cut time
+        	c.set(java.util.Calendar.MILLISECOND, 0);
+        	long id = c.get(Calendar.YEAR) * 10000000000l;
+        	id = id + (c.get(Calendar.MONTH) + 1) * 100000000l;
+        	id = id + c.get(Calendar.DAY_OF_MONTH) * 1000000l;
+        	id = id + c.get(Calendar.HOUR_OF_DAY) * 10000l;
+        	id = id + c.get(Calendar.MINUTE) * 100l;
+        	id = id + c.get(Calendar.SECOND);
+        	return id;
+    	} else {
+    		return null;
+    	}
+    }
+
+    /**
      * getIntAsDate: returns the integer as date
      * 
      * {talendTypes} String

@@ -107,4 +107,15 @@ public class TestTimestampUtil {
 		System.out.println(actual);
 		assertEquals("Time wrong", expected, actual);
 	}
+
+
+	@Test
+	public void testGetDatetimeAsLong() throws ParseException {
+		System.out.println("#### testGetDatetimeAsLong");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		Date test = sdf.parse("20171201164211");
+		long expected = 20171201164211l;
+		long actual = TimestampUtil.getDatetimeAsLong(test);
+		assertEquals("Time wrong", expected, actual);
+	}
 }
