@@ -2,6 +2,8 @@ import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 import routines.NumberUtil;
@@ -16,7 +18,7 @@ public class PlayWithRoutines {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println(233 % 10);
+		testDuration();
 		
 	}
 	
@@ -194,6 +196,16 @@ public class PlayWithRoutines {
 		BigDecimal i1 = new BigDecimal(3);
 		Long i2 = 1l;
 		System.out.println(NumberUtil.equals(i1, i2));
+	}
+	
+	public static void testDuration() {
+		long diffTime = 173117573000L;
+		Duration duration = Duration.of(diffTime, ChronoUnit.MILLIS);
+		long days = duration.toDays();
+		long hours = duration.toHours() - (24 * days);
+		long minutes = duration.toMinutes() - ((24 * days * 60) + (60 * hours));
+		long seconds = (duration.toMillis() / 1000) - ((24 * days * 60 * 60) + (60 * hours * 60) + (minutes * 60));
+		System.out.println(days + "d " + hours + "h " + minutes + "m " + seconds + "s");
 	}
 	
 }

@@ -15,6 +15,7 @@
  */
 package routines;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -382,6 +383,58 @@ public class GlobalMapUtil {
 			String newMessage = prevMessage + "\n" + message;
 			globalMap.put(componentId + "_ERROR_MESSAGE", newMessage);
 			return newMessage;
+		}
+	}
+	
+	private static final Map<String, Integer> counterMap = new HashMap<>();
+	
+    /**
+     * add a counter
+     * 
+     * {Category} GlobalMapUtil
+     * 
+     * {talendTypes} void
+     * 
+     * {param} String(pid) pid
+     * {param} String(countName) countName
+     * {param} Integer(count) count
+     * 
+     * {example} addCounter(globalMap, "NB_LINE", 0) result: 123 ...
+     * 
+     */
+	public static void addCounter(String pid, String countName, Integer count) {
+		if (count != null) {
+			synchronized(counterMap) {
+				Integer c = counterMap.get(pid + countName);
+				if (c == null) {
+					c = count;
+				} else {
+					c = c.intValue() + count.intValue();
+				}
+				counterMap.put(pid + countName, c);
+			}
+		}
+	}
+	
+    /**
+     * get a counter
+     * 
+     * {Category} GlobalMapUtil
+     * 
+     * {talendTypes} Integer
+     * 
+     * {param} String(pid) pid
+     * {param} String(counterName) countName
+     * 
+     * {example} getCounter(this.pid, "NB_LINE", 0) result: 123 ...
+     * 
+     */
+	public static int getCounter(String pid, String countName) {
+		Integer r = counterMap.get(pid + countName);
+		if (r != null) {
+			return r.intValue();
+		} else {
+			return 0;
 		}
 	}
 

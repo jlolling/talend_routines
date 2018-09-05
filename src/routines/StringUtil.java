@@ -20,8 +20,11 @@ import java.net.MalformedURLException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 /**
  * Copyright 2017 Jan Lolling jan.lolling@cimt-ag.de
  * 
@@ -597,65 +600,6 @@ public class StringUtil {
 	}
 
 	/**
-	 * converts string value into a Boolean
-	 * 
-	 * {Category} StringUtil
-	 * 
-	 * {talendTypes} Boolean
-	 * 
-	 * {param} String("true") aString: String.
-	 * 
-	 * {example} getNullSaveBoolean(aString) # true
-	 */
-	public Boolean getNullSaveBoolean(String value) throws Exception {
-		if (value == null) {
-			return null;
-		}
-		value = value.toLowerCase();
-		if ("true".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("false".equals(value)) {
-			return Boolean.FALSE;
-		} else if ("1".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("0".equals(value)) {
-			return Boolean.FALSE;
-		} else if ("yes".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("y".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("sí".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("да".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("no".equals(value)) {
-			return Boolean.FALSE;
-		} else if ("нет".equals(value)) {
-			return Boolean.FALSE;
-		} else if ("n".equals(value)) {
-			return Boolean.FALSE;
-		} else if ("ja".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("j".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("nein".equals(value)) {
-			return Boolean.FALSE;
-		} else if ("oui".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("non".equals(value)) {
-			return Boolean.FALSE;
-		} else if ("ok".equals(value)) {
-			return Boolean.TRUE;
-		} else if ("x".equals(value)) {
-			return Boolean.TRUE;
-		} else if (value != null) {
-			return Boolean.FALSE;
-		} else {
-			return null;
-		}
-	}
-
-	/**
 	 * limits the message text to avoid overflow database field
 	 * @param size to limit
 	 * @param cutPosition 'b' at beginning, 'm' cuts in the middle, 'e' cuts at the end
@@ -744,27 +688,6 @@ public class StringUtil {
 	}
 
 	/**
-     * Escape line breaks
-     * 
-     * {Category} StringUtil
-     * 
-     * {talendTypes} String
-     * 
-     * {param} String("text") text
-     * 
-     * {example} getEscapeTextForJSON(text) 
-     * 
-     */
-	public static String getEscapeTextForJSON(String text) {
-		if (text == null) {
-			return null;
-		}
-		text = text.replace("\n", "\\n");
-		text = text.replace("\"", "\\\"");
-		return text;
-	}
-
-	/**
 	 * creates an SQL in clause including the needed column name
 	 * @param separatedValueList list of values separated
 	 * @param delimiter separator 
@@ -837,5 +760,190 @@ public class StringUtil {
 			return test.length();
 		}
 	}
+	
+	/**
+	 * Compares to version strings in form 1.2.3
+	 * @param version1
+	 * @param version2
+	 * @return 0= if both versions are equal, -1= if version 1 is lower than version 2, 1= version 1 is higher the version 2
+	 * 
+	 * {Category} StringUtil
+	 * {talendTypes} int
+	 * {param} String(version1)
+	 * {param} String(version2)
+	 * {example} compareVersions(v1,v2) 
+	 */
+	public static int compareVersions(String version1, String version2) throws Exception {
+		if (isEmpty(version1) == false && isEmpty(version2)) {
+			return 1;
+		} else if (isEmpty(version1) && isEmpty(version2) == false) {
+			return -1;
+		} else if (isEmpty(version1) && isEmpty(version2)) {
+			return 0;
+		}
+		try {
+			Pattern pattern = Pattern.compile("([0-9]{1,})");
+			Matcher m1 = pattern.matcher(version1);
+			Matcher m2 = pattern.matcher(version2);
+			int[] version1_array = new int[3];
+			int v1_seq = 0;
+			while (m1.find()) {
+				version1_array[v1_seq++] = Integer.parseInt(m1.group());
+			}
+			int[] version2_array = new int[3];
+			int v2_seq = 0;
+			while (m2.find()) {
+				version2_array[v2_seq++] = Integer.parseInt(m2.group());
+			}
+			for (int i = 0; i < version1_array.length; i++) {
+				if (version1_array[i] < version2_array[i]) {
+					return -1;
+				} else if (version1_array[i] > version2_array[i]) {
+					return 1;
+				}
+			}
+			return 0;
+		} catch (Exception e) {
+			//throw e;
+			return 0;
+		}
+	}
+	
+
+	/**
+	 * Checks if the test contains the token as whole word
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} boolean | Boolean
+	 * 
+	 * {param} string(test) test: String.
+	 * 
+	 * {param} string(token) posibleValues: String.
+	 * 
+	 * {example} containsToken(test, token) # true
+	 */
+	public static boolean containsToken(String test, String token) {
+		String tokenLimiter = "[\\s\\.,;/|:<_>\\(\\)\\{\\}\\-]";
+		if (isEmpty(test) == false && isEmpty(token) == false) {
+			String token0 = Pattern.quote(token);
+			StringBuilder regex = new StringBuilder();
+			regex.append("^(");
+			regex.append(token0);
+			regex.append(")");
+			regex.append(tokenLimiter);
+			regex.append("|");
+			regex.append(tokenLimiter);
+			regex.append("(");
+			regex.append(token0);
+			regex.append(")");
+			regex.append(tokenLimiter);
+			regex.append("|");
+			regex.append(tokenLimiter);
+			regex.append("(");
+			regex.append(token0);
+			regex.append(")$");
+			regex.append("|");
+			regex.append("^(");
+			regex.append(token0);
+			regex.append(")$");
+			int pos = RegexUtil.matchesByRegex(test, regex.toString());
+			if (pos != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Checks if the test contains the token as whole word
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} boolean | Boolean
+	 * 
+	 * {param} string(test) test: String.
+	 * 
+	 * {param} list(tokenList) posibleValues: String.
+	 * 
+	 * {example} containsToken(test, tokenList) # true
+	 */
+	public static String containsTokens(String test, List<String> tokenList) {
+		if (test != null) {
+			for (String token : tokenList) {
+				if (containsToken(test, token)) {
+					return token;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Checks if the test contains the token as whole word
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} boolean | Boolean
+	 * 
+	 * {param} string(test) test: String.
+	 * 
+	 * {param} list(tokenList) posibleValues: String.
+	 * 
+	 * {example} containsString(test, tokenList) # true
+	 */
+	public static String containsStrings(String test, List<String> stringList) {
+		if (test != null) {
+			for (String s : stringList) {
+				if (test.contains(s)) {
+					return s;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Checks if the test contains the token as whole word
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} boolean | Boolean
+	 * 
+	 * {param} string(test) test: String.
+	 * 
+	 * {param} list(tokenList) posibleValues: String.
+	 * 
+	 * {example} containsString(test, tokenList) # true
+	 */
+	public static String containsString(String test, String string) {
+		if (test != null && string != null) {
+			if (test.toLowerCase().contains(string.toLowerCase())) {
+				return string;
+			}
+		}
+		return null;
+	}
+
+	/**
+     * Escape line breaks
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String("text") text
+     * 
+     * {example} getEscapedTextForSQL(text) 
+     * 
+     */
+	public static String getEscapedTextForSQL(String text) {
+		if (text == null) {
+			return "";
+		}
+		text = text.replace("'", "''");
+		return text;
+	}
+	
 	
 }

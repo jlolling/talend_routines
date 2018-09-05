@@ -15,11 +15,24 @@
  */
 package routines;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RegexUtil {
 
+	private static Map<String, Pattern> patternMap = new HashMap<String, Pattern>();
+	
+	private static Pattern compile(String regex) {
+		Pattern p = patternMap.get(regex);
+		if (p == null) {
+			p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+			patternMap.put(regex, p);
+		}
+		return p;
+	}
+	
     /**
      * Extracts a string by regex groups.
      * 
@@ -36,7 +49,7 @@ public class RegexUtil {
 			if (content != null) {
 				content = content.trim();
 				final StringBuffer sb = new StringBuffer();
-				Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+				Pattern pattern = compile(regex);
 		        Matcher matcher = pattern.matcher(content);
 		        while (matcher.find()) {
 		            if (matcher.start() < matcher.end()) {
@@ -72,7 +85,7 @@ public class RegexUtil {
 			if (content != null) {
 				content = content.trim();
 				final StringBuffer sb = new StringBuffer();
-				Pattern pattern = Pattern.compile(regex);
+				Pattern pattern = compile(regex);
 		        Matcher matcher = pattern.matcher(content);
 		        while (matcher.find()) {
 		            if (matcher.start() < matcher.end()) {
@@ -108,7 +121,7 @@ public class RegexUtil {
 			if (content != null) {
 				content = content.trim();
 				boolean ok = false;
-				Pattern pattern = Pattern.compile(regex);
+				Pattern pattern = compile(regex);
 		        Matcher matcher = pattern.matcher(content);
 		        while (matcher.find()) {
 		            if (matcher.start() < matcher.end()) {
@@ -151,7 +164,7 @@ public class RegexUtil {
 	public static String replaceByRegexGroups(String content, String regex, String replacement) {
 		if (content != null) {
 			StringBuilder result = new StringBuilder();
-			java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
+			java.util.regex.Pattern pattern = compile(regex);
 			java.util.regex.Matcher matcher = pattern.matcher(content);
 			int prevEnd = 0;
 			while (matcher.find()) {
@@ -178,7 +191,7 @@ public class RegexUtil {
 
 	/**
      * Tests if a given string contains text mathing to the given regex
-     * Returns the idnex of the found content and if not found returns -1
+     * Returns the index of the found content and if not found returns -1
      * 
      * {Category} RegexUtil
      * 
@@ -194,7 +207,7 @@ public class RegexUtil {
 		if (regex != null) {
 			if (content != null) {
 				content = content.trim();
-				Pattern pattern = Pattern.compile(regex);
+				Pattern pattern = compile(regex);
 		        Matcher matcher = pattern.matcher(content);
 		        while (matcher.find()) {
 		            if (matcher.start() < matcher.end()) {
@@ -226,7 +239,7 @@ public class RegexUtil {
 			if (content != null) {
 				content = content.trim();
 				final StringBuffer sb = new StringBuffer();
-				Pattern pattern = Pattern.compile(regex);
+				Pattern pattern = compile(regex);
 		        Matcher matcher = pattern.matcher(content);
 		        while (matcher.find()) {
 		            if (matcher.start() < matcher.end()) {
