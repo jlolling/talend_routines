@@ -182,7 +182,6 @@ public class TestStringUtil {
 		list.add("Moritzburg Festival");
 		list.add("Moskauer Virtuosenkonzert");
 		list.add("Mozartfest Würzburg");
-//		list.add("Münchner Opernfestspiele");
 		list.add("Musikfest Berlin");
 		list.add("Musikfest Bremen");
 		list.add("Musikfest Erzgebirge");
@@ -240,23 +239,28 @@ public class TestStringUtil {
 		list.add("Aufnahmen");
 		list.add("Direkt aus");
 		list.add("Aufzeichnung vom");
-//		list.add("Ausschnitt");
+		list.add("Ausschnitt");
 		list.add("Ausschnitte");
 		list.add("jazzahead!");
 		list.add("X-JAZZ-Festival");
-/*
-		//list.add("Festival d'Aix-en-Provence");
-		//list.add("Festival Musiq'3");
-//		list.add("Übertragung");
-		list.add("Unplugged");
-		list.add("Konzert aus");
-//		list.add("Eigenproduktion");
-		list.add("Zeitversetzt");
-		list.add("Aufzeichnung des");
-//		list.add("Aufführung vom");
-*/
 		boolean found = (StringUtil.containsTokens(test, list) == null);
 		assertTrue(found == false);
+	}
+	
+	@Test
+	public void testReplaceAndReplicate() {
+		String placeHolder = "{process_status}";
+		String pattern = "select b17_core.catalog_id_by_sysname('" + placeHolder + "', 30) as id\n";
+		String inBetween = "union all\n";
+		String replacementTexts = "contrib_not_plausible,\ncontrib_plausible,contrib_not_automatically_verifiable";
+		String expected = "select b17_core.catalog_id_by_sysname('contrib_not_plausible', 30) as id\n" + 
+						  "union all\n" +
+				          "select b17_core.catalog_id_by_sysname('contrib_plausible', 30) as id\n" +
+						  "union all\n" +
+				          "select b17_core.catalog_id_by_sysname('contrib_not_automatically_verifiable', 30) as id\n";
+		String actual = StringUtil.replaceAndReplicate(pattern, inBetween, placeHolder, replacementTexts, null);
+		System.out.println(actual);
+		assertEquals("Result is wrong", expected, actual);
 	}
 	
 }

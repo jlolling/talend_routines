@@ -25,21 +25,7 @@ import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-/**
- * Copyright 2017 Jan Lolling jan.lolling@cimt-ag.de
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
 public class StringUtil {
 
 	/**
@@ -945,5 +931,53 @@ public class StringUtil {
 		return text;
 	}
 	
+	/**
+     * Replicates the patternToReplicate, replaces a part of the text.
+     * @param patternToReplicate will be replicated as often as replacementText Strings are existing
+     * @param inBetweenText if not null it will be put between the replicated text parts
+     * @param placeHolder place holder for the text to replace
+     * @param replacementText text which replaces a placeholder, this text will be trimmed within the method!
+     * @param replacementDelimiter delimiter to detect multiple values within replacementText
+     * @return new text build of the replicated (and partly replaced) patternToReplicate, the inBetweenText
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(patternToReplicate) text
+     * {param} String(inBetweenText) text
+     * {param} String(placeHolder) text
+     * {param} String(replacementText) text
+     * {param} String(replacementDelimiter) text
+     * 
+     * {example} replaceAndReplicate(patternToReplicate,inBetweenText,placeHolder,replacementText,replacementDelimiter)
+     */
+	public static String replaceAndReplicate(String patternToReplicate, String inBetweenText, String placeHolder, String replacementText, String replacementDelimiter) {
+		if (isEmpty(patternToReplicate) == false) {
+			StringBuilder result = new StringBuilder();
+			if (isEmpty(replacementDelimiter)) {
+				replacementDelimiter = ",;|";
+			}
+			StringTokenizer st = new StringTokenizer(replacementText, replacementDelimiter);
+			boolean firstLoop = true;
+			while (st.hasMoreTokens()) {
+				String oneReplacement = st.nextToken().trim();
+				if (firstLoop) {
+					firstLoop = false;
+				} else if (isEmpty(inBetweenText) == false) {
+					result.append(inBetweenText);
+				}
+				if (isEmpty(placeHolder) == false) {
+					String oneResult = patternToReplicate.replace(placeHolder, oneReplacement);
+					result.append(oneResult);
+				} else {
+					result.append(patternToReplicate);
+				}
+			}
+			return result.toString();
+		} else {
+			return null;
+		}
+	}
 	
 }

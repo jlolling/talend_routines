@@ -1513,9 +1513,25 @@ public class TimestampUtil {
         	c.setTimeInMillis(time);
         	c.set(java.util.Calendar.YEAR, 1970);
         	c.set(java.util.Calendar.DAY_OF_YEAR, 1);
-        	c.set(java.util.Calendar.HOUR_OF_DAY, -1);
         	return c.getTime();
     	}
+    }
+    
+    /**
+     * Returns a String formatted time
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} Long(time)
+     * {param} String(format)
+     * 
+     * {example} getTimeFormatted(time,format).
+     */
+    public static String getTimeFormatted(Long time, String format) {
+    	Date d = getTimeByLongTime(time);
+    	return formatAsUTC(d, format);
     }
     
 }

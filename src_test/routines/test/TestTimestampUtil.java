@@ -103,11 +103,30 @@ public class TestTimestampUtil {
 		Date d = TimestampUtil.getTimeByLongTime(178000l);
 		System.out.println(d);
 		String expected = "02:58";
-		String actual = TimestampUtil.format(d, "mm:ss");
+		String actual = TimestampUtil.formatAsUTC(d, "mm:ss");
 		System.out.println(actual);
 		assertEquals("Time wrong", expected, actual);
 	}
 
+	@Test
+	public void testGetTimeByLongTimeWithHours() {
+		System.out.println("#### testGetTimeByLongTime");
+		Date d = TimestampUtil.getTimeByLongTime(178000l);
+		System.out.println(d);
+		String expected = "00:02:58";
+		String actual = TimestampUtil.formatAsUTC(d, "HH:mm:ss");
+		System.out.println(actual);
+		assertEquals("Time wrong", expected, actual);
+	}
+
+	@Test
+	public void testGetTimeFormatted() {
+		System.out.println("#### testGetTimeFormatted");
+		String expected = "02:02:58";
+		String actual = TimestampUtil.getTimeFormatted(178000l+(2l*3600l*1000l), "HH:mm:ss");
+		System.out.println(actual);
+		assertEquals("Time wrong", expected, actual);
+	}
 
 	@Test
 	public void testGetDatetimeAsLong() throws ParseException {

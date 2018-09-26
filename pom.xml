@@ -73,16 +73,15 @@
 		    <version>4.12</version>
 		    <scope>test</scope>
 		</dependency>
-        <dependency>
-		    <groupId>de.cimt.talendcomp.test</groupId>
-		    <artifactId>talend-fake-job</artifactId>
-		    <version>0.9</version>
-		    <scope>test</scope>
-		</dependency>
 		<dependency>
 			<groupId>de.jlo.talendcomp</groupId>
 			<artifactId>jlo-talendcomp-json</artifactId>
 			<version>10.2</version>
+		</dependency>
+		<dependency>
+			<groupId>de.cimt.talend.mock</groupId>
+			<artifactId>talend-job-mock</artifactId>
+			<version>1.0</version>
 		</dependency>
 	</dependencies>
 	<version>1.1</version>
