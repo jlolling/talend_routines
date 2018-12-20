@@ -696,6 +696,51 @@ public class NumberUtil {
 	}
 	
 	/**
+     * compares 2 numbers
+     * @param n1 number 1
+     * @param n2 number 2
+     * @param precision
+     * @return true if equals
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} int
+     * 
+     * {param} Number(10)
+     * {param} Number(20) 
+     * 
+     * {example} equals(10, 20) result: current value
+     * 
+     */
+	public static boolean equals(Double n1, Double n2, int precision) {
+		if (n1 != null && n2 != null) {	
+			return Math.abs(n1 - n2) < Math.pow(10d, -1 * (precision + 1));
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+     * rounds the number to a value with 2 decimal digits
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} double | Double
+     * 
+     * {param} double(2.5) number: number to format
+     * 
+     * {example} numberToString(1234.12345) result: 1234.12
+     * 
+     */
+	public static Double roundScaleN(Number number, int precision) {
+		if (number != null) {
+			return Math.round(number.doubleValue() * Math.pow(10d, precision)) / Math.pow(10d, precision);
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * sort a given list of long numbers given as string
 	 * @param listString list long numbers
 	 * @return list long numbers sorted numerical

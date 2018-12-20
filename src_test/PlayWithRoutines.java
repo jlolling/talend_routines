@@ -18,8 +18,8 @@ public class PlayWithRoutines {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		testDuration();
-		
+		//testDuration();
+		System.out.println(Math.pow(10d, -1 * (2 + 1)));
 	}
 	
 	public static void testTimestampUtil() {
