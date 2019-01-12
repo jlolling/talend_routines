@@ -51,5 +51,14 @@ public class TestFileUtil {
 		String expected = "file";
 		assertEquals("Existing file check (ful path) failed", expected, actual);
 	}
+	
+	@Test
+	public void testWriteAndReadContentToFromFile() throws Exception {
+		String filePath = "/tmp/test_write_content_to_file";
+		String expectedContent = "Bla Bla\nNothing";
+		FileUtil.writeContentToFile(filePath, expectedContent, null);
+		String actualContent = FileUtil.readContentfromFile(filePath, null);
+		assertEquals("Content doers not match", expectedContent, actualContent);
+	}
 
 }

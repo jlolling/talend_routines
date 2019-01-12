@@ -1,6 +1,9 @@
 package routines;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 /**
  * Copyright 2017 Jan Lolling jan.lolling@cimt-ag.de
  * 
@@ -264,5 +267,103 @@ public class FileUtil {
 	    }
 	    return dir.delete();
 	}
+	
+	/**
+	 * Writes text content to a file
+	 * @param filePath the file path
+	 * @param content
+	 * @param charset if null UTF-8 will be used
+	 *
+	 * {Category} FileUtil
+	 * 
+	 * {talendTypes} void
+	 * 
+	 * {param} String(filePath) strings: String.
+	 * {param} String(content) strings: String.
+	 * {param} String(charset) strings: String.
+	 * 
+	 * {example} writeContentToFile(context.currentDir) # 2323133_18
+	 * 
+	 */
+	public static void writeContentToFile(String filePath, String content, String charset) throws Exception {
+		if (filePath == null || content == null) {
+			return;
+		}
+		if (charset == null || charset.trim().isEmpty()) {
+			charset = "UTF-8";
+		}
+		File f = new File(filePath);
+		if (f.exists()) {
+			f.delete();
+		}
+		Files.write(java.nio.file.Paths.get(filePath), content.getBytes(charset), StandardOpenOption.CREATE);
+	}
+
+	/**
+	 * Reads text content from a file
+	 * @param filePath the file path
+	 * @param charset if null UTF-8 will be used
+	 *
+	 * {Category} FileUtil
+	 * 
+	 * {talendTypes} String
+	 * 
+	 * {param} String(filePath) strings: String.
+	 * {param} String(charset) strings: String.
+	 * 
+	 * {example} readContentfromFile(context.currentDir, "UTF-8")
+	 * 
+	 */
+	public static String readContentfromFile(String filePath, String charset) throws Exception {
+		if (filePath == null) {
+			return null;
+		}
+		File f = new File(filePath);
+		if (f.exists() == false) {
+			throw new Exception("File: " + filePath + " does not exist.");
+		}
+		if (charset == null || charset.trim().isEmpty()) {
+			charset = "UTF-8";
+		}
+		Path p = java.nio.file.Paths.get(filePath);
+		byte[] bytes = Files.readAllBytes(p);
+		if (bytes != null && bytes.length > 0) {
+			return new String(bytes, charset);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Writes text content to a file if the content has been changed
+	 * @param filePath the file path
+	 * @param content
+	 * @param charset if null UTF-8 will be used
+	 *
+	 * {Category} FileUtil
+	 * 
+	 * {talendTypes} void
+	 * 
+	 * {param} String(filePath) strings: String.
+	 * {param} String(content) strings: String.
+	 * {param} String(charset) strings: String.
+	 * 
+	 * {example} writeContentToFile(context.currentDir) # 2323133_18
+	 * 
+	 */
+    public static boolean writeContentToFileIfChanged(String filePath, String content, String charset) throws Exception {
+    	File f = new File(filePath);
+    	if (f.exists() == false) {
+    		FileUtil.writeContentToFile(filePath, content, charset);
+    		return true;
+    	} else {
+    		String prevcontent = FileUtil.readContentfromFile(filePath, charset);
+    		if (content.equals(prevcontent) == false) {
+        		FileUtil.writeContentToFile(filePath, content, charset);
+        		return true;
+    		}
+    	}
+    	return false;
+    }
 
 }

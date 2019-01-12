@@ -1,4 +1,5 @@
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -19,7 +20,8 @@ public class PlayWithRoutines {
 	 */
 	public static void main(String[] args) {
 		//testDuration();
-		System.out.println(Math.pow(10d, -1 * (2 + 1)));
+		//System.out.println(Math.pow(10d, -1 * (2 + 1)));
+		Paths.get("/var/data/talend/jobs/talend_jobs.crontab");
 	}
 	
 	public static void testTimestampUtil() {
