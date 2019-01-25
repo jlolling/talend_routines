@@ -18,4 +18,14 @@ public class TestRegexUtil {
 		assertEquals("Result wrong", expected, actual);
 	}
 	
+	@Test
+	public void testReplaceByRegexGroups() {
+		String pattern = "(-Xmx[0-9]{1,6}[mG])";
+		String test = "{SSO_ID,ID Fremd-VG}";
+		String expected = "ID Fremd-VG";
+		String actual = RegexUtil.extractByRegexGroups(test, pattern);
+		System.out.println(actual);
+		assertEquals("Result wrong", expected, actual);
+	}
+
 }
