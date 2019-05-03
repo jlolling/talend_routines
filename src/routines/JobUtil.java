@@ -1,5 +1,8 @@
 package routines;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 
 /*
@@ -87,5 +90,103 @@ public class JobUtil {
 			return true;
 		}
     }
-        
+    
+    /**
+     * Runs a process
+     * @param command an array of the command and its arguments
+     * @return the exit code of the process
+     * 
+     * {talendTypes} Integer
+     * {Category} JobUtil
+     * {param} string(command) command: 
+     * {example} runProcess(command) # 0
+     */
+    public static void runProcessDontWait(String...command) {
+    	try {
+			final Process p = new ProcessBuilder(command).start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    /**
+     * Runs a process
+     * @param command an array of the command and its arguments
+     * @return the exit code of the process
+     * 
+     * {talendTypes} Integer
+     * {Category} JobUtil
+     * {param} string(command) command: 
+     * {example} runProcess(command) # 0
+     */
+    public static int runProcess(String...command) {
+    	int exitCode = -1;
+    	try {
+			final Process p = new ProcessBuilder(command).start();
+			Thread st = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+		            try {
+				        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
+				            String line = null;
+							while ((line = input.readLine()) != null) {
+							    System.out.println(line);
+							}
+				        }
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+			});
+			Thread et = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+		            try {
+				        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getErrorStream()))) {
+				            String line = null;
+							while ((line = input.readLine()) != null) {
+							    System.err.println(line);
+							}
+				        }
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				
+			});
+			st.start();
+			et.start();
+			exitCode = p.waitFor();
+			st.join(100);
+			et.join(100);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return exitCode;
+    }
+
+    /**
+     * Makes the file executable under Unix
+     * @param file
+     * 
+     * {talendTypes} Void
+     * {Category} JobUtil
+     * {param} string(file) command: 
+     * {example} makeExecutable(file) # 0
+     */
+    public static void makeExecutable(String file) {
+    	if (isUnixSystem()) {
+    		try {
+        		java.nio.file.Files.setPosixFilePermissions(java.nio.file.Paths.get(file), java.nio.file.attribute.PosixFilePermissions.fromString("rwxr--r--"));
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	}
+    }
+
 }

@@ -1,9 +1,12 @@
 package routines;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.security.MessageDigest;
 /**
  * Copyright 2017 Jan Lolling jan.lolling@cimt-ag.de
  * 
@@ -366,4 +369,42 @@ public class FileUtil {
     	return false;
     }
 
+	/**
+	 * Builds the MD5 checksum over a file
+	 * @param filename
+	 * @return MD5 checksum
+	 * @throws Exception
+	 * 
+	 * {Category} FileUtil
+	 * {talendTypes} String
+	 * 
+	 * {param} String(filename)
+	 * 
+	 * {example} buildMD5(filename)
+	 * 
+	 */
+	public static String buildMD5(String filePath) throws Exception {
+		File f = new File(filePath);
+		if (f.exists() == false) {
+			throw new Exception("buildMD5 failed. File: " + f.getAbsolutePath() + " is not readable or does not exists.");
+		}
+		InputStream fis = new FileInputStream(f);
+		byte[] buffer = new byte[1024];
+		MessageDigest complete = MessageDigest.getInstance("MD5");
+		int numRead;
+		do {
+			numRead = fis.read(buffer);
+			if (numRead > 0) {
+				complete.update(buffer, 0, numRead);
+			}
+		} while (numRead != -1);
+		fis.close();
+		byte[] b = complete.digest();
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < b.length; i++) {
+			result.append(Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1));
+		}
+		return result.toString();
+	}
+	
 }
