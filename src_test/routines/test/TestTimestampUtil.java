@@ -148,4 +148,15 @@ public class TestTimestampUtil {
 		assertEquals("Time wrong", expected, actual);
 	}
 
+	@Test
+	public void testFormatAsUTC() throws ParseException {
+		System.out.println("#### testGetTimeAsSeconds");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+		Date test = sdf.parse("2019-08-01 05:00:00.000");
+		String expected =     "2019-08-01 03:00:00.000";
+		String actual = TimestampUtil.formatAsUTC(test, "yyyy-MM-dd HH:mm:ss.SSS");
+		assertEquals("Time wrong", expected, actual);
+	}
+
+	
 }
