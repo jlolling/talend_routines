@@ -84,4 +84,47 @@ public class TalendJobUtil {
     	return scriptContent;
     }
 
+    /**
+     * Makes the file executable under Unix
+     * @param file
+     * 
+     * {talendTypes} Void
+     * {Category} JobUtil
+     * {param} string(file) command: 
+     * {example} makeExecutable(file) # 0
+     */
+    public static void makeExecutable(String file) {
+    	if (isUnixSystem()) {
+    		try {
+        		java.nio.file.Files.setPosixFilePermissions(java.nio.file.Paths.get(file), java.nio.file.attribute.PosixFilePermissions.fromString("rwxr--r--"));
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	}
+    }
+
+    /**
+     * Returns true if jobserver is a unix system
+     * 
+     * {talendTypes} Boolean
+     * 
+     * {Category} JobUtil
+     * 
+     * {example} isUnixSystem() # true.
+     */
+    public static boolean isUnixSystem() {
+		String os = System.getProperty("os.name");
+		if (os != null) {
+			os = os.toLowerCase().trim();
+		} else {
+			return false;
+		}
+		if (os.contains("win")) {
+			return false;
+		} else {
+			return true;
+		}
+    }
+    
+
 }

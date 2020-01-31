@@ -263,4 +263,12 @@ public class TestStringUtil {
 		assertEquals("Result is wrong", expected, actual);
 	}
 	
+	@Test
+	public void testQuoteForJson() {
+		String input = "\"value'\"with quotas";
+		String expected = "\\\"value'\\\"with quotas";
+		String actual = StringUtil.quoteForJson(input);
+		assertEquals("quoted text incorrect", expected, actual);
+	}
+	
 }

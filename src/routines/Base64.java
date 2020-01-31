@@ -103,7 +103,7 @@ public final class Base64 {
         return true;
     }
 
-    private static byte[] encode(byte[] binaryData) {
+    public static byte[] encode(byte[] binaryData) {
         return encode(binaryData, binaryData.length);
     }
 

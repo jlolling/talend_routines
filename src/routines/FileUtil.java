@@ -46,7 +46,7 @@ public class FileUtil {
 	/**
 	 * Returns the directory of the file
 	 * 
-	 * {Category} StringUtil
+	 * {Category} FileUtil
 	 * 
 	 * {param} string(fullPath) fullPath: String.
 	 * 
@@ -66,7 +66,7 @@ public class FileUtil {
 	/**
 	 * Returns the name of file without path
 	 * 
-	 * {Category} StringUtil
+	 * {Category} FileUtil
 	 * 
 	 * {param} string(fullPath) fullPath: String.
 	 * 
@@ -84,7 +84,7 @@ public class FileUtil {
 	/**
 	 * Returns the name of file without path and extension
 	 * 
-	 * {Category} StringUtil
+	 * {Category} FileUtil
 	 * 
 	 * {param} string(fullPath) fullPath: String.
 	 * 
@@ -103,7 +103,7 @@ public class FileUtil {
 	/**
 	 * Returns the relative path from a full path based on a base path
 	 * 
-	 * {Category} StringUtil
+	 * {Category} FileUtil
 	 * 
 	 * {param} string(fullPath) fullPath: String.
 	 * 
@@ -225,7 +225,7 @@ public class FileUtil {
 	/**
 	 * returns true if the string points to an archive file
 	 * 
-	 * {Category} StringUtil
+	 * {Category} FileUtil
 	 * 
 	 * {talendTypes} boolean
 	 * 
@@ -246,7 +246,7 @@ public class FileUtil {
 	 * Delets a dir recursively deleting anything inside it.
 	 * @param dir The dir to delete
 	 * @return true if the dir was successfully deleted
-	 * {Category} StringUtil
+	 * {Category} FileUtil
 	 * 
 	 * {talendTypes} boolean
 	 * 
@@ -405,6 +405,46 @@ public class FileUtil {
 			result.append(Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1));
 		}
 		return result.toString();
+	}
+	
+	/**
+	 * Builds a file path
+	 * @param filename
+	 * @param path parts
+	 * @return the complete path
+	 * @throws Exception
+	 * 
+	 * {Category} FileUtil
+	 * {talendTypes} String
+	 * 
+	 * {param} String(filename)
+	 * {param} String(filename)
+	 * {param} String(filename)
+	 * 
+	 * {example} buildPath(filename, path1...pathn)
+	 * 
+	 */
+	public static String buildPath(String filename, String...pathParts) {
+		StringBuilder path = new StringBuilder();
+		if (pathParts != null) {
+			for (String p : pathParts) {
+				if (p != null && p.trim().isEmpty() == false) {
+					if (p.contains("\\")) {
+						p = p.replace('\\', '/');
+					}
+					if (p.endsWith("/")) {
+						path.append(p);
+					} else {
+						path.append(p);
+						path.append("/");
+					}
+				}
+			}
+		}
+		if (filename != null) {
+			path.append(filename);
+		}
+		return path.toString();
 	}
 	
 }

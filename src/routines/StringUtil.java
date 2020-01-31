@@ -278,6 +278,7 @@ public class StringUtil {
 	/**
 	 * shows if string substring from another string {Category} StringUtil
 	 * 
+	 * {Category} StringUtil
 	 * {talendTypes} String
 	 * 
 	 * {param} string("cdf") small: String. {param} string("abcdfegf") large:
@@ -690,7 +691,7 @@ public class StringUtil {
      * {param} String("name") columnName
      * {param} Boolean(false) numbers
      * 
-     * {example} getSQLInList("listvalues", ";", "name", true) 
+     * {example} buildSQLInListClause("listvalues", ";", "name", true) 
 	 */
 	public static String buildSQLInListClause(String separatedValueList, String delimiter, String columnName, boolean numbers) {
 		StringBuilder sb = new StringBuilder();
@@ -978,6 +979,76 @@ public class StringUtil {
 		} else {
 			return null;
 		}
+	}
+	
+    private final static int[] sOutputEscapes128;
+    static {
+        int[] table = new int[128];
+        // Control chars need generic escape sequence
+        for (int i = 0; i < 32; ++i) {
+            // 04-Mar-2011, tatu: Used to use "-(i + 1)", replaced with constant
+            table[i] = -1;
+        }
+        /* Others (and some within that range too) have explicit shorter
+         * sequences
+         */
+        table['"'] = '"';
+        table['\\'] = '\\';
+        // Escaping of slash is optional, so let's not add it
+        table[0x08] = 'b';
+        table[0x09] = 't';
+        table[0x0C] = 'f';
+        table[0x0A] = 'n';
+        table[0x0D] = 'r';
+        sOutputEscapes128 = table;
+    }
+    private final static char[] HC = "0123456789ABCDEF".toCharArray();
+
+	/**
+     * Quotes a text for a json attribute name or value
+     * @param content the content to qouted
+     * @return qouted json value
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * 
+     * {example} quoteForJson(content)
+     */
+    public static String quoteForJson(String content) {
+    	StringBuilder sb = new StringBuilder();
+        final int[] escCodes = sOutputEscapes128;
+        int escLen = escCodes.length;
+        for (int i = 0, len = content.length(); i < len; ++i) {
+            char c = content.charAt(i);
+            if (c >= escLen || escCodes[c] == 0) {
+                sb.append(c);
+                continue;
+            }
+            sb.append('\\');
+            int escCode = escCodes[c];
+            if (escCode < 0) { // generic quoting (hex value)
+                // The only negative value sOutputEscapes128 returns
+                // is CharacterEscapes.ESCAPE_STANDARD, which mean
+                // appendQuotes should encode using the Unicode encoding;
+                // not sure if this is the right way to encode for
+                // CharacterEscapes.ESCAPE_CUSTOM or other (future)
+                // CharacterEscapes.ESCAPE_XXX values.
+
+                // We know that it has to fit in just 2 hex chars
+                sb.append('u');
+                sb.append('0');
+                sb.append('0');
+                int value = c;  // widening
+                sb.append(HC[value >> 4]);
+                sb.append(HC[value & 0xF]);
+            } else { // "named", i.e. prepend with slash
+                sb.append((char) escCode);
+            }
+        }
+        return sb.toString();
 	}
 	
 }

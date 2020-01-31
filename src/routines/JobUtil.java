@@ -101,25 +101,6 @@ public class JobUtil {
      * {param} string(command) command: 
      * {example} runProcess(command) # 0
      */
-    public static void runProcessDontWait(String...command) {
-    	try {
-			final Process p = new ProcessBuilder(command).start();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-    }
-    
-    /**
-     * Runs a process
-     * @param command an array of the command and its arguments
-     * @return the exit code of the process
-     * 
-     * {talendTypes} Integer
-     * {Category} JobUtil
-     * {param} string(command) command: 
-     * {example} runProcess(command) # 0
-     */
     public static int runProcess(String...command) {
     	int exitCode = -1;
     	try {

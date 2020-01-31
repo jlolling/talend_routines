@@ -1476,7 +1476,7 @@ public class TimestampUtil {
     	Date[] overlappingRange = null;
     	if (dateRange1End.after(dateRange2Start) && dateRange2End.after(dateRange1Start)) {
     		overlappingRange = new Date[2];
-    		// there are overlapping
+    		// they are overlapping
     		// set as value 0 the latest start
     		if (dateRange1Start.after(dateRange2Start)) {
     			overlappingRange[0] = dateRange1Start;

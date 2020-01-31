@@ -60,5 +60,13 @@ public class TestFileUtil {
 		String actualContent = FileUtil.readContentfromFile(filePath, null);
 		assertEquals("Content doers not match", expectedContent, actualContent);
 	}
+	
+	@Test
+	public void testBuildFilePath() {
+		String expected = "/p1/p2/p3/file.txt";
+		String actual = FileUtil.buildPath("file.txt", "/p1", "p2/", "p3");
+		System.out.println(actual);
+		assertEquals("Path not correct", expected, actual);
+	}
 
 }
