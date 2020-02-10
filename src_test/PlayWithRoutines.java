@@ -22,6 +22,7 @@ public class PlayWithRoutines {
 		//testDuration();
 		//System.out.println(Math.pow(10d, -1 * (2 + 1)));
 		Paths.get("/var/data/talend/jobs/talend_jobs.crontab");
+
 	}
 	
 	public static void testTimestampUtil() {

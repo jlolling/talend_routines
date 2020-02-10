@@ -447,4 +447,53 @@ public class FileUtil {
 		return path.toString();
 	}
 	
+	/**
+	 * Moves a file
+	 * @param filePath
+	 * @param targetDir
+	 * @return the absolute path of the moved file
+	 * @throws Exception
+	 * 
+	 * {Category} FileUtil
+	 * {talendTypes} String
+	 * 
+	 * {param} String(filePath)
+	 * {param} String(targetDir)
+	 * 
+	 * {example} moveFile(filePath, targetDir)
+	 * 
+	 */
+	public static String moveFile(String filePath, String targetDir) throws Exception {
+		if (StringUtil.isEmpty(targetDir)) {
+			throw new Exception("targetDir cannot be null or empty!");
+		}
+		if (StringUtil.isEmpty(filePath)) {
+			return null;
+		} else {
+			File f = new File(filePath);
+			if (f.exists() == false) {
+				throw new Exception("moveFile: file: " + filePath + " failed: file does not exist");
+			} else {
+				File td = new File(targetDir);
+				if (td.exists() == false) {
+					td.mkdirs();
+				}
+				if (td.exists()) {
+					if (td.isFile()) {
+						throw new Exception("targetDir: " + targetDir + " points to an existing file but must be a directory");
+					} else {
+						File tf = new File(td, f.getName());
+						if (f.renameTo(tf)) {
+							return tf.getAbsolutePath();
+						} else {
+							throw new Exception("moveFile: file: " + filePath + " failed: targetDir+file: " + tf.getAbsolutePath() + " the filesystem has not performed the move");
+						}
+					}
+				} else {
+					throw new Exception("moveFile: file: " + filePath + " failed: targetDir: " + td.getAbsolutePath() + " does not exist and cannot be created");
+				}
+			}
+		}
+	}
+	
 }

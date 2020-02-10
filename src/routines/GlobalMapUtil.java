@@ -15,13 +15,72 @@
  */
 package routines;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class GlobalMapUtil {
 
 	public static final String OVERRIDE_DIE_CODE_KEY = "OVERRIDE_DIE_CODE";
+	
+    /**
+     * adds a value to a list and stores this in the globalMap
+     * use the first value found.
+     * 
+     * {Category} GlobalMapUtil
+     * 
+     * {talendTypes} List
+     * 
+     * {param} String(globalMap) String: reference to globalMap.
+     * {param} String(listName)
+     * {param} Object(value)
+     * 
+     * {example} addToList(globalMap,listName, value)
+     * 
+     */
+	public static List<Object> addToList(Map<String, Object> globalMap, String listName, Object value) {
+		Object test = globalMap.get(listName);
+		if (test == null) {
+			List<Object> list = new ArrayList<Object>();
+			list.add(value);
+			globalMap.put(listName, list);
+			return list;
+		} else if (test instanceof List) {
+			List<Object> list = (List<Object>) test;
+			list.add(value);
+			return list;
+		} else {
+			throw new IllegalStateException("globalMap contains already a none-list value with the key: " + listName);
+		}
+	}
+	
+    /**
+     * adds a value to a list and stores this in the globalMap
+     * use the first value found.
+     * 
+     * {Category} GlobalMapUtil
+     * 
+     * {talendTypes} List
+     * 
+     * {param} String(globalMap) String: reference to globalMap.
+     * 
+     * {param} String(listName)
+     * 
+     * {example} getList(globalMap,listName)
+     * 
+     */
+	public static List<Object> getList(Map<String, Object> globalMap, String listName) {
+		Object test = globalMap.get(listName);
+		if (test == null) {
+			return new ArrayList<Object>();
+		} else if (test instanceof List) {
+			return (List<Object>) test;
+		} else {
+			throw new IllegalStateException("globalMap has a none-list value with the key: " + listName);
+		}
+	}
 	
     /**
      * return integer and accepts Integer and String. Null returns 0

@@ -650,7 +650,7 @@ public class StringUtil {
 			return "";
 		}
 	}
-
+	
 	/**
      * Replace the german umlauts
      * 
