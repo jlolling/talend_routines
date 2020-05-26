@@ -57,8 +57,8 @@ public class GlobalMapUtil {
 	}
 	
     /**
-     * adds a value to a list and stores this in the globalMap
-     * use the first value found.
+     * returns a list within the globalMap
+     * If the list does not exist, it will be created
      * 
      * {Category} GlobalMapUtil
      * 
@@ -74,7 +74,7 @@ public class GlobalMapUtil {
 	public static List<Object> getList(Map<String, Object> globalMap, String listName) {
 		Object test = globalMap.get(listName);
 		if (test == null) {
-			return new ArrayList<Object>();
+			return (List<Object>) globalMap.put(listName, new ArrayList<Object>());
 		} else if (test instanceof List) {
 			return (List<Object>) test;
 		} else {

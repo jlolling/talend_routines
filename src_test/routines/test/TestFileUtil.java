@@ -69,4 +69,20 @@ public class TestFileUtil {
 		assertEquals("Path not correct", expected, actual);
 	}
 
+	@Test
+	public void testGetUnixPath1() {
+		String expected = "/p1/p2/p3/file.txt";
+		String actual = FileUtil.getUnixPath("d:\\p1\\p2\\p3\\file.txt");
+		System.out.println(actual);
+		assertEquals("Path not correct", expected, actual);
+	}
+
+	@Test
+	public void testGetUnixPath2() {
+		String expected = "/p1/p2/p3/file.txt";
+		String actual = FileUtil.getUnixPath("/p1/p2/p3/file.txt");
+		System.out.println(actual);
+		assertEquals("Path not correct", expected, actual);
+	}
+
 }

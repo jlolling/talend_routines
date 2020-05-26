@@ -1,0 +1,335 @@
+package routines;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
+import java.nio.charset.Charset;
+import java.util.Iterator;
+import java.util.StringTokenizer;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPBody;
+import javax.xml.soap.SOAPConnection;
+import javax.xml.soap.SOAPConnectionFactory;
+import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPHeader;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.soap.SOAPPart;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
+import org.jdom.input.DOMBuilder;
+import org.jdom.output.XMLOutputter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
+import com.sun.xml.messaging.saaj.soap.SOAPPartImpl;
+
+public class SOAPClient {
+
+    private SOAPConnection connection;
+
+    public static final String SOAP11 = "soap11";
+
+    public static final String SOAP12 = "soap12";
+
+    private String reBodyMessage;
+
+    private String reHeaderMessage;
+
+    private String reFaultMessage;
+
+    private String username;
+
+    private String password;
+
+    private boolean basicAuth;
+
+    private boolean hasFault = false;
+
+    public SOAPClient() throws SOAPException {
+        init();
+    }
+
+    private void init() throws SOAPException {
+        SOAPConnectionFactory soapConnFactory = SOAPConnectionFactory.newInstance();
+        connection = soapConnFactory.createConnection();
+    }
+
+    public void setBasicAuth(final String username, final String password) {
+        this.username = username;
+        this.password = password;
+        this.basicAuth = true;
+        setAuthenticator(username, password);
+    }
+
+    public void setAuthenticator(final String username, final String password) {
+        Authenticator.setDefault(new Authenticator() {
+
+            @Override
+			public PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password.toCharArray());
+            }
+        });
+    }
+
+    public void setNTLMAuth(String domain, String username, String password) {
+        setAuthenticator(domain + "\\" + username, password);
+    }
+
+    public void invokeSOAP(String version, String destination, String soapAction, String soapMessage) throws Exception {
+        MessageFactory messageFactory = null;
+        if (version.equals(SOAP12)) {
+            messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+        } else {
+            messageFactory = MessageFactory.newInstance();
+        }
+        SOAPMessage message = messageFactory.createMessage();
+        MimeHeaders mimeHeaders = message.getMimeHeaders();
+        mimeHeaders.setHeader("SOAPAction", soapAction);
+        if (basicAuth) {
+            addBasicAuthHeader(mimeHeaders, username, password);
+        }
+        
+        // Create objects for the message parts
+        SOAPPart soapPart = message.getSOAPPart();
+
+        String encoding = getEncoding(soapMessage);
+        
+        ByteArrayInputStream stream = new ByteArrayInputStream(soapMessage.getBytes(encoding));
+        StreamSource preppedMsgSrc = new StreamSource(stream);
+        soapPart.setContent(preppedMsgSrc);
+
+        // InputStream stream = new FileInputStream(new File("d://soap.txt"));
+        // StreamSource preppedMsgSrc = new StreamSource(stream);
+        // soapPart.setContent(preppedMsgSrc);
+
+        message.saveChanges();
+        OutputStream test = new OutputStream() {
+        	
+        	final StringBuilder content = new StringBuilder();
+			
+			@Override
+			public void write(int b) throws IOException {
+				content.append((char) b);
+			}
+			
+			@Override
+			public String toString() {
+				return content.toString();
+			}
+		};
+        message.writeTo(test);
+        System.out.println(test);
+        // Send the message
+        SOAPMessage reply = connection.call(message, destination);
+
+        SOAPPart reSoapPart = reply.getSOAPPart();
+        
+        if (reSoapPart != null && reSoapPart instanceof SOAPPartImpl) {
+			((SOAPPartImpl) reSoapPart).setSourceCharsetEncoding(encoding);
+		}
+        
+        SOAPEnvelope reEnvelope = reSoapPart.getEnvelope();
+        SOAPHeader reHeader = reEnvelope.getHeader();
+        if (reHeader != null) {
+            setReHeaderMessage(Doc2StringWithoutDeclare(extractContentAsDocument(reHeader)));
+        }
+        SOAPBody reBody = reEnvelope.getBody();
+        if (reBody.getFault() != null) {
+            hasFault = true;
+            setReFaultMessage(Doc2StringWithoutDeclare(extractContentAsDocument(reBody)));
+            setReBodyMessage(null);
+        } else {
+            hasFault = false;
+            if (reBody.getChildNodes().getLength() < 1) {
+                setReBodyMessage(null);
+            } else if (reBody.getChildNodes().getLength() == 1 && reBody.getChildNodes().item(0) instanceof javax.xml.soap.Text) {
+                setReBodyMessage(null);
+            } else {
+                setReBodyMessage(Doc2StringWithoutDeclare(extractContentAsDocument(reBody)));
+            }
+            setReFaultMessage(null);
+        }
+    }
+
+    public void close() throws SOAPException {
+        connection.close();
+    }
+
+    public boolean hasFault() {
+        return hasFault;
+    }
+
+    private void setReFaultMessage(String faultMessageStr) {
+        reFaultMessage = faultMessageStr;
+    }
+
+    public String getReFaultMessage() {
+        return reFaultMessage;
+    }
+
+    private Document extractContentAsDocument(SOAPBody body) throws SOAPException, TransformerException,
+            ParserConfigurationException {
+        return body.extractContentAsDocument();
+    }
+
+    private void setReBodyMessage(String bodyMessageStr) {
+        reBodyMessage = bodyMessageStr;
+    }
+
+    public String getReBodyMessage() {
+        return reBodyMessage;
+    }
+
+    private Document extractContentAsDocument(SOAPHeader header) throws ParserConfigurationException, TransformerException {
+        Document document;
+        DocumentBuilderFactory factory = new com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        document = builder.newDocument();
+
+        Node content;
+        Element headerRootElem = document.createElement("Header");
+
+        Iterator childElements = header.getChildElements();
+        org.w3c.dom.Node domNode = null;
+        while (childElements.hasNext()) {
+            domNode = (org.w3c.dom.Node) childElements.next();
+            content = document.importNode(domNode, true);
+            headerRootElem.appendChild(content);
+        }
+        document.appendChild(headerRootElem);
+        return document;
+    }
+
+    private void setReHeaderMessage(String headerMessageStr) {
+        reHeaderMessage = headerMessageStr;
+    }
+
+    public String getReHeaderMessage() {
+        return reHeaderMessage;
+    }
+
+    private String Doc2StringWithoutDeclare(Document doc) {
+        DOMBuilder builder = new DOMBuilder();
+        org.jdom.Document jdomDoc = builder.build(doc);
+        XMLOutputter outputter = new XMLOutputter();
+        return outputter.outputString(jdomDoc.getRootElement());
+    }
+
+	/**
+	 * invoke soap and return the response document
+	 */
+	public String extractContentAsDocument(String version, String destination, String soapAction, String soapMessage) throws SOAPException,
+            TransformerException, ParserConfigurationException, FileNotFoundException, UnsupportedEncodingException {
+    	MessageFactory messageFactory = null;
+    	if (version.equals(SOAP12)) {
+    		messageFactory = MessageFactory.newInstance(SOAPConstants.SOAP_1_2_PROTOCOL);
+    	} else {
+    		messageFactory = MessageFactory.newInstance();
+    	}
+    	SOAPMessage message = messageFactory.createMessage();
+    	MimeHeaders mimeHeaders = message.getMimeHeaders();
+    	mimeHeaders.setHeader("SOAPAction", soapAction);
+    	SOAPPart soapPart = message.getSOAPPart();
+    	
+    	String encoding = getEncoding(soapMessage);
+    	
+    	ByteArrayInputStream stream = new ByteArrayInputStream(soapMessage.getBytes(encoding));
+    	StreamSource preppedMsgSrc = new StreamSource(stream);
+    	soapPart.setContent(preppedMsgSrc);
+    	message.saveChanges();
+    	SOAPMessage reply = connection.call(message, destination);
+    	SOAPPart reSoapPart = reply.getSOAPPart();
+    	
+    	if (reSoapPart != null && reSoapPart instanceof SOAPPartImpl) {
+			((SOAPPartImpl) reSoapPart).setSourceCharsetEncoding(encoding);
+		}
+    	
+    	try {
+			TransformerFactory tf = TransformerFactory.newInstance();
+			Transformer t = tf.newTransformer();
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			t.transform(reSoapPart.getContent(), new StreamResult(bos));
+			return bos.toString(encoding);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+    }
+	
+	private String getEncoding(String text) {
+        String result = Charset.defaultCharset().name();
+
+        if(text == null) {
+			return result;
+		}
+        
+        char[] match = {'<','?','x','m','l'};
+        boolean found = false;
+        int i = 0;
+        int j = 0;
+        for(;i<text.length();i++) {
+        	if(j==0 && text.charAt(i) <= ' ') {
+        		continue;
+        	}
+        	
+        	if(j<match.length && text.charAt(i) == match[j++]) {
+        		if(j==match.length) {
+        			found = true;
+        			break;
+        		}
+        	} else {
+        		break;
+        	}
+        }
+        
+        if (found) {
+            int end = text.indexOf("?>");
+            String sub = text.substring(i+1, end);
+            StringTokenizer tokens = new StringTokenizer(sub, " =\"\'");
+
+            while (tokens.hasMoreTokens()) {
+                String token = tokens.nextToken();
+
+                if ("encoding".equals(token)) {
+                    if (tokens.hasMoreTokens()) {
+                        String encoding = tokens.nextToken();
+                        if(Charset.isSupported(encoding)) {
+                        	result = encoding;
+                        	return result;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        return result;
+    }
+	
+	private void addBasicAuthHeader(MimeHeaders headers, String username, String password) {
+        String encodeUserInfo = username + ":" + password;
+        encodeUserInfo = Base64.encodeToBase64String(encodeUserInfo.getBytes());
+        headers.setHeader("Authorization", "Basic " + encodeUserInfo);
+    }
+
+
+}

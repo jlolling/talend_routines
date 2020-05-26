@@ -496,4 +496,25 @@ public class FileUtil {
 		}
 	}
 	
+	/**
+	 * Converts the path to a UNIX style path (which works on both: Windows and UNIX)
+	 * @param filePath
+	 * @return the unix style path
+	 * 
+	 * {Category} FileUtil
+	 * {talendTypes} String
+	 * 
+	 * {param} String(filePath)
+	 * 
+	 * {example} getUnixPath(filePath)
+	 * 
+	 */
+	public static String getUnixPath(String filePath) {
+		if (filePath == null) {
+			return null;
+		}
+		filePath = filePath.replace('\\', '/');
+		return RegexUtil.replaceByRegexGroups(filePath, "^([a-z]:)", "");
+	}
+	
 }

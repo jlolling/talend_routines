@@ -10,6 +10,7 @@ import java.util.Date;
 import org.junit.Test;
 
 import routines.GenericDateUtil;
+import routines.GenericDateUtil.DateParser;
 
 public class TestGenericDateUtil {
 	
@@ -98,6 +99,20 @@ public class TestGenericDateUtil {
 		Long actual = GenericDateUtil.parseDate(s, "yyyy-MM-dd HH:mm:ss").getTime();
 		Long expected = 1481459171000l;
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testInvalidDate() throws ParseException {
+		String s = "2016-13-11 13:26:11";
+		DateParser p =  GenericDateUtil.getDateParser(false);
+		try {
+			p.setLenient(false);
+			Date actual = p.parseDate(s, "yyyy-MM-dd HH:mm:ss");
+			System.out.println(actual);
+			assertTrue(false);
+		} catch (Exception e) {
+			assertTrue(true);
+		}
 	}
 	
 	@Test

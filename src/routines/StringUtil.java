@@ -102,7 +102,7 @@ public class StringUtil {
 	public static String getNullSaveStr(String input) {
 		if (input == null) {
 			return "";
-		} else if ("null".equalsIgnoreCase(input)) {
+		} else if ("null".equals(input)) {
 			return "";
 		} else {
 			return input;
@@ -363,7 +363,7 @@ public class StringUtil {
 		if (s.trim().isEmpty()) {
 			return true;
 		}
-		if (s.trim().equalsIgnoreCase("null")) {
+		if (s.trim().equals("null")) {
 			return true;
 		}
 		return false;

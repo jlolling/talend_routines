@@ -15,7 +15,9 @@
  */
 package routines;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,6 +70,40 @@ public class RegexUtil {
 	}
 	
     /**
+     * Extracts a string by regex groups.
+     * 
+     * {Category} RegexUtil
+     * 
+     * {param} string("content") content: String.
+     * 
+     * {param} string("regex") regex: String
+     * 
+     * {example} extractByRegexGroupsToList("content","regex") # value2
+     */
+	public static List<String> extractByRegexGroupsToList(String content, String regex) {
+		if (regex != null) {
+			if (content != null) {
+				content = content.trim();
+				final List<String> result = new ArrayList<String>();
+				Pattern pattern = compile(regex);
+		        Matcher matcher = pattern.matcher(content);
+		        while (matcher.find()) {
+		            if (matcher.start() < matcher.end()) {
+		            	for (int i = 1, n = matcher.groupCount(); i <= n; i++) {
+		            		result.add(matcher.group(i));
+		            	}
+		            }
+		        }
+				return result;
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+
+	/**
      * Extracts a string by a particular regex group.
      * 
      * {Category} RegexUtil
@@ -182,6 +218,9 @@ public class RegexUtil {
 			}
     		if (prevEnd > 0 && prevEnd < content.length()) {
     			result.append(content.substring(prevEnd, content.length()));
+    		} else if (prevEnd == 0) {
+    			// we have found nothing
+    			result.append(content);
     		}
 			return result.toString();
 		} else {
