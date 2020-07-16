@@ -207,7 +207,7 @@ public class SOAPClient {
         Node content;
         Element headerRootElem = document.createElement("Header");
 
-        Iterator childElements = header.getChildElements();
+		Iterator<?> childElements = header.getChildElements();
         org.w3c.dom.Node domNode = null;
         while (childElements.hasNext()) {
             domNode = (org.w3c.dom.Node) childElements.next();
@@ -277,7 +277,7 @@ public class SOAPClient {
 	private String getEncoding(String text) {
         String result = Charset.defaultCharset().name();
 
-        if(text == null) {
+        if (text == null) {
 			return result;
 		}
         
@@ -285,13 +285,13 @@ public class SOAPClient {
         boolean found = false;
         int i = 0;
         int j = 0;
-        for(;i<text.length();i++) {
-        	if(j==0 && text.charAt(i) <= ' ') {
+        for (;i<text.length();i++) {
+        	if (j==0 && text.charAt(i) <= ' ') {
         		continue;
         	}
         	
-        	if(j<match.length && text.charAt(i) == match[j++]) {
-        		if(j==match.length) {
+        	if (j<match.length && text.charAt(i) == match[j++]) {
+        		if (j==match.length) {
         			found = true;
         			break;
         		}

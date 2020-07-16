@@ -150,7 +150,7 @@ public class FileUtil {
 			dir.mkdirs();
 		} else {
 			if (dir.isFile()) {
-				throw new Exception("The directory path: " + directoryPath + " points to an existing file!");
+				throw new Exception("The directory path: " + directoryPath + " points to a file and not to a directory as expected!");
 			}
 		}
 		if (dir.exists() == false) {
@@ -167,13 +167,49 @@ public class FileUtil {
 	 * 
 	 * {example} doesFileExist(filePath) # ""
 	 */
-	public static boolean doesFileExist(String filePath) throws Exception {
+	public static boolean doesFileExist(String filePath) {
 		if (filePath == null) {
 			return false;
 		}
 		filePath = filePath.replace('\\', '/');
 		File file = new File(filePath);
 		return file.exists();
+	}
+	
+	/**
+	 * Checks if a file exists, can be read and write
+	 * 
+	 * {Category} FileUtil
+	 * 
+	 * {param} string(filePath) basePath: String.
+	 * 
+	 * {example} fileReadableAndWritable(filePath) # ""
+	 */
+	public static boolean fileReadableAndWritable(String filePath) {
+		if (filePath == null) {
+			return false;
+		}
+		filePath = filePath.replace('\\', '/');
+		File file = new File(filePath);
+		return file.exists() && file.canRead() && file.canWrite();
+	}
+
+	/**
+	 * Checks if a file exists, can be read
+	 * 
+	 * {Category} FileUtil
+	 * 
+	 * {param} string(filePath) basePath: String.
+	 * 
+	 * {example} fileReadable(filePath) # ""
+	 */
+	public static boolean fileReadable(String filePath) {
+		if (filePath == null) {
+			return false;
+		}
+		filePath = filePath.replace('\\', '/');
+		File file = new File(filePath);
+		return file.exists() && file.canRead();
 	}
 
 	/**
@@ -186,7 +222,7 @@ public class FileUtil {
 	 * 
 	 * {example} doesFileExist(dirPath, fileName) # ""
 	 */
-	public static boolean doesFileExist(String dirPath, String fileName) throws Exception {
+	public static boolean doesFileExist(String dirPath, String fileName) {
 		if (dirPath == null || dirPath.trim().isEmpty()) {
 			return false;
 		}
@@ -514,7 +550,7 @@ public class FileUtil {
 			return null;
 		}
 		filePath = filePath.replace('\\', '/');
-		return RegexUtil.replaceByRegexGroups(filePath, "^([a-z]:)", "");
+		return RegexUtil.replaceByRegexGroups(filePath, "^([a-zA-Z]:)", "");
 	}
 	
 }

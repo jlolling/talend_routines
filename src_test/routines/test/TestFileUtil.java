@@ -85,4 +85,18 @@ public class TestFileUtil {
 		assertEquals("Path not correct", expected, actual);
 	}
 
+	@Test
+	public void testFileUnreadable() {
+		String path = "/Data/Talend/testdata/test/unreadble_dir/";
+		boolean actual = FileUtil.fileReadable(path);
+		assertEquals("Path check failed", false, actual);
+	}
+
+	@Test
+	public void testFileReadableAndWritable() {
+		String path = "/Data/Talend/testdata/test/";
+		boolean actual = FileUtil.fileReadableAndWritable(path);
+		assertEquals("Path check failed", true, actual);
+	}
+
 }

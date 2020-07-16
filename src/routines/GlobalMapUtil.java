@@ -48,6 +48,7 @@ public class GlobalMapUtil {
 			globalMap.put(listName, list);
 			return list;
 		} else if (test instanceof List) {
+			@SuppressWarnings("unchecked")
 			List<Object> list = (List<Object>) test;
 			list.add(value);
 			return list;
@@ -71,6 +72,7 @@ public class GlobalMapUtil {
      * {example} getList(globalMap,listName)
      * 
      */
+	@SuppressWarnings("unchecked")
 	public static List<Object> getList(Map<String, Object> globalMap, String listName) {
 		Object test = globalMap.get(listName);
 		if (test == null) {
@@ -241,16 +243,44 @@ public class GlobalMapUtil {
      * 
      */
 	public static String getErrorMessage(Map<String, Object> globalMap) {
-		StringBuilder message = new StringBuilder();
-		for (java.util.Map.Entry<String, Object> entry : globalMap.entrySet()) {
-			String key = entry.getKey();
-			if (key.endsWith("ERROR_MESSAGE")) {
-				if (entry.getValue() instanceof String) {
-					message.append((String) entry.getValue());
-					break; 
-				}
-			}
-		}
+		String tDieMessage = null;
+		String compName = null;
+    	StringBuilder message = new StringBuilder();
+    	for (Map.Entry<String, Object> entry : globalMap.entrySet()) {
+    		String key = entry.getKey();
+			compName = key.replace("_DIE_CODE", "");
+    		if (key.endsWith("_DIE_CODE")) {
+    			if (entry.getValue() instanceof Integer) {
+    				Integer code = (Integer) entry.getValue();
+    				if (code.intValue() != 0) {
+    					key = key.replace("_DIE_CODE", "_DIE_MESSAGE");
+    					tDieMessage = (String) globalMap.get(key);
+    					break;
+    				}
+    			}
+    		}
+    	}
+    	if (tDieMessage != null && tDieMessage.trim().isEmpty() == false && "the end is near".equalsIgnoreCase(tDieMessage) == false) {
+			message.append(compName);
+			message.append(":");
+    		message.append(tDieMessage);
+    		message.append("\n");
+    	}
+		// get error message
+    	for (Map.Entry<String, Object> entry : globalMap.entrySet()) {
+    		String key = entry.getKey();
+    		if (key.endsWith("_ERROR_MESSAGE") && entry.getValue() !=  null) {
+    			compName = key.replace("_ERROR_MESSAGE", "");
+    			message.append(compName);
+    			message.append(":");
+        		message.append(entry.getValue().toString());
+        		message.append("\n");
+        		if (compName.contains("tRunJob")) {
+        			message.append(compName + " returncode: " + globalMap.get(compName + "_CHILD_RETURN_CODE"));
+        			message.append("\n" + compName + " stacktrace: " + globalMap.get(compName + "_CHILD_EXCEPTION_STACKTRACE"));
+        		}
+    		}
+    	}
 		if (message.length() > 0) {
 			return message.toString();
 		} else {
