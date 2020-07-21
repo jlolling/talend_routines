@@ -63,8 +63,8 @@ public class TestFileUtil {
 	
 	@Test
 	public void testBuildFilePath() {
-		String expected = "/p1/p2/p3/file.txt";
-		String actual = FileUtil.buildPath("file.txt", "/p1", "p2/", "p3");
+		String expected = "/p1/p2/p3/p4/file.txt";
+		String actual = FileUtil.buildPath("file.txt", "/p1", "p2/", "/p3", "p4");
 		System.out.println(actual);
 		assertEquals("Path not correct", expected, actual);
 	}

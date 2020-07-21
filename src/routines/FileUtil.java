@@ -144,7 +144,7 @@ public class FileUtil {
 	 * 
 	 * {example} ensureDirectoryExists(directoryPath) # ""
 	 */
-	public static void ensureDirectoryExists(String directoryPath) throws Exception {
+	public static String ensureDirectoryExists(String directoryPath) throws Exception {
 		File dir = new File(directoryPath);
 		if (dir.exists() == false) {
 			dir.mkdirs();
@@ -156,6 +156,7 @@ public class FileUtil {
 		if (dir.exists() == false) {
 			throw new Exception("The directory path: " + directoryPath + " cannot be created. Check rights or path syntax.");
 		}
+		return dir.getAbsolutePath();
 	}
 
 	/**
@@ -463,10 +464,18 @@ public class FileUtil {
 	public static String buildPath(String filename, String...pathParts) {
 		StringBuilder path = new StringBuilder();
 		if (pathParts != null) {
+			boolean firstLoop = true;
 			for (String p : pathParts) {
 				if (p != null && p.trim().isEmpty() == false) {
 					if (p.contains("\\")) {
 						p = p.replace('\\', '/');
+					}
+					if (firstLoop) {
+						firstLoop = false;
+					} else {
+						if (p.startsWith("/")) {
+							p = p.substring(1);
+						}
 					}
 					if (p.endsWith("/")) {
 						path.append(p);
