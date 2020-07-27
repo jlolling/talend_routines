@@ -99,4 +99,22 @@ public class TestFileUtil {
 		assertEquals("Path check failed", true, actual);
 	}
 
+	@Test
+	public void testEnsureDirectoryExists1() throws Exception {
+		String expected = "/Data/Talend/testdata/test-create/";
+		String actual = FileUtil.ensureDirectoryExists(expected);
+		assertEquals("Path check failed", expected, actual);
+		File d = new File(actual);
+		d.delete();
+	}
+
+	@Test
+	public void testEnsureDirectoryExists2() throws Exception {
+		String expected = "/Data/Talend/testdata/test-create";
+		String actual = FileUtil.ensureDirectoryExists(expected);
+		assertEquals("Path check failed", expected, actual);
+		File d = new File(actual);
+		d.delete();
+	}
+
 }

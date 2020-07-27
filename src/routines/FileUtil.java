@@ -53,6 +53,9 @@ public class FileUtil {
 	 * {example} getFileDir(fullPath) # ""
 	 */
 	public static String getFileDir(String filePath) {
+		if (filePath == null || filePath.trim().isEmpty()) {
+			return null;
+		}
 		filePath = filePath.replace('\\', '/');
 		File f = new File(filePath);
 		String parent = f.getParent();
@@ -145,6 +148,15 @@ public class FileUtil {
 	 * {example} ensureDirectoryExists(directoryPath) # ""
 	 */
 	public static String ensureDirectoryExists(String directoryPath) throws Exception {
+		if (directoryPath == null || directoryPath.trim().isEmpty()) {
+			throw new Exception("directoryPath cannot be null or empty");
+		}
+		directoryPath = directoryPath.trim();
+		boolean pathEndsWithDelimiter = directoryPath.endsWith("/") || directoryPath.endsWith("\\");
+		String endChar = "";
+		if (pathEndsWithDelimiter) {
+			endChar = String.valueOf(directoryPath.charAt(directoryPath.length() - 1));
+		}
 		File dir = new File(directoryPath);
 		if (dir.exists() == false) {
 			dir.mkdirs();
@@ -156,7 +168,11 @@ public class FileUtil {
 		if (dir.exists() == false) {
 			throw new Exception("The directory path: " + directoryPath + " cannot be created. Check rights or path syntax.");
 		}
-		return dir.getAbsolutePath();
+		String returnPath = dir.getAbsolutePath();
+		if (pathEndsWithDelimiter && (returnPath.endsWith("/") || returnPath.endsWith("\\")) == false) {
+			returnPath = returnPath + endChar;
+		}
+		return returnPath;
 	}
 
 	/**
@@ -169,7 +185,7 @@ public class FileUtil {
 	 * {example} doesFileExist(filePath) # ""
 	 */
 	public static boolean doesFileExist(String filePath) {
-		if (filePath == null) {
+		if (filePath == null || filePath.trim().isEmpty()) {
 			return false;
 		}
 		filePath = filePath.replace('\\', '/');
@@ -187,7 +203,7 @@ public class FileUtil {
 	 * {example} fileReadableAndWritable(filePath) # ""
 	 */
 	public static boolean fileReadableAndWritable(String filePath) {
-		if (filePath == null) {
+		if (filePath == null || filePath.trim().isEmpty()) {
 			return false;
 		}
 		filePath = filePath.replace('\\', '/');
@@ -205,7 +221,7 @@ public class FileUtil {
 	 * {example} fileReadable(filePath) # ""
 	 */
 	public static boolean fileReadable(String filePath) {
-		if (filePath == null) {
+		if (filePath == null || filePath.trim().isEmpty()) {
 			return false;
 		}
 		filePath = filePath.replace('\\', '/');
