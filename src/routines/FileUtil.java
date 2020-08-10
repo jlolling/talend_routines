@@ -595,7 +595,9 @@ public class FileUtil {
 	 */
     public static String getBytesAsBase64(String filePath) throws Exception {
         try {
-        	doesFileExist(filePath);
+        	if (doesFileExist(filePath) == false) {
+        		throw new Exception("File: " + filePath + " does not exist or is not readable");
+        	}
         	Path path = Paths.get(filePath);
         	byte[] b = Files.readAllBytes(path);
         	b = Base64.encode(b);
