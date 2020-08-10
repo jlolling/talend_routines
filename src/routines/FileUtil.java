@@ -3,8 +3,10 @@ package routines;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 /**
@@ -578,4 +580,30 @@ public class FileUtil {
 		return RegexUtil.replaceByRegexGroups(filePath, "^([a-zA-Z]:)", "");
 	}
 	
+	/**
+	 * Converts the the file into a Base64 String
+	 * @param filePath
+	 * @return the Base64 encoded String
+	 * 
+	 * {Category} FileUtil
+	 * {talendTypes} String
+	 * 
+	 * {param} String(filePath)
+	 * 
+	 * {example} getBytesAsBase64(filePath)
+	 * 
+	 */
+    public static String getBytesAsBase64(String filePath) throws Exception {
+        try {
+        	doesFileExist(filePath);
+        	Path path = Paths.get(filePath);
+        	byte[] b = Files.readAllBytes(path);
+        	b = Base64.encode(b);
+        	String retString = new String(b, StandardCharsets.UTF_8);
+        	return retString;
+        } catch (Exception e) {
+            throw new Exception("Fail to convert file: " + filePath + " to base64: " + e.getMessage(), e);
+        }
+    }
+
 }

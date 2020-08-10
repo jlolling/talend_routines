@@ -116,5 +116,18 @@ public class TestFileUtil {
 		File d = new File(actual);
 		d.delete();
 	}
+	
+	@Test
+	public void testConvertToBase64() throws Exception {
+		String path = "/Data/Talend/testdata/test/excel/store_report.txt";
+		System.out.println("Start convert file...");
+		String actual = FileUtil.getBytesAsBase64(path);
+		System.out.println("Read expected content...");
+		String expected = FileUtil.readContentfromFile(path + ".base64", null);
+		System.out.println("Compare content...");
+		System.out.println("actual content length: " + actual.length());
+		System.out.println("expected content length: " + expected.length());
+		assertEquals("Check failed", expected, actual);
+	}
 
 }
