@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileOutputStream;
 
 import org.junit.Test;
 
@@ -128,6 +129,99 @@ public class TestFileUtil {
 		System.out.println("actual content length: " + actual.length());
 		System.out.println("expected content length: " + expected.length());
 		assertEquals("Check failed", expected, actual);
+	}
+	
+	@Test
+	public void testReadReverseOneLine() throws Exception {
+		String expected = "Carrington Frozen Mushroom Pizza|19-12-1997|Gayle Watson|11.19|3.9165|3.0|2.8571428571";
+		String path = "/Data/Talend/testdata/test/excel/store_report.txt";
+		String actual = FileUtil.readReverseNumberLines(path, 1, null);
+		System.out.println(actual);
+		assertEquals("Check failed", expected, actual);
+	}
+
+	@Test
+	public void testReadReverse3Lines() throws Exception {
+		String expected = "Carrington Frozen Mushroom Pizza|19-12-1997|Gayle Watson|11.19|3.9165|3.0|2.8571428571\n" +
+				          "Landslide Extra Chunky Peanut Butter|19-12-1997|Gayle Watson|2.19|0.9636|3.0|2.2727272727\n" +
+                          "Plato Grape Jam|19-12-1997|Gayle Watson|7.92|3.4848|4.0|2.2727272727";
+		String path = "/Data/Talend/testdata/test/excel/store_report.txt";
+		String actual = FileUtil.readReverseNumberLines(path, 3, null);
+		System.out.println(actual);
+		assertEquals("Check failed", expected, actual);
+	}
+	
+	@Test
+	public void testWaitForFile1() throws Exception {
+		File tempFile = File.createTempFile("test", "xyz");
+		String actual = FileUtil.waitForFileFinishedWriting(tempFile.getAbsolutePath(), false, 100);
+		System.out.println(actual);
+		assertTrue(true);
+	}
+	
+	@Test
+	public void testWaitForFile2() throws Exception {
+		File tempFile = File.createTempFile("test", "xyz");
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				System.out.println("Start writing file....");
+				try {
+					FileOutputStream o = new FileOutputStream(tempFile);
+					for (int i = 0; i < 1000; i++) {
+						o.write(i);
+						o.flush();
+						Thread.sleep(10);
+					}
+					o.close();
+					System.out.println("write finished: " + System.currentTimeMillis());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+		});
+		t.start();
+		System.out.println("Start checking file....");
+		String actual = FileUtil.waitForFileFinishedWriting(tempFile.getAbsolutePath(), false, 100);
+		System.out.println("wait finished: " + System.currentTimeMillis());
+		System.out.println(actual);
+		assertTrue(true);
+		tempFile.delete();
+	}
+	
+	@Test
+	public void testWaitForEndOfFile() throws Exception {
+		File tempFile = File.createTempFile("test", "xyz");
+		final String end = "End";
+		Thread t = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				System.out.println("Start writing file....");
+				try {
+					FileOutputStream o = new FileOutputStream(tempFile);
+					for (int i = 0; i < 1000; i++) {
+						o.write(i);
+						o.flush();
+						Thread.sleep(10);
+					}
+					o.write(end.getBytes());
+					o.close();
+					System.out.println("write finished: " + System.currentTimeMillis());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+		});
+		t.start();
+		System.out.println("Start checking file....");
+		FileUtil.waitForEndOfFile(tempFile.getAbsolutePath(), end, null);
+		System.out.println("wait finished: " + System.currentTimeMillis());
+		assertTrue(true);
+		tempFile.delete();
 	}
 
 }

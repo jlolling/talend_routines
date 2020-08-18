@@ -1,8 +1,13 @@
 package routines;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -580,6 +585,8 @@ public class FileUtil {
 		return RegexUtil.replaceByRegexGroups(filePath, "^([a-zA-Z]:)", "");
 	}
 	
+	
+	
 	/**
 	 * Converts the the file into a Base64 String
 	 * @param filePath
@@ -607,5 +614,191 @@ public class FileUtil {
             throw new Exception("Fail to convert file: " + filePath + " to base64: " + e.getMessage(), e);
         }
     }
+    
+	/**
+	 * Reads a file in reverse order of the lines
+	 * @param filePath
+	 * @param limitNumberLines (-1 means without limit)
+	 * @param charset charset (null means UTF-8)
+	 * @return the the reverse file content
+	 * 
+	 * {Category} FileUtil
+	 * {talendTypes} String
+	 * 
+	 * {param} String(filePath)
+	 * {param} Integer(limitNumberLines)
+	 * {param} String(charset)
+	 * 
+	 * {example} readReverseNumberLines(filePath,limitNumberLines,charset)
+	 * 
+	 */
+    public static String readReverseNumberLines(String filePath, int limitNumberLines, String charset) throws Exception {
+    	if (filePath == null || filePath.trim().isEmpty()) {
+    		throw new IllegalArgumentException("Parameter filePath cannot be null or empty");
+    	}
+    	if (charset == null || charset.trim().isEmpty()) {
+    		charset = "UTF-8";
+    	}
+    	File file = new File(filePath);
+    	if (file.canRead() == false) {
+    		throw new Exception("File: " + file.getAbsolutePath() + " cannot be read.");
+    	}
+    	BufferedReader in = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(file), charset));
+    	try {
+    		boolean firstLoop = true;
+    		StringBuilder sb = new StringBuilder();
+        	int countLines = 0;
+        	while (true) {
+        	    String line = in.readLine();
+        	    if (line == null) {
+        	        break;
+        	    }
+        	    if (firstLoop) {
+        	    	// ignore line breaks at the end of the file
+        	    	if (line.trim().isEmpty()) {
+        	    		continue;
+        	    	}
+        	    	firstLoop = false;
+        	    } else {
+        	    	sb.append("\n");
+        	    }
+        	    sb.append(line);
+        	    countLines++;
+        	    if (limitNumberLines > 0 && limitNumberLines <= countLines) {
+        	    	break;
+        	    }
+        	}
+        	return sb.toString();
+    	} catch (Exception e) {
+    		throw new Exception("Fail to reverse read file: " + file.getAbsolutePath(), e);
+    	} finally {
+    		if (in != null) {
+    			in.close();
+    		}
+    	}
+    }
 
+    public static class ReverseLineInputStream extends InputStream {
+
+        private RandomAccessFile in;
+        private long currentLineStart = -1;
+        private long currentLineEnd = -1;
+        private long currentPos = -1;
+        private long lastPosInFile = -1;
+
+        public ReverseLineInputStream(File file) throws FileNotFoundException {
+            in = new RandomAccessFile(file, "r");
+            currentLineStart = file.length();
+            currentLineEnd = file.length();
+            lastPosInFile = file.length() - 1;
+            currentPos = currentLineEnd; 
+        }
+
+        public void findPrevLine() throws IOException {
+            currentLineEnd = currentLineStart; 
+            // There are no more lines, since we are at the beginning of the file and no lines.
+            if (currentLineEnd == 0) {
+                currentLineEnd = -1;
+                currentLineStart = -1;
+                currentPos = -1;
+                return; 
+            }
+            long filePointer = currentLineStart -1;
+            while (true) {
+                filePointer--;
+                // we are at start of file so this is the first line in the file.
+                if (filePointer < 0) {  
+                    break; 
+                }
+                in.seek(filePointer);
+                int readByte = in.readByte();
+                // We ignore last LF in file. search back to find the previous LF.
+                if (readByte == 0xA && filePointer != lastPosInFile) {   
+                    break;
+                }
+             }
+             // we want to start at pointer +1 so we are after the LF we found or at 0 the start of the file.   
+             currentLineStart = filePointer + 1;
+             currentPos = currentLineStart;
+        }
+
+        @Override
+		public int read() throws IOException {
+            if (currentPos < currentLineEnd) {
+                in.seek(currentPos++);
+                int readByte = in.readByte();
+                return readByte;
+            } else if (currentPos < 0) {
+                return -1;
+            } else {
+                findPrevLine();
+                return read();
+            }
+        }
+    }
+    
+	/**
+	 * Checks if a file finally ends with a text portion
+	 * @param filePath
+	 * @param contentAtTheEndOfFile
+	 * @param charset charset (null means UTF-8)
+	 * @return the the reverse file content
+	 * 
+	 * {Category} FileUtil
+	 * {talendTypes} String
+	 * 
+	 * {param} String(filePath)
+	 * {param} String(contentAtTheEndOfFile)
+	 * {param} String(charset)
+	 * 
+	 * {example} waitForEndOfFile(filePath,limitNumberLines,charset)
+	 * 
+	 */
+    public static void waitForEndOfFile(String filePath, String contentAtTheEndOfFile, String charset) throws Exception {
+    	if (filePath == null || filePath.trim().isEmpty()) {
+    		throw new IllegalArgumentException("filepath cannot be  null or empty");
+    	}
+    	File file = new File(filePath);
+    	if (file.exists() == false) {
+    		throw new Exception("File: " + file.getAbsolutePath() + " does not exist.");
+    	} else if (file.canRead() == false) {
+    		throw new Exception("File: " + file.getAbsolutePath() + " cannot be read.");
+    	}
+    	while (true) {
+    		String lastLine = readReverseNumberLines(file.getAbsolutePath(), 2, charset);
+    		if (lastLine.contains(contentAtTheEndOfFile)) {
+    			break;
+    		} else {
+    			Thread.sleep(1000);
+    		}
+    	}
+    }
+    
+    public static String waitForFileFinishedWriting(String filePath, boolean allowWaitingForFileCreate, int timeout) throws Exception {
+    	if (filePath == null || filePath.trim().isEmpty()) {
+    		throw new IllegalArgumentException("filepath cannot be  null or empty");
+    	}
+    	File file = new File(filePath);
+    	long start = System.currentTimeMillis();    	
+    	while (true) {
+    		if (file.exists() == false) {
+    			if (allowWaitingForFileCreate) {
+    				long current = System.currentTimeMillis();
+    				if (timeout > 0 && (current - start) > timeout) {
+    					throw new Exception("Timeout while waiting for files existence. File: " + file.getAbsolutePath());
+    				}
+    			}
+        		Thread.sleep(100);
+    		} else {
+    			long lastSize = file.length();
+    			long lastModified = file.lastModified();
+    			Thread.sleep(100);
+    			if (lastModified == file.lastModified() && lastSize == file.length()) {
+    				break;
+    			}
+    		}
+    	}
+    	return file.getAbsolutePath();
+    }
+    
 }
