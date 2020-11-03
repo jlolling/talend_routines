@@ -303,7 +303,7 @@ public class FileUtil {
 	}
 	
 	/**
-	 * Delets a dir recursively deleting anything inside it.
+	 * Delete a dir recursively deleting anything inside it.
 	 * @param dir The dir to delete
 	 * @return true if the dir was successfully deleted
 	 * {Category} FileUtil
@@ -312,18 +312,19 @@ public class FileUtil {
 	 * 
 	 * {param} String(dir) strings: String.
 	 * 
-	 * {example} deleteDirectory(context.currentDir) # 2323133_18
+	 * {example} deleteDirectory(context.currentDir)
 	 * 
 	 */
-	public static boolean deleteDirectory(File dir) {
-	    if (dir.exists() == false || dir.isDirectory() == false)    {
+	public static boolean deleteDirectory(String dirStr) {
+		File dir = new File(dirStr);
+	    if (dir.exists() == false || dir.isDirectory() == false) {
 	        return false;
 	    }
 	    String[] files = dir.list();
-	    for(int i = 0, len = files.length; i < len; i++)    {
+	    for(int i = 0, len = files.length; i < len; i++) {
 	        File f = new File(dir, files[i]);
 	        if (f.isDirectory()) {
-	            deleteDirectory(f);
+	            deleteDirectory(f.getAbsolutePath());
 	        } else {
 	            f.delete();
 	        }
@@ -331,6 +332,25 @@ public class FileUtil {
 	    return dir.delete();
 	}
 	
+	/**
+	 * Delete a file
+	 * {Category} FileUtil
+	 * 
+	 * {talendTypes} boolean
+	 * 
+	 * {param} String(fileStr) strings: String.
+	 * 
+	 * {example} deleteFile(context.currentFile)
+	 * 
+	 */
+	public static boolean deleteFile(String fileStr) {
+		File file = new File(fileStr);
+	    if (file.exists() == false || file.isDirectory()) {
+	        return false;
+	    }
+	    return file.delete();
+	}
+
 	/**
 	 * Writes text content to a file
 	 * @param filePath the file path

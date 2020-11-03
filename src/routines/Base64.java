@@ -81,7 +81,7 @@ public final class Base64 {
     }
 
     /**
-     * Checks if the given string is a base64 encoded array
+     * Checks if the given array is a base64 encoded array
      * @param arrayOctect
      * @return true if it is most likely base64 encoded
      * 
