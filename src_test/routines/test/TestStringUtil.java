@@ -271,4 +271,40 @@ public class TestStringUtil {
 		assertEquals("quoted text incorrect", expected, actual);
 	}
 	
+	@Test
+	public void testIndexInConcatenated1() {
+		String input = "1234,4567,7890";
+		String test = "4567";
+		int expected = 1;
+		int actual = StringUtil.indexInConcatenated(test, input, null);
+		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testIndexInConcatenated2() {
+		String input = "1234";
+		String test = "1234";
+		int expected = 0;
+		int actual = StringUtil.indexInConcatenated(test, input, null);
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void testIndexInConcatenated3() {
+		String input = "12345";
+		String test = "1234";
+		int expected = -1;
+		int actual = StringUtil.indexInConcatenated(test, input, null);
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void testIndexInConcatenated4() {
+		String input = null;
+		String test = "1234";
+		int expected = -1;
+		int actual = StringUtil.indexInConcatenated(test, input, null);
+		assertEquals(expected, actual);
+	}
+
 }

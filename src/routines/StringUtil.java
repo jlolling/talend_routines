@@ -198,6 +198,61 @@ public class StringUtil {
 	}
 
 	/**
+	 * Returns the index of test within the list of possible values
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} int | Integer
+	 * 
+	 * {param} string("to_test") test: String.
+	 * 
+	 * {param} string("possibleValue") posibleValues: String.
+	 * 
+	 * {example} index(" test","hans"," TEST ","Tata") # true
+	 */
+	public static int index(String test, String... possibleValues) {
+		int index = -1;
+		if (test != null) {
+			for (String v : possibleValues) {
+				index++;
+				if (v != null && test.trim().equalsIgnoreCase(v.trim())) {
+					break;
+				}
+			}
+		}
+		return index;
+	}
+
+	/**
+	 * Returns the index of test within the list of possible values
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} int | Integer
+	 * 
+	 * {param} string("1234") test: String.
+	 * 
+	 * {param} string("1234,5678,8766") arrayStr: String.
+	 * 
+	 * {example} indexInConcatenated("1234","1234,5678,8766") # true
+	 */
+	public static int indexInConcatenated(String test, String arrayStr, String delimiter) {
+		if (test == null || arrayStr == null) {
+			return -1;
+		}
+		if (delimiter == null || delimiter.isEmpty()) {
+			delimiter = ",";
+		}
+		String[] array = arrayStr.split(delimiter);
+		for (int i = 0; i < array.length; i++) {
+			if (test.equalsIgnoreCase(array[i])) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	/**
 	 * Retrieves the host from a URL
 	 * 
 	 * {Category} StringUtil
