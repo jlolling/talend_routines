@@ -223,5 +223,17 @@ public class TestFileUtil {
 		assertTrue(true);
 		tempFile.delete();
 	}
+	
+	@Test
+	public void testRemoveBOM() throws Exception {
+		String contentWithoutBOM = "more-text üöä";
+		String contentWithBOM = "\uFEFF"+contentWithoutBOM;
+		String sourceFilePath = File.createTempFile("testRemoveBOM", ".txt").getAbsolutePath();
+		FileUtil.writeContentToFile(sourceFilePath, contentWithBOM, null);
+		boolean removed = FileUtil.removeBOM(sourceFilePath, null, null);
+		assertTrue(removed);
+		String actual = FileUtil.readContentfromFile(sourceFilePath, "UTF-8");
+		assertEquals("Result file content not correct", contentWithoutBOM, actual);
+	}
 
 }
