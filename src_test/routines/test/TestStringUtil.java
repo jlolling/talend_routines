@@ -306,5 +306,17 @@ public class TestStringUtil {
 		int actual = StringUtil.indexInConcatenated(test, input, null);
 		assertEquals(expected, actual);
 	}
+	
+	@Test
+	public void testTrim() {
+		String in = " abcd efgüöä      " + ((char) 160); // take care there are other chars then spaces!
+		String expected = "abcd efgüöä";
+		String actual = StringUtil.trim(in);
+		assertEquals("trim does not work", expected, actual);
+		for (int i = 0, len = in.length(); i < len; i++) {
+			char c = in.charAt(i);
+			System.out.println("char:" + c + " int:" + (int) c);
+		}
+	}
 
 }

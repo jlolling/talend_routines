@@ -937,7 +937,7 @@ public class StringUtil {
 	public static String containsStrings(String test, List<String> stringList) {
 		if (test != null) {
 			for (String s : stringList) {
-				if (test.contains(s)) {
+				if (test.toLowerCase().contains(s.toLowerCase())) {
 					return s;
 				}
 			}
@@ -945,6 +945,30 @@ public class StringUtil {
 		return null;
 	}
 	
+	/**
+	 * Checks if the test contains the tokens as whole word
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} boolean | Boolean
+	 * 
+	 * {param} string(test) test: String.
+	 * 
+	 * {param} list(tokenList) posibleValues: String.
+	 * 
+	 * {example} containsStrings(test, tokenList) # true
+	 */
+	public static String containsStrings(String test, String ...strings) {
+		if (test != null && strings != null) {
+			for (String s : strings) {
+				if (test.toLowerCase().contains(s.toLowerCase())) {
+					return s;
+				}
+			}
+		}
+		return null;
+	}
+
 	/**
 	 * Checks if the test contains the token as whole word
 	 * 
@@ -1105,5 +1129,29 @@ public class StringUtil {
         }
         return sb.toString();
 	}
+    
+	/**
+     * Trims a text and also removes none-break-spaces
+     * '\u005Cu00A0','\u005Cu2007','\u005Cu202F'
+     * @param content to trim
+     * @return trimmed value
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * 
+     * {example} trim(content)
+     */
+    public static String trim(String content) {
+    	if (content == null) {
+    		return null;
+    	} else {
+    		String s = content.trim();
+    		s = s.replaceAll("(^\\h*)|(\\h*$)","");
+    		return s;
+    	}
+    }
 	
 }
