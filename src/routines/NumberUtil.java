@@ -436,13 +436,39 @@ public class NumberUtil {
      */
 	public static String numberToString(Number number) {
 		if (number != null) {
-			NumberFormat nf = NumberFormat.getInstance(Locale.GERMANY);
+			NumberFormat nf = NumberFormat.getInstance(Locale.ENGLISH);
 			return nf.format(number);
 		} else {
 			return "";
 		}
 	}
 	
+	/**
+     * formats the number
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} double(2.5) number: number to format
+     * {param} boolean(false) german: number to format
+     * {param} boolean(false) grouping: number to format
+     * {param} int(2) maxfraction: number to format
+     * 
+     * {example} numberToString(1234.12345,false,false,2) result: "1,234.12345"
+     * 
+     */
+	public static String numberToString(Number number, boolean german, boolean grouping, int maxFractionDigits) {
+		if (number != null) {
+			NumberFormat nf = NumberFormat.getInstance(german ? Locale.GERMAN : Locale.ENGLISH);
+			nf.setGroupingUsed(grouping);
+			nf.setMaximumFractionDigits(maxFractionDigits);
+			return nf.format(number);
+		} else {
+			return "";
+		}
+	}
+
 	/**
      * formats the number
      * 
