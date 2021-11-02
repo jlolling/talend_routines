@@ -3,6 +3,7 @@ package routines.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -305,6 +306,19 @@ public class TestStringUtil {
 		int expected = -1;
 		int actual = StringUtil.indexInConcatenated(test, input, null);
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void testGetUtf8() {
+		String input = "special-数据应用-text";
+		String output = input;
+		try {
+			output = StringUtil.getUTF_8(input);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(output);
 	}
 
 }

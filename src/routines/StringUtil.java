@@ -17,6 +17,7 @@ package routines;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
@@ -435,27 +436,19 @@ public class StringUtil {
 	 * 
 	 *         {talendTypes} String
 	 * 
-	 *         {param} String("value1") text: String.
+	 *         {param} String("value1") str: String.
 	 * 
-	 *         {example} getUTF_8(aString) # 2323133_18
+	 *         {example} getUTF_8(str) # 2323133_18
+	 * @throws UnsupportedEncodingException 
 	 */
-	public static String getUTF_8(String text) {
-		if (text == null) {
+	public static String getUTF_8(String str) throws UnsupportedEncodingException {
+		if (str == null) {
 			return null;
 		}
-		if (text.isEmpty()) {
+		if (str.isEmpty()) {
 			return "";
 		}
-		StringBuilder sb = new StringBuilder();
-		java.nio.charset.Charset cs = java.nio.charset.Charset.forName("UTF-8");
-		// replaces all not UTF-8 chars to standard replacement chars
-		java.nio.ByteBuffer bb = cs.encode(text);
-		// get it back as char buffer
-		java.nio.CharBuffer cb = cs.decode(bb);
-		while (cb.hasRemaining()) {
-			sb.append(cb.get()); // add chars to output buffer
-		}
-		return sb.toString();
+		return URLEncoder.encode(str, "UTF-8").replaceAll("%(..)%(..)", "%u$1$2");
 	}
 
 	/**
