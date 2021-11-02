@@ -322,14 +322,8 @@ public class TestStringUtil {
 	
 	@Test
 	public void testGetUtf8() {
-		String input = "special-数据应用-text";
-		String output = input;
-		try {
-			output = StringUtil.getUTF_8(input);
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		String input = "special-数据应用-text(x) abcdefghijklmnopqrstxyzäöü€$% /|\\ ";
+		String output = StringUtil.getUTF_8(input);
 		System.out.println(output);
 	}
 

@@ -17,7 +17,12 @@ package routines;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URLEncoder;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
@@ -436,19 +441,18 @@ public class StringUtil {
 	 * 
 	 *         {talendTypes} String
 	 * 
-	 *         {param} String("value1") str: String.
+	 *         {param} String("value1") text: String.
 	 * 
-	 *         {example} getUTF_8(str) # 2323133_18
-	 * @throws UnsupportedEncodingException 
+	 *         {example} getUTF_8(aString) # 2323133_18
 	 */
-	public static String getUTF_8(String str) throws UnsupportedEncodingException {
-		if (str == null) {
+	public static String getUTF_8(String text) {
+		if (text == null) {
 			return null;
 		}
-		if (str.isEmpty()) {
+		if (text.isEmpty()) {
 			return "";
 		}
-		return URLEncoder.encode(str, "UTF-8").replaceAll("%(..)%(..)", "%u$1$2");
+		return text.replaceAll("[^\\u0000-\\uFFFF]", "?");
 	}
 
 	/**
