@@ -19,7 +19,7 @@ public class TestNumberUtil {
 	
 	@Test
 	public void testRoundScaleN() {
-		double expected = 6.675d;
+		double expected = 6.68d;
 		double test = 6.675000000000003d;
 		int precision = 2;
 		double actual = NumberUtil.roundScaleN(test, precision);
@@ -37,4 +37,13 @@ public class TestNumberUtil {
 		assertTrue("Positive test failed", NumberUtil.equals(t1, t2, precision));
 	}
 
+	@Test
+	public void testNumber2String() {
+		double d = 100000000d;
+		String expected = "100000000";
+		String actual = NumberUtil.numberToString(d, false, false, 4);
+		System.out.println(actual);
+		assertEquals("Format wrong", expected, actual);
+	}
+	
 }
