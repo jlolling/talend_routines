@@ -889,7 +889,8 @@ public class FileUtil {
 			targetFile = new File(targetFilePath);
 		}
 		FileInputStream fin = new FileInputStream(sourceFile);
-		UnicodeBOMInputStream inBOM = new UnicodeBOMInputStream(fin).skipBOM();
+		UnicodeBOMInputStream inBOM = new UnicodeBOMInputStream(fin);
+		inBOM.skipBOM();
 		boolean hasBOM = (inBOM.getBOM() != null);
 		BufferedInputStream in = new BufferedInputStream(inBOM);
 		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile));
