@@ -10,7 +10,7 @@ To use them in your studio follow these steps:
 
 4. Save it and that it - have a lot of fun.
 
-##Following routines are available:
+## Following routines are available:
 * FileUtil: useful methods to handle files
 * StringUtil: a lot of String manipualtion functions
 * RegexUtil: a lot of functions to deal with regularly expressions
@@ -18,5 +18,7 @@ To use them in your studio follow these steps:
 * GenericDateUtil: a tolerant parser for date/time
 * GlobalMapUtil: extracting useful values from the globalMap
 * TimestampUtil: functions to transform date/time or extracting parts of it
+* JobUtil: tools to run scripts
+* TalendJobUtil: tools to improve Talend job run scripts
 
 ... check the routine package in the source! All of them have comments
