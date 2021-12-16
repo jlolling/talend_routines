@@ -88,21 +88,21 @@ public class TestFileUtil {
 
 	@Test
 	public void testFileUnreadable() {
-		String path = "/Data/Talend/testdata/test/unreadble_dir/";
+		String path = "/var/testdata/test/unreadble_dir/";
 		boolean actual = FileUtil.fileReadable(path);
 		assertEquals("Path check failed", false, actual);
 	}
 
 	@Test
 	public void testFileReadableAndWritable() {
-		String path = "/Data/Talend/testdata/test/";
+		String path = "/var/testdata/test/";
 		boolean actual = FileUtil.fileReadableAndWritable(path);
 		assertEquals("Path check failed", true, actual);
 	}
 
 	@Test
 	public void testEnsureDirectoryExists1() throws Exception {
-		String expected = "/Data/Talend/testdata/test-create/";
+		String expected = "/var/testdata/test-create/";
 		String actual = FileUtil.ensureDirectoryExists(expected);
 		assertEquals("Path check failed", expected, actual);
 		File d = new File(actual);
@@ -111,7 +111,7 @@ public class TestFileUtil {
 
 	@Test
 	public void testEnsureDirectoryExists2() throws Exception {
-		String expected = "/Data/Talend/testdata/test-create";
+		String expected = "/var/testdata/test-create";
 		String actual = FileUtil.ensureDirectoryExists(expected);
 		assertEquals("Path check failed", expected, actual);
 		File d = new File(actual);
@@ -120,7 +120,7 @@ public class TestFileUtil {
 	
 	@Test
 	public void testConvertToBase64() throws Exception {
-		String path = "/Data/Talend/testdata/test/excel/store_report.txt";
+		String path = "/var/testdata/test/excel/store_report.txt";
 		System.out.println("Start convert file...");
 		String actual = FileUtil.getBytesAsBase64(path);
 		System.out.println("Read expected content...");
@@ -134,7 +134,7 @@ public class TestFileUtil {
 	@Test
 	public void testReadReverseOneLine() throws Exception {
 		String expected = "Carrington Frozen Mushroom Pizza|19-12-1997|Gayle Watson|11.19|3.9165|3.0|2.8571428571";
-		String path = "/Data/Talend/testdata/test/excel/store_report.txt";
+		String path = "/var/testdata/test/excel/store_report.txt";
 		String actual = FileUtil.readReverseNumberLines(path, 1, null);
 		System.out.println(actual);
 		assertEquals("Check failed", expected, actual);
@@ -145,7 +145,7 @@ public class TestFileUtil {
 		String expected = "Carrington Frozen Mushroom Pizza|19-12-1997|Gayle Watson|11.19|3.9165|3.0|2.8571428571\n" +
 				          "Landslide Extra Chunky Peanut Butter|19-12-1997|Gayle Watson|2.19|0.9636|3.0|2.2727272727\n" +
                           "Plato Grape Jam|19-12-1997|Gayle Watson|7.92|3.4848|4.0|2.2727272727";
-		String path = "/Data/Talend/testdata/test/excel/store_report.txt";
+		String path = "/var/testdata/test/excel/store_report.txt";
 		String actual = FileUtil.readReverseNumberLines(path, 3, null);
 		System.out.println(actual);
 		assertEquals("Check failed", expected, actual);

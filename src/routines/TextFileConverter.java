@@ -22,6 +22,7 @@ public class TextFileConverter {
 	private long currentInputLineNumber = 0;
 	private long maxLinesPerFile = 0;
 	private long currentOutputLineNumber = 0;
+	private boolean readWholeText = false;
 	
 	public static class Replacement {
 		
@@ -41,6 +42,9 @@ public class TextFileConverter {
 				replacement = "";
 			}
 			list.add(new Replacement(searchStr, replacement));
+			if (searchStr.contains("\n")) {
+				readWholeText = true;
+			}
 		}
 	}
 
@@ -113,7 +117,11 @@ public class TextFileConverter {
 		if (targetDir.exists() == false) {
 			throw new Exception("Target file folder: " + targetDir.getAbsolutePath() + " does not exist.");
 		}
-		convert(source, target, targetLineSeparator);
+		if (readWholeText) {
+			convertAllAtOnce(source, target, targetLineSeparator);
+		} else {
+			convertLineByLine(source, target, targetLineSeparator);
+		}
 		if (targetPath.equals(source.getAbsolutePath()+"-tmpfile")) {
 			// delete former source file
 			if (source.delete() == false) {
@@ -133,7 +141,7 @@ public class TextFileConverter {
 		return line;
 	}
 	
-	private void convert(final File source, final File target, final String targetLineSeparator) throws IOException {
+    private void convertLineByLine(final File source, final File target, final String targetLineSeparator) throws IOException {
 		if (source.equals(target)) {
 			throw new IllegalArgumentException("source cannot be the same as target file");
 		}
@@ -146,6 +154,7 @@ public class TextFileConverter {
 						new FileOutputStream(currentTargetFile), targetEncoding));
 		String line = null;
 		int fileIndex = 0;
+		boolean firstLine = true;
 		while ((line = in.readLine()) != null) {
 			if (Thread.currentThread().isInterrupted()) {
 				break;
@@ -160,15 +169,46 @@ public class TextFileConverter {
 						new OutputStreamWriter(
 								new FileOutputStream(currentTargetFile), targetEncoding));
 			}
+			if (firstLine) {
+				firstLine = false;
+			} else {
+				out.write(targetLineSeparator);
+			}
 			out.write(replace(line));
-			out.write(targetLineSeparator);
-			currentOutputLineNumber++;
 		}
 		out.flush();
 		out.close();
 		in.close();
 	}
 	
+	private void convertAllAtOnce(final File source, final File target, final String targetLineSeparator) throws IOException {
+		if (source.equals(target)) {
+			throw new IllegalArgumentException("source cannot be the same as target file");
+		}
+		File currentTargetFile = target;
+		final BufferedReader in = new BufferedReader(
+				new InputStreamReader(
+						new FileInputStream(source), sourceEncoding));
+		BufferedWriter out = new BufferedWriter(
+				new OutputStreamWriter(
+						new FileOutputStream(currentTargetFile), targetEncoding));
+		String line = null;
+		StringBuilder content = new StringBuilder(10000);
+		while ((line = in.readLine()) != null) {
+			if (Thread.currentThread().isInterrupted()) {
+				break;
+			}
+			currentInputLineNumber++;
+			content.append(line);
+			content.append(targetLineSeparator);
+			currentOutputLineNumber++;
+		}
+		out.write(replace(content.toString()));
+		out.flush();
+		out.close();
+		in.close();
+	}
+
 	public long getCurrentLineNumber() {
 		return currentInputLineNumber;
 	}

@@ -17,12 +17,6 @@ package routines;
 
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CodingErrorAction;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
@@ -1151,4 +1145,6 @@ public class StringUtil {
     	}
     }
 	
+    public static final int INDEX_NOT_FOUND = -1;
+    
 }
