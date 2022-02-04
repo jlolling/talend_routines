@@ -92,8 +92,8 @@ public class TestStringUtil {
 		int expected = 0;
 		int actual = StringUtil.length(test);
 		assertEquals(expected, actual);
-		test = "äüö";
-		expected = 3;
+		test = "Ã¤Ã¼Ã¶";
+		expected = 6;
 		actual = StringUtil.length(test);
 		assertEquals(expected, actual);
 	}
@@ -149,9 +149,9 @@ public class TestStringUtil {
 
 	@Test
 	public void testContainsTokens() throws Exception {
-		String test = "Mit Katharina Eickhoff. Anonymus: La guillotine (Les Lunaisiens)Hector Berlioz: Hymne des Marseillais (Sylvia McNair, Sopran; Richard Leech, Tenor; Choir of St. Michael; Choir of St. David's; Baltimore Symphony Chorus and Orchestra, Leitung: David Zinman)Georg Philipp Telemann: Quartett Nr. 7, aus \"Nouveaux quatuors en six suites\" (Barthold Kuijken, Flöte; Sigiswald Kuijken, Violine; Wieland Kuijken, Viola da gamba; Gustav Leonhardt, Cembalo)Henry Charles Litolff: Maximilien Robespierre op. 55, Konzertouvertüre (Nordwestdeutsche Philharmonie, Leitung: Georg Fritzsch)Anonymus: La queue a Robespierre (Les Lunaisiens)Umberto Giordano: Ausschnitt aus dem musikalischen Drama \"André Chénier\" (Carlo Bergonzi, Tenor; Orchestra dell'Accademia Nazionale di Santa Cecilia, Leitung: Gianandrea Gavazzeni)John Zorn: Cat O'Nine Tails (Kronos Quartet)Hyacinthe Jadin: Sonate c-Moll op. 5,3, aus der Sammlung \"Trois sonates pour le forte-piano ... oeuvre 5e\" (Patrick Cohen, Hammerklavier)Reynaldo Hahn: A Chloris (Philippe Jaroussky, Countertenor; Jérôme Ducros, Klavier)Maurice Ravel: Suite Nr. 2, aus dem Ballett \"Daphnis und Chloe\" (Cleveland Orchestra, Leitung: Christoph von Dohnányi)Jean-Baptiste Lully: Te Deum, Motette (Amel Brahim-Djelloul und Aurore Bucher, Sopran; Reinoud Van Mechelen, Countertenor; Jeffrey Thompson, Tenor; Benoît Arnould, Bass; Capella Cracoviensis; Le Poeme Harmonique, Leitung: Vincent Dumestre)Jean-Baptiste Davaux: Sinfonie concertante mélée d'airs patriotiques G-Dur (Werner Ehrhardt und Andrea Keller, Violine; Concerto Köln)";
+		String test = "Mit Katharina Eickhoff. Anonymus: La guillotine (Les Lunaisiens)Hector Berlioz: Hymne des Marseillais (Sylvia McNair, Sopran; Richard Leech, Tenor; Choir of St. Michael; Choir of St. David's; Baltimore Symphony Chorus and Orchestra, Leitung: David Zinman)Georg Philipp Telemann: Quartett Nr. 7, aus \"Nouveaux quatuors en six suites\" (Barthold Kuijken, FlÃ¶te; Sigiswald Kuijken, Violine; Wieland Kuijken, Viola da gamba; Gustav Leonhardt, Cembalo)Henry Charles Litolff: Maximilien Robespierre op. 55, KonzertouvertÃ¼re (Nordwestdeutsche Philharmonie, Leitung: Georg Fritzsch)Anonymus: La queue a Robespierre (Les Lunaisiens)Umberto Giordano: Ausschnitt aus dem musikalischen Drama \"AndrÃ© ChÃ©nier\" (Carlo Bergonzi, Tenor; Orchestra dell'Accademia Nazionale di Santa Cecilia, Leitung: Gianandrea Gavazzeni)John Zorn: Cat O'Nine Tails (Kronos Quartet)Hyacinthe Jadin: Sonate c-Moll op. 5,3, aus der Sammlung \"Trois sonates pour le forte-piano ... oeuvre 5e\" (Patrick Cohen, Hammerklavier)Reynaldo Hahn: A Chloris (Philippe Jaroussky, Countertenor; JÃ©rÃ´me Ducros, Klavier)Maurice Ravel: Suite Nr. 2, aus dem Ballett \"Daphnis und Chloe\" (Cleveland Orchestra, Leitung: Christoph von DohnÃ¡nyi)Jean-Baptiste Lully: Te Deum, Motette (Amel Brahim-Djelloul und Aurore Bucher, Sopran; Reinoud Van Mechelen, Countertenor; Jeffrey Thompson, Tenor; BenoÃ®t Arnould, Bass; Capella Cracoviensis; Le Poeme Harmonique, Leitung: Vincent Dumestre)Jean-Baptiste Davaux: Sinfonie concertante mÃ©lÃ©e d'airs patriotiques G-Dur (Werner Ehrhardt und Andrea Keller, Violine; Concerto KÃ¶ln)";
 		List<String> list = new ArrayList<String>();
-		list.add("Acht Brücken");
+		list.add("Acht BrÃ¼cken");
 		list.add("Aldeburgh Festival");
 		list.add("Arolser Barock-Festspiele");
 		list.add("Avanti Summer Sounds");
@@ -162,13 +162,13 @@ public class TestStringUtil {
 		list.add("BBC Proms");
 		list.add("Brandenburgische Sommerkonzerte");
 		list.add("Bregenzer Festspiele");
-		list.add("Brühler Schlosskonzerte");
+		list.add("BrÃ¼hler Schlosskonzerte");
 		list.add("Eurovision Young Musicians");
 		list.add("Festspiele Mecklenburg-Vorpommern");
-		list.add("Heidelberger Frühling");
+		list.add("Heidelberger FrÃ¼hling");
 		list.add("International Chamber Festival Utrecht");
-		list.add("Internationale Darmstädter Ferienkurse für Neue Musik");
-		list.add("Internationale Händel-Festspiele Göttingen");
+		list.add("Internationale DarmstÃ¤dter Ferienkurse fÃ¼r Neue Musik");
+		list.add("Internationale HÃ¤ndel-Festspiele GÃ¶ttingen");
 		list.add("Internationale Jazzwoche Burghausen");
 		list.add("Internationales Festival geistlicher Musik Freiburg");
 		list.add("Internationales Musikfest Kreuth");
@@ -181,7 +181,7 @@ public class TestStringUtil {
 		list.add("Montpellier Festival");
 		list.add("Moritzburg Festival");
 		list.add("Moskauer Virtuosenkonzert");
-		list.add("Mozartfest Würzburg");
+		list.add("Mozartfest WÃ¼rzburg");
 		list.add("Musikfest Berlin");
 		list.add("Musikfest Bremen");
 		list.add("Musikfest Erzgebirge");
@@ -207,7 +207,7 @@ public class TestStringUtil {
 		list.add("Weilburger Schlosskonzerte");
 		list.add("West Cork Chamber Music Festival");
 		list.add("Wiener Festwochen");
-		list.add("Wittener Tage für neue Kammermusik");
+		list.add("Wittener Tage fÃ¼r neue Kammermusik");
 		list.add("Young Euro Classic");
 		list.add("Festival");
 		list.add("Festivals");
@@ -309,8 +309,8 @@ public class TestStringUtil {
 	
 	@Test
 	public void testTrim() {
-		String in = " abcd efgüöä      " + ((char) 160); // take care there are other chars then spaces!
-		String expected = "abcd efgüöä";
+		String in = " abcd efgÃ¼Ã¶Ã¤" + ((char) 160); // take care there are other chars then spaces!
+		String expected = "abcd efgÃ¼Ã¶Ã¤";
 		String actual = StringUtil.trim(in);
 		assertEquals("trim does not work", expected, actual);
 		for (int i = 0, len = in.length(); i < len; i++) {
@@ -321,9 +321,71 @@ public class TestStringUtil {
 	
 	@Test
 	public void testGetUtf8() {
-		String input = "special-数据应用-text(x) abcdefghijklmnopqrstxyzäöü€$% /|\\ ";
-		String output = StringUtil.getUTF_8(input);
-		System.out.println(output);
+		String test = "special-æ•°æ�®åº”ç”¨-text(x) \u1000 abcdefghijklmnopqrstxyzÃ¤Ã¶Ã¼â‚¬$% /|\\ ";
+		String expected = "special-æ•°æ�®åº”ç”¨-text(x) ? abcdefghijklmnopqrstxyzÃ¤Ã¶Ã¼â‚¬$% /|\\ ";
+		String actual = StringUtil.getUTF_8(test);
+		System.out.println(actual);
+		assertEquals("Clean does not work", expected, actual);
+	}
+	
+	@Test
+	public void testSubstringBetweenWithoutDelimiters1() {
+		String start = "%%%%% Start";
+		String end = "%%%%%";
+		String test = "asdsdfsdfsdfercw" + start + "\nexample text\n" + end + "kjlkjwxnwwx";
+		String expected = "\nexample text\n";
+		String actual = StringUtil.substringBetween(test, start, end, false);
+		assertEquals("extracted text wrong", expected, actual);
 	}
 
+	@Test
+	public void testSubstringBetweenWithoutDelimiters2() {
+		String start = "%%%%% Start";
+		String end = "%%%%%";
+		String test = start + "\nexample text\n" + end;
+		String expected = "\nexample text\n";
+		String actual = StringUtil.substringBetween(test, start, end, false);
+		assertEquals("extracted text wrong", expected, actual);
+	}
+
+	@Test
+	public void testSubstringBetweenWithoutDelimitersNotFound() {
+		String start = "%%%%% Start";
+		String end = "%%%%%";
+		String test = "example text\n" + end;
+		String expected = "";
+		String actual = StringUtil.substringBetween(test, start, end, false);
+		assertEquals("extracted text wrong", expected, actual);
+	}
+
+
+	@Test
+	public void testSubstringBetweenWithDelimiters1() {
+		String start = "%%%%% Start";
+		String end = "%%%%%";
+		String test = "asdsdfsdfsdfercw" + start + "\nexample text\n" + end + "kjlkjwxnwwx";
+		String expected = start + "\nexample text\n" + end;
+		String actual = StringUtil.substringBetween(test, start, end, true);
+		assertEquals("extracted text wrong", expected, actual);
+	}
+
+	@Test
+	public void testSubstringBetweenWithDelimiters2() {
+		String start = "%%%%% Start";
+		String end = "%%%%%";
+		String test = start + "\nexample text\n" + end;
+		String expected = start + "\nexample text\n" + end;
+		String actual = StringUtil.substringBetween(test, start, end, true);
+		assertEquals("extracted text wrong", expected, actual);
+	}
+
+	@Test
+	public void testSubstringBetweenWithDelimitersNotFound() {
+		String start = "%%%%% Start";
+		String end = "%%%%%";
+		String test = "example text\n" + end;
+		String expected = "";
+		String actual = StringUtil.substringBetween(test, start, end, true);
+		assertEquals("extracted text wrong", expected, actual);
+	}
 }
