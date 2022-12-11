@@ -1149,4 +1149,244 @@ public class StringUtil {
 	
     public static final int INDEX_NOT_FOUND = -1;
     
+	/**
+     * Converts a list of string delimited by ,;| into a SQL in expression
+     * @param content the content to converted
+     * @return sql in expression
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * 
+     * {example} makeSQLInListExpressionForText(content)
+     */
+    public static String makeSQLInListExpressionForText(String listOfValuesStr) {
+    	if (listOfValuesStr == null) {
+    		return "";
+    	} else {
+    		return " in ('" + listOfValuesStr.replace(",", "','").replace(";", "','") + "')"; 
+    	}
+    }
+    
+    
+	/**
+     * Converts a camel case formatted string into a snake case formated string
+     * @param content the content to qouted
+     * @return qouted json value
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * 
+     * {example} camelToSnake(content)
+     */
+    public static String camelToSnake(String content) {
+    	if (content == null) return null;
+        // Empty String
+        String result = "";
+        // Append first character(in lower case)
+        // to result string
+        char c = content.charAt(0);
+        result = result + Character.toLowerCase(c);
+        // Traverse the string from
+        // is index to last index
+        boolean lastWasUppercase = false;
+        for (int i = 1; i < content.length(); i++) {
+            char ch = content.charAt(i);
+            // Check if the character is upper case
+            // then append '_' and such character
+            // (in lower case) to result string
+            if (Character.isUpperCase(ch)) {
+            	if (lastWasUppercase) {
+                    result
+                        = result
+                          + Character.toLowerCase(ch);
+            	} else {
+                    result = result + '_';
+                    result
+                        = result
+                          + Character.toLowerCase(ch);
+                    lastWasUppercase = true;
+            	}
+            } else {
+            	lastWasUppercase = false;
+                // If the character is lower case then
+                // add such character into result string
+                result = result + ch;
+            }
+        }
+        // return the result
+        return result;
+    }
+
+    /**
+     * Function returns the string before the untilString
+     * @param content
+     * @param untilString
+     * @return The content before the untilString
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * {param} String(untilString) untilString
+     * 
+     * {example} substringBefore(content, untilString)
+     */
+    public static String substringBefore(String content, String untilString) {
+    	return substringBefore(content, untilString, false);
+    }
+
+    /**
+     * Function returns the string before the untilString
+     * @param content
+     * @param untilString
+     * @param includeDelimiter
+     * @return The content before the untilString
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * {param} String(untilString) untilString
+     * {param} boolean(includeDelimiter) false
+     * 
+     * {example} substringBefore(content, untilString, false)
+     */
+    public static String substringBefore(String content, String untilString, boolean includeDelimiter) {
+    	// check if content is null
+    	if (content == null) {
+    		return null;
+    	}
+    	// check if search string is null or empty
+    	if (untilString == null || untilString.isEmpty()) {
+    		throw new IllegalArgumentException("untilString must not be null or empty!");
+    	}
+    	// get position of searchString in whole string and deliver everything before
+    	int pos = content.indexOf(untilString);
+    	if (pos < 0) {
+    		return "";
+    	} else {
+    		if (includeDelimiter) {
+        		return content.substring(0, pos + untilString.length());
+    		} else {
+        		return content.substring(0, pos);
+    		}
+    	}
+    }
+
+    /**
+     * Function returns the string after the beforeString
+     * @param content
+     * @param beforeString
+     * @return Content after the beforeString
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * {param} String(beforeString) beforeString
+     * 
+     * {example} substringAfter(content, beforeString)
+     */
+    public static String substringAfter(String content, String beforeString) {
+    	return substringAfter(content, beforeString, false);
+    }
+    
+    /**
+     * Function returns the string after the beforeString
+     * @param content
+     * @param beforeString
+     * @param includeDelimiter 
+     * @return Content after the beforeString
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * {param} String(beforeString) beforeString
+     * {param} boolean(includeDelimiter) false
+     * 
+     * {example} substringAfter(content, beforeString, false)
+     */
+    public static String substringAfter(String content, String beforeString, boolean includeDelimiter) {
+    	// check if content is null
+    	if (content == null) {
+    		return null;
+    	}
+    	// check if search string is null or empty
+    	if (beforeString == null || beforeString.isEmpty()) {
+    		throw new IllegalArgumentException("beforeString must not be null or empty!");
+    	}
+    	// get position of searchString in whole string and deliver everything after
+    	int pos = content.indexOf(beforeString);
+    	if (pos < 0) {
+    		return "";
+    	} else {
+    		if (includeDelimiter) {
+        		return content.substring(pos);
+    		} else {
+        		return content.substring(pos + beforeString.length());
+    		}
+    	}
+    }
+
+    /**
+     * Function returns the string after the beforeString
+     * @param content
+     * @param before
+     * @param includeDelimiter 
+     * @return Content after the beforeString
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * {param} String(before) before
+     * {param} String(after) after
+     * {param} boolean(includeDelimiter) false
+     * 
+     * {example} substringBetween(content, before, after, false)
+     */
+    public static String substringBetween(String content, String before, String after, boolean includeDelimiter) {
+    	// check if content is null
+    	if (content == null) {
+    		return null;
+    	}
+    	// check if search string is null or empty
+    	if (before == null || before.isEmpty()) {
+    		throw new IllegalArgumentException("parameter before cannot be null or empty!");
+    	}
+    	// check if search string is null or empty
+    	if (after == null || after.isEmpty()) {
+    		throw new IllegalArgumentException("parameter after cannot not be null or empty!");
+    	}
+    	// get position of searchString in whole string and deliver everything after
+    	int pos1 = content.indexOf(before);
+    	if (pos1 < 0) {
+    		return "";
+    	} else {
+    		int pos2 = content.indexOf(after, pos1 + before.length());
+    		if (pos2 < 0) {
+    			return "";
+    		} else {
+    			if (includeDelimiter) {
+    				return content.substring(pos1, pos2 + after.length());
+    			} else {
+    				return content.substring(pos1 + before.length(), pos2);
+    			}
+    		}
+    	}
+    }
+
+    
 }
