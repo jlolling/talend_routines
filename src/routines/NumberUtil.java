@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Jan Lolling jan.lolling@gmail.com
+ * Copyright 2022 Jan Lolling jan.lolling@gmail.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,7 +119,139 @@ public class NumberUtil {
 		}
 	}
 		
-    /**
+	/**
+     * return integer and accepts Numbers or String.
+     * If the value is not a number, it returns null or 0
+     * @param input (input value
+     * @param notNull if true: if null or not a number, it returns 0
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} int | Integer
+     * 
+     * {param} Object(123) input: Number or String
+     * {param} Boolean(notNull)
+     * 
+     * {example} getFailSaveInt("123", false) result: 123 ...
+     * 
+     */
+	public static Integer getFailSaveInt(Object input, boolean notNull) {
+		if (input instanceof Number) {
+			return ((Number) input).intValue();
+		} else if (input instanceof String) {
+			String s = (String) input;
+			if (s.trim().isEmpty()) {
+				if (notNull) {
+					return 0;
+				} else {
+					return null;
+				}
+			}
+			try {
+				return Integer.parseInt(s.trim());
+			} catch (Exception e) {
+				if (notNull) {
+					return 0;
+				} else {
+					return null;
+				}
+			}
+		} else if (notNull) {
+			return 0;
+		} else {
+			return null;
+		}
+	}
+		
+	/**
+     * return Long and accepts Numbers or String.
+     * If the value is not a number, it returns null or 0
+     * @param input (input value
+     * @param notNull if true: if null or not a number, it returns 0
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} long | Long
+     * 
+     * {param} Object(123) input: Number or String
+     * {param} Boolean(notNull)
+     * 
+     * {example} getFailSaveLong("123", false) result: 123 ...
+     * 
+     */
+	public static Long getFailSaveLong(Object input, boolean notNull) {
+		if (input instanceof Number) {
+			return ((Number) input).longValue();
+		} else if (input instanceof String) {
+			String s = (String) input;
+			if (s.trim().isEmpty()) {
+				if (notNull) {
+					return 0l;
+				} else {
+					return null;
+				}
+			}
+			try {
+				return Long.parseLong(s.trim());
+			} catch (Exception e) {
+				if (notNull) {
+					return 0l;
+				} else {
+					return null;
+				}
+			}
+		} else if (notNull) {
+			return 0l;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+     * return Double and accepts Numbers or String.
+     * If the value is not a number, it returns null or 0
+     * @param input value
+     * @param notNull if true: if null or not a number, it returns 0
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} double | Double
+     * 
+     * {param} Object(123) input: Number or String
+     * {param} Boolean(notNull)
+     * 
+     * {example} getFailSaveDouble("123", false) result: 123 ...
+     * 
+     */
+	public static Double getFailSaveDouble(Object input, boolean notNull) {
+		if (input instanceof Number) {
+			return ((Number) input).doubleValue();
+		} else if (input instanceof String) {
+			String s = (String) input;
+			if (s.trim().isEmpty()) {
+				if (notNull) {
+					return 0d;
+				} else {
+					return null;
+				}
+			}
+			try {
+				return Double.parseDouble(s.trim());
+			} catch (Exception e) {
+				if (notNull) {
+					return 0d;
+				} else {
+					return null;
+				}
+			}
+		} else if (notNull) {
+			return 0d;
+		} else {
+			return null;
+		}
+	}
+
+	/**
      * return integer and accepts Integer and String. Null returns 0
      * 
      * {Category} NumberUtil

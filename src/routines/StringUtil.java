@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Jan Lolling jan.lolling@gmail.com
+ * Copyright 2022 Jan Lolling jan.lolling@gmail.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -424,6 +424,8 @@ public class StringUtil {
 		return false;
 	}
 
+	private static Pattern noneUtf8Pattern = Pattern.compile("[^\\u0000-\\uFFFF]");
+
 	/**
 	 * returns a UTF-8 encoded string
 	 * 
@@ -446,7 +448,7 @@ public class StringUtil {
 		if (text.isEmpty()) {
 			return "";
 		}
-		return text.replaceAll("[^\\u0000-\\uFFFF]", "?");
+		return noneUtf8Pattern.matcher(text).replaceAll("?");
 	}
 
 	/**

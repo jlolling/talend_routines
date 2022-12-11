@@ -26,7 +26,7 @@ import java.util.Map;
 
 /**
  * This class helps to render records as a html table
- * @author jan.lolling@cimt-ag.de
+ * @author jan.lolling@gmail.com
  */
 public class HTMLTable {
 	
@@ -34,22 +34,55 @@ public class HTMLTable {
 	private List<List<String>> rows = null;
 	private int rowIndex = -1;
 	private String tableStyle = "border-collapse: collapse";
-	private String headerStyle = "border: 2px solid black; padding: 5px;";
+	private String headerStyle = "border: 2px solid black; padding: 5px; background-color: #DDDDDD; font-weight: bold;";
 	private String dataCellStyle = "border: 1px solid black; padding: 5px;";
-	private Map<Integer, String> additionalRowStyles = new HashMap<Integer, String>();
+	private Map<Integer, String> alternativeRowStyles = new HashMap<Integer, String>();
 	private Map<String, String> additionalCellSyles = new HashMap<String, String>();
+	private String rowBackgroundEvenStyle = "background-color: #FFFFFF;";
+	private String rowBackgroundOddStyle = "background-color: #EEEEEE;";
+	private boolean useAlternatingBackgroundForRows = true;
+	public static final String STYLE_BG_RED = "background-color: #FFCCCB;";
+	public static final String STYLE_BG_YELLOW = "background-color: #FFFFE0;";
+	public static final String STYLE_BG_GREEN = "background-color: #90EE90;";
+	public static final String STYLE_BG_WHITE = "background-color: #FFFFFF;";
 	
+	public boolean isUseAlternatingBackgroundForRows() {
+		return useAlternatingBackgroundForRows;
+	}
+
+	public void setUseAlternatingBackgroundForRows(Boolean useAlternatingBackgroundForRows) {
+		if (useAlternatingBackgroundForRows != null) {
+			this.useAlternatingBackgroundForRows = useAlternatingBackgroundForRows;
+		}
+	}
+
 	private String getDataRowStyle(int rowIndex) {
 		String style = null;
 		if (dataCellStyle != null) {
 			style = dataCellStyle;
 		}
-		String additionalRowStyle = additionalRowStyles.get(rowIndex);
-		if (additionalRowStyle != null) {
+		String alternativeRowStyle = alternativeRowStyles.get(rowIndex);
+		if (alternativeRowStyle != null) {
 			if (style.trim().endsWith(";") == false) {
 				style = style + ";";
 			}
-			style = style + additionalRowStyle;
+			style = style + alternativeRowStyle;
+		} else {
+			if (useAlternatingBackgroundForRows) {
+				if (rowIndex % 2 == 0) {
+					// even row
+					if (style.trim().endsWith(";") == false) {
+						style = style + ";";
+					}
+					style = style + rowBackgroundEvenStyle;
+				} else {
+					// even row
+					if (style.trim().endsWith(";") == false) {
+						style = style + ";";
+					}
+					style = style + rowBackgroundOddStyle;
+				}
+			}
 		}
 		return style;
 	}
@@ -126,7 +159,7 @@ public class HTMLTable {
 		rowIndex++;
 		rows.add(new ArrayList<String>());
 		if (style != null && style.trim().isEmpty() == false) {
-			additionalRowStyles.put(rowIndex, style);
+			alternativeRowStyles.put(rowIndex, style);
 		}
 	}
 	
@@ -135,14 +168,26 @@ public class HTMLTable {
 	 * @param value a string value
 	 */
 	public void addDataValue(String value) {
+		addDataValue(value, null);
+	}
+	
+	/**
+	 * add a value to the current row
+	 * @param value a string value
+	 * @param additionalCellStyle CSS style for this cell 
+	 */
+	public void addDataValue(String value, String additionalCellStyle) {
 		if (rowIndex < 0) {
 			throw new IllegalArgumentException("Call addRow() first!");
 		}
-		List<String> row = rows.get(rowIndex);
 		if (value == null) {
 			value = "";
+		} else {
+			value = getHTMLEncoded(value);
 		}
+		List<String> row = rows.get(rowIndex);
 		row.add(value);
+		setupCellStyle(row, rowIndex, additionalCellStyle);
 	}
 
 	private void setupCellStyle(List<String> row, int rowIndex, String style) {
@@ -190,10 +235,10 @@ public class HTMLTable {
 	/**
 	 * add a value to the current row
 	 * @param value a boolean value
-	 * @param pattern SimpleDateFormat pattern
 	 * @param additionalCellStyle CSS style for this cell
+	 * @param pattern SimpleDateFormat pattern
 	 */
-	public void addDataValue(Date value, String pattern, String additionalCellStyle) {
+	public void addDataValue(Date value, String additionalCellStyle, String pattern) {
 		if (rowIndex < 0) {
 			throw new IllegalArgumentException("Call addRow() first!");
 		}
@@ -221,10 +266,10 @@ public class HTMLTable {
 	/**
 	 * add a value to the current row
 	 * @param value a boolean value
-	 * @param format see DecimalFormat
 	 * @param additionalCellStyle CSS style for this cell
+	 * @param format see DecimalFormat
 	 */
-	public void addDataValue(Number value, String format, String additionalCellStyle) {
+	public void addDataValue(Number value, String additionalCellStyle, String format) {
 		if (rowIndex < 0) {
 			throw new IllegalArgumentException("Call addRow() first!");
 		}
@@ -234,7 +279,7 @@ public class HTMLTable {
 				if (value instanceof Short || value instanceof Integer || value instanceof Long) {
 					format = "##0";
 				} else {
-					format = "#,##0.00";
+					format = "#,##0.000";
 				}
 			}
 			NumberFormat nf = new DecimalFormat(format);
@@ -315,4 +360,51 @@ public class HTMLTable {
 		return table.toString();
 	}
 
+	/**
+	 * Replace the chars with html umlauts
+	 * @param text
+	 * @return encoded text
+	 */
+	public static String getHTMLEncoded(String text) {
+		if (text == null) {
+			return null;
+		}
+		text = text.replace("Ä","&Auml;");
+		text = text.replace("ä","&auml;");
+		text = text.replace("Ë","&Euml;");
+		text = text.replace("ë","&euml;");
+		text = text.replace("Ï","&Iuml;");
+		text = text.replace("ï","&iuml;");
+		text = text.replace("Ö","&Ouml;");
+		text = text.replace("ö","&ouml;");
+		text = text.replace("Ü","&Uuml;");
+		text = text.replace("ü","&uuml;");
+		text = text.replace("ß","&szlig;");
+		text = text.replace("À","&Agrave;");
+		text = text.replace("à","&agrave;");
+		text = text.replace("Á","&Aacute;");
+		text = text.replace("á","&aacute;");
+		text = text.replace("Â","&Acirc;");
+		text = text.replace("â","&acirc;");
+		text = text.replace("Ç","&Ccedil;");
+		text = text.replace("ç","&ccedil;");
+		text = text.replace("È","&Egrave;");
+		text = text.replace("è","&egrave;");
+		text = text.replace("É","&Eacute;");
+		text = text.replace("é","&eacute;");
+		text = text.replace("Ê","&Ecirc;");
+		text = text.replace("ê","&ecirc;");
+		text = text.replace("Ñ","&Ntilde;");
+		text = text.replace("ñ","&ntilde;");
+		text = text.replace("Ò","&Ograve;");
+		text = text.replace("ò","&ograve;");
+		text = text.replace("Ó","&Oacute;");
+		text = text.replace("ó","&oacute;");
+		text = text.replace("Ô","&Ocirc;");
+		text = text.replace("ô","&ocirc;");
+		text = text.replace("õ","&otilde;");
+		text = text.replace("Ÿ","&Yuml;");
+		text = text.replace("ÿ","&yuml;");		
+		return text;
+	}
 }
