@@ -20,7 +20,7 @@ import java.security.MessageDigest;
 import java.io.PushbackInputStream;
 
 /**
- * Copyright 2022 Jan Lolling jan.lolling@gmail.de
+ * Copyright 2021 Jan Lolling jan.lolling@gmail.de
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -207,6 +207,21 @@ public class FileUtil {
 		return file.exists();
 	}
 
+	/**
+	 * Fails if a file exists
+	 * 
+	 * {Category} FileUtil
+	 * 
+	 * {param} string(filePath) basePath: String.
+	 * 
+	 * {example} failIfFileNotExists(filePath) # ""
+	 */
+	public static void failIfFileNotExists(String filePath) throws Exception {
+		if (doesFileExist(filePath) == false) {
+			throw new Exception("The given file path: " + filePath + " does not exist!");
+		}
+	}
+	
 	/**
 	 * Checks if a file exists, can be read and write
 	 * 
@@ -598,6 +613,65 @@ public class FileUtil {
 			}
 		}
 	}
+	
+	/**
+	 * Copy a file
+	 * 
+	 * @param filePath
+	 * @param targetPath
+	 * @return the absolute path of the moved file
+	 * @throws Exception
+	 * 
+	 *                   {Category} FileUtil 
+	 *                   {talendTypes} String
+	 * 
+	 *                   {param} String(filePath) 
+	 *                   {param} String(targetPath)
+	 * 
+	 *                   {example} copyFile(filePath, targetPath)
+	 * 
+	 */
+	public static String copyFile(String sourcePath, String targetPath) throws Exception {
+		if (StringUtil.isEmpty(sourcePath)) {
+			throw new IllegalArgumentException("Source file path cannot be null or empty");
+		}
+		if (StringUtil.isEmpty(targetPath)) {
+			throw new IllegalArgumentException("Target file path cannot be null or empty");
+		}
+		File sp = new File(sourcePath);
+		if (sp.exists() == false) {
+			throw new Exception("Source file path: " + sp.getAbsolutePath() + " does not exist");
+		}
+		File tp = new File(targetPath);
+		File td = tp.getParentFile();
+		if (td == null) {
+			throw new Exception("Target path: " + targetPath + " does not contains a target folder");
+		}
+		if (td.exists() == false) {
+			td.mkdirs();
+		}
+		if (td.exists() == false) {
+			throw new Exception("Target dir: " + td.getAbsolutePath() + " does not exist and cannot be created"); 
+		}
+		BufferedInputStream in = new BufferedInputStream(new FileInputStream(sp));
+		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(tp));
+		try {
+			byte[] buffer = new byte[1024];
+			int length = 0;
+			while ((length = in.read(buffer)) != -1) {
+				out.write(buffer, 0, length);
+			}
+		} catch(Exception e) {
+			throw new Exception("Copy source file: " + sp.getAbsolutePath() + " to target file: " + tp.getAbsolutePath() + " failed: " + e.getMessage(), e);
+		} finally {
+			in.close();
+			if (out != null) {
+				out.flush();
+				out.close();
+			}
+		}
+		return tp.getAbsolutePath();
+	}
 
 	/**
 	 * Converts the path to a UNIX style path (which works on both: Windows and
@@ -891,7 +965,13 @@ public class FileUtil {
 		FileInputStream fin = new FileInputStream(sourceFile);
 		UnicodeBOMInputStream inBOM = new UnicodeBOMInputStream(fin);
 		inBOM.skipBOM();
-		final boolean hasBOM = inBOM.hasBOM();
+		boolean hasBOM = inBOM.hasBOM();
+		if (hasBOM == false && targetFilePath == null) {
+			// we do not have a BOM and we do not want to copy the file.
+			// nothing to do here
+			inBOM.close();
+			return false;
+		}
 		BufferedInputStream in = new BufferedInputStream(inBOM);
 		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile));
 		try {
@@ -901,9 +981,7 @@ public class FileUtil {
 				out.write(buffer, 0, length);
 			}
 		} finally {
-			if (inBOM != null) {
-				inBOM.close();
-			}
+			inBOM.close();
 			if (out != null) {
 				out.flush();
 				out.close();
@@ -911,7 +989,22 @@ public class FileUtil {
 		}
 		if (targetFilePath == null) {
 			sourceFile.delete();
-			targetFile.renameTo(sourceFile);
+			String tempFilePath = targetFile.getAbsolutePath();
+			if (targetFile.renameTo(sourceFile)) {
+				// check if the target file really exist!
+				Thread.sleep(500);
+				if (sourceFile.exists() == false) {
+					throw new Exception("Move of temp file: " + tempFilePath + " to original source file: " + sourceFile.getAbsolutePath() + " has actually succeeded but something went wrong! Now the source file also does not exist anymore!");
+				}
+			} else {
+				// move did not work because probably not the same file system between source and target
+				// check if the temp file still exist and copy it to the target
+				if (targetFile.exists() == false) {
+					throw new Exception("Move of temp file: " + tempFilePath + " to original file: " + sourceFile.getAbsolutePath() + " has been failed! The temp file also does not exist anymore!");
+				}
+				copyFile(tempFilePath, sourceFile.getAbsolutePath());
+				deleteFile(tempFilePath);
+			}
 		}
 		return hasBOM;
 	}
@@ -1076,13 +1169,11 @@ public class FileUtil {
 					this.bom = BOM.UTF_32_BE;
 					break;
 				}
-
 			case 3:
 				if ((bom[0] == (byte) 0xEF) && (bom[1] == (byte) 0xBB) && (bom[2] == (byte) 0xBF)) {
 					this.bom = BOM.UTF_8;
 					break;
 				}
-
 			case 2:
 				if ((bom[0] == (byte) 0xFF) && (bom[1] == (byte) 0xFE)) {
 					this.bom = BOM.UTF_16_LE;
@@ -1091,14 +1182,14 @@ public class FileUtil {
 					this.bom = BOM.UTF_16_BE;
 					break;
 				}
-
 			default:
 				this.bom = BOM.NONE;
 				break;
 			}
 
-			if (read > 0)
+			if (read > 0) {
 				in.unread(bom, 0, read);
+			}
 		}
 
 		/**
@@ -1112,10 +1203,6 @@ public class FileUtil {
 			return bom;
 		}
 		
-		/**
-		 * Does this file has a BOM?
-		 * @return true if a BOM was found
-		 */
 		public boolean hasBOM() {
 			return (bom != null && bom != BOM.NONE);
 		}
@@ -1205,4 +1292,181 @@ public class FileUtil {
 		private boolean skipped = false;
 
 	}
+	
+	/**
+	 * Deletes a file and repeate if it does not work
+	 * 
+	 * @param filePath
+	 * @param attempts
+	 * @return true if file could be deleted
+	 * 
+	 *         {Category} FileUtil 
+	 *         {talendTypes} Boolean
+	 * 
+	 *         {param} String(filePath) 
+	 *         {param} int(attempts)
+	 * 
+	 *         {example} delete(filePath,attempts)
+	 * 
+	 */
+	public static boolean deleteFile(String filePath, int attempts) {
+		if (filePath == null || filePath.trim().isEmpty()) {
+			throw new IllegalArgumentException("filePath cannot be null or empty");
+		}
+		File f = new File(filePath);
+		if (f.exists() == false) {
+			throw new IllegalArgumentException("Given file to delete does not exist: " + f.getAbsolutePath());
+		}
+		for (int i = 0; i < attempts; i++) {
+			f.delete();
+			if (f.exists() == false) {
+				return true;
+			} else {
+				try {
+					Thread.sleep(5000);
+				} catch (Exception e) {
+					return false;
+				}
+			}
+		}
+		return false;
+	}
+	
+    /**
+     * Returns true if jobserver is a unix system
+     * 
+     * {talendTypes} Boolean
+     * 
+     * {Category} JobUtil
+     * 
+     * {example} isUnixSystem() # true.
+     */
+    public static boolean isUnixSystem() {
+		String os = System.getProperty("os.name");
+		if (os != null) {
+			os = os.toLowerCase().trim();
+		} else {
+			return false;
+		}
+		if (os.contains("win")) {
+			return false;
+		} else {
+			return true;
+		}
+    }
+
+    /**
+	 * Returns the system native file path
+	 * 
+	 * @param filePath
+	 * @return the native path
+	 * 
+	 *         {Category} FileUtil 
+	 *         {talendTypes} String
+	 * 
+	 *         {param} String(filePath) 
+	 * 
+	 *         {example} getNativeFilePath(filePath)
+	 * 
+	 */
+	public static String getNativeFilePath(String path) {
+		if (path != null) {
+			if (isUnixSystem()) {
+				if (path.toLowerCase().startsWith("c:") || path.toLowerCase().startsWith("d:")) {
+					path = path.substring(2);
+				}
+				path = path.replace("\\", "/");
+				return path;
+			} else {
+				path = path.replace("/", "\\");
+				if (path.startsWith("\\")) {
+					path = "c:" + path;
+				}
+				return path;
+			}
+		} else {
+			return null;
+		}
+	}
+	
+    /**
+	 * Returns the file length
+	 * 
+	 * @param filePath
+	 * @return the file length
+	 * 
+	 *         {Category} FileUtil 
+	 *         {talendTypes} Long
+	 * 
+	 *         {param} String(filePath) 
+	 * 
+	 *         {example} getFileLength(filePath)
+	 * 
+	 */
+	public static long getFileLength(String filePath) throws Exception {
+		if (filePath == null || filePath.trim().isEmpty()) {
+			throw new IllegalArgumentException("Parameter filePath cannot be null or empty!");
+		}
+		File f = new File(filePath);
+		if (f.exists() == false) {
+			throw new Exception("File: " + f.getAbsolutePath() + " does not exist");
+		}
+		return f.length();
+	}
+	
+    /**
+	 * Check if file is empty
+	 * 
+	 * @param filePath
+	 * @throws Exception if file is empty
+	 * 
+	 *         {Category} FileUtil 
+	 * 
+	 *         {param} String(filePath) 
+	 * 
+	 *         {example} failIfFileIsEmpty(filePath)
+	 * 
+	 */
+	public static void failIfFileIsEmpty(String filePath) throws Exception {
+		long length = getFileLength(filePath);
+		if (length == 0) {
+			throw new Exception("File: " + filePath + " is empty!");
+		}
+	}
+	
+    /**
+	 * Renames a file
+	 * 
+	 * @param sourcePath full path of the source file 
+	 * @param targetName name of the target file
+	 * @return full path of the renamed file
+	 * @throws Exception if sourceFile does not exists or targetFile already exist 
+	 * 
+	 *         {Category} FileUtil 
+	 * 
+	 *         {param} String(sourcePath) 
+	 *         {param} String(targetName)
+	 *         {talendTypes} String
+	 *         {example} renameFile(context.sourceFile, context.targetName)
+	 * 
+	 */
+	public static String renameFile(String sourcePath, String targetName, boolean overwriteTarget) throws Exception {
+		File s = new File(sourcePath);
+		if (s.exists() == false) {
+			throw new Exception("Rename file failed: Source file: " + s.getAbsolutePath() + " does not exist");
+		}
+		File t = new File(s.getParentFile(), targetName);
+		if (t.exists()) {
+			if (overwriteTarget) {
+				if (t.delete() == false) {
+					throw new Exception("Rename file failed: Source file: " + s.getAbsolutePath() + ": Could not delete already existing target file: " + t.getAbsolutePath());
+				}
+			}
+		}
+		if (s.renameTo(t) == false) {
+			throw new Exception("Rename file failed: Unable to rename source: " + s.getAbsolutePath() + " to " + t.getAbsolutePath());
+		}
+		return t.getAbsolutePath();
+	}
+	
 }

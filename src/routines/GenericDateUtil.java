@@ -40,6 +40,12 @@ public class GenericDateUtil {
      * 
      * @param source the formatted time as String
      * @return Date object representing the duration
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} string(source) source: String.
+	 * 
+	 * {example} parseDuration(source)
      */
 	public static Date parseDuration(String source) throws ParseException {
 		return parseDuration(source, (String[]) null);
@@ -52,6 +58,13 @@ public class GenericDateUtil {
      * @param source the formatted time as String
      * @param suggestedPattern an array of suggested patterns
      * @return Date object representing the duration
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} string(source) source: String.
+	 * {param} string(pattern) pattern: String.
+	 * 
+	 * {example} parseDuration(source, pattern)
      */
 	public static Date parseDuration(String source, String ...suggestedPattern) throws ParseException {
 		return getDateParser().parseDuration(source, suggestedPattern);
@@ -63,6 +76,12 @@ public class GenericDateUtil {
      * with build in patterns
      * @param source date or time as Double in which a 1 is one day
      * @return Long object representing the duration
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} double(source) source:.
+	 * 
+	 * {example} parseDuration(source)
      */
 	public static Long parseDuration(Double source) {
 		return getDateParser().getDuration(source);
@@ -74,6 +93,12 @@ public class GenericDateUtil {
      * 
      * @param source the formatted date as String
      * @return Date object representing the Date
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} string(source) source:.
+	 * 
+	 * {example} parseDate(source)
      */
 	public static Date parseDate(String source) throws ParseException {
 		return parseDate(source, (String[]) null);
@@ -87,6 +112,13 @@ public class GenericDateUtil {
      * @param source the formatted time as String
      * @param suggestedPattern an array of suggested patterns
      * @return Date object representing the Date
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} string(source) source
+	 * {param} string(pattern) pattern
+	 * 
+	 * {example} parseDate(source,pattern)
      */
 	public static Date parseDate(String source, String ...suggestedPattern) throws ParseException {
 		return getDateParser().parseDate(source, null, suggestedPattern);
@@ -100,6 +132,14 @@ public class GenericDateUtil {
      * @param source the formatted time as String
      * @param suggestedPattern an array of suggested patterns
      * @return Date object representing the Date
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} string(source) source
+	 * {param} string(locale) locale
+	 * {param} string(pattern) pattern
+	 * 
+	 * {example} parseDate(source,locale,pattern)
      */
 	public static Date parseDate(String source, Locale locale, String ...suggestedPattern) throws ParseException {
 		return getDateParser().parseDate(source, locale, suggestedPattern);

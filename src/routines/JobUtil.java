@@ -169,5 +169,29 @@ public class JobUtil {
     		}
     	}
     }
+    
+    /**
+     * Makes the file executable under Unix
+     * @param message
+     * @throws Exception
+     * 
+     * {talendTypes} Void
+     * {Category} JobUtil
+     * {param} string(message) message: 
+     * {example} throwException(message) # 0
+     */
+    public static void throwException(String ...message ) throws Exception {
+    	StringBuilder sb = new StringBuilder();
+    	if (message != null) {
+        	for (String s : message) {
+        		if (s != null) {
+        			sb.append(s);
+        		}
+        	}
+    	}
+    	if (true) {
+    		throw new Exception(sb.toString());
+    	}
+    }
 
 }

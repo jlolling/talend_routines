@@ -112,11 +112,11 @@ public class RegexUtil {
      * 
      * {param} string("regex") regex: String
      * 
-     * {param} int(2) groupOccurrence
+     * {param} int(2) groupIndex
      * 
-     * {example} extractByRegexGroup("content","regex", groupOccurrence) # value2
+     * {example} extractByRegexGroup("content","regex", groupIndex) # value2
      */
-	public static String extractByRegexGroup(String content, String regex, int groupOccurrence) {
+	public static String extractByRegexGroup(String content, String regex, int groupIndex) {
 		if (regex != null) {
 			if (content != null) {
 				content = content.trim();
@@ -126,10 +126,52 @@ public class RegexUtil {
 		        while (matcher.find()) {
 		            if (matcher.start() < matcher.end()) {
 		            	for (int i = 1, n = matcher.groupCount(); i <= n; i++) {
-				            if (i == groupOccurrence) {
+				            if (i == groupIndex) {
 				                sb.append(matcher.group(i));
 				            }
 		            	}
+		            }
+		        }
+				return sb.toString();
+			} else {
+				return null;
+			}
+		} else {
+			return content;
+		}
+	}
+
+	/**
+     * Extracts a string by a particular regex group.
+     * 
+     * {Category} RegexUtil
+     * 
+     * {param} string("content") content: String.
+     * {param} string("regex") regex: String 
+     * {param} int(1) groupIndex
+     * {param} int(2) groupOccurrence
+     * 
+     * {example} extractByRegexGroup("content","regex", groupIndex, groupOccurrence) # value2
+     */
+	public static String extractByRegexGroup(String content, String regex, int groupIndex, int groupOccurrence) {
+		if (regex != null) {
+			if (content != null) {
+				content = content.trim();
+				final StringBuffer sb = new StringBuffer();
+				Pattern pattern = compile(regex);
+		        Matcher matcher = pattern.matcher(content);
+		        int index = 0;
+		        while (matcher.find()) {
+		        	index++;
+		            if (matcher.start() < matcher.end()) {
+		            	if (index == groupOccurrence) {
+			            	for (int i = 1, n = matcher.groupCount(); i <= n; i++) {
+					            if (i == groupIndex) {
+					                sb.append(matcher.group(i));
+					            }
+			            	}
+		            	}
+		            	
 		            }
 		        }
 				return sb.toString();

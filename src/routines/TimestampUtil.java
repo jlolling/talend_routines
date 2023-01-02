@@ -350,6 +350,39 @@ public class TimestampUtil {
     }
 
     /**
+     * returns true if date1 is younger than date2
+     * If date2 is null, it means date1 is younger to support better SCD2 logic
+     * @param date1
+     * @param date2
+     * @return true if date1 is younger
+     * 
+     * {talendTypes} Date
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {param} Date date1: any day.
+     * 
+     * {param} Date date2: any day
+     * 
+     * {example} isYounger(date1, date2).
+     */
+    public static boolean isYounger(java.util.Date date1, java.util.Date date2) {
+    	if (date1 != null && date2 != null) {
+    		if (date1.before(date2)) {
+    			return true;
+    		} else {
+    			return false;
+    		}
+    	} else if (date1 != null) {
+    		return true;
+    	} else if (date2 != null) {
+    		return false;
+    	} else {
+    		return false;
+    	}
+    }
+
+    /**
      * returns the older of both
      * @param date1
      * @param date2
@@ -696,7 +729,7 @@ public class TimestampUtil {
     }
 
     /**
-     * getYesterday: returns today
+     * getYesterday: returns yesterday
      * @return Date with no time
      * 
      * {talendTypes} Date
@@ -709,6 +742,19 @@ public class TimestampUtil {
 		return truncateToDay(addDays(new Date(), -1));
     }
 
+    /**
+     * getTomorrow: returns tomorrow
+     * @return Date with no time
+     * 
+     * {talendTypes} Date
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {example} getTomorrow().
+     */
+	public static java.util.Date getTomorrow() {
+		return truncateToDay(addDays(new Date(), +1));
+    }
 	/**
      * getLastWorkday: returns the last work day
      * @return last work date without time
@@ -1516,6 +1562,28 @@ public class TimestampUtil {
         	return c.getTime();
     	}
     }
+ 
+    /**
+     * Returns a date in UTC which holds the date+time
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Date
+     * 
+     * {param} Long(time)
+     * 
+     * {example} getDatetimeByLongTime(time).
+     */
+    public static Date getDatetimeByLongTime(Long time) {
+    	if (time == null || time == 0l) {
+    		return null;
+    	} else {
+        	java.util.Calendar c = java.util.Calendar.getInstance(Locale.GERMAN);
+//       	c.setTimeZone(getUTCTimeZone());
+        	c.setTimeInMillis(time);
+        	return c.getTime();
+    	}
+    }
     
     /**
      * Returns a String formatted time
@@ -1533,5 +1601,55 @@ public class TimestampUtil {
     	Date d = getTimeByLongTime(time);
     	return formatAsUTC(d, format);
     }
+    
+    /**
+     * getDate: returns the date representing the int values
+     * @param year the year
+     * @param month starting with 1
+     * @param day_of_month starting with 1
+     * @return date for these int values
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} Date
+     * 
+     * {param} year(2021) year
+     * {param} month(04) month
+     * {param} day_of_month(04)
+     * 
+     * {example} getDate(TalendDate.getCurentDate()).
+     */
+    public static java.util.Date getDate(int year, int month, int day_of_month) {
+    	java.util.Calendar c = java.util.Calendar.getInstance();
+    	// cut minutes and seconds
+    	c.set(java.util.Calendar.MINUTE, 0);
+    	c.set(java.util.Calendar.SECOND, 0);
+    	c.set(java.util.Calendar.MILLISECOND, 0);
+    	c.set(java.util.Calendar.YEAR, year);
+    	c.set(java.util.Calendar.MONTH, month - 1);
+    	c.set(java.util.Calendar.DAY_OF_MONTH, day_of_month);
+    	return c.getTime();
+    }
+
+    /**
+     * Returns a java.sql.Date
+     * 
+     * {Category} TimestampUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} Date(date)
+     * 
+     * {example} getSQLDate(date).
+     */
+    public static java.sql.Date getSQLDate(java.util.Date date) {
+    	if (date != null) {
+    		return new java.sql.Date(date.getTime());
+    	} else {
+    		return null;
+    	}
+    }
+    
+    
     
 }

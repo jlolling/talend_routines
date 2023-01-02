@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Jan Lolling jan.lolling@gmail.com
+ * Copyright 2015 Jan Lolling jan.lolling@gmail.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,6 +93,36 @@ public class NumberUtil {
 		}
 	}
 
+    /**
+     * return Long and accepts Integer and String. Null returns null if input null of not a number
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} long | Long
+     * 
+     * {param} Long(123) input: long format.
+     * 
+     * {example} getFailSaveLong("123") result: 123 ...
+     * 
+     */
+	public static Long getFailSaveLong(Object input) {
+		if (input instanceof Number) {
+			return ((Number) input).longValue();
+		} else if (input instanceof String) {
+			String s = (String) input;
+			if (s == null || s.isEmpty()) {
+				return null;
+			}
+			Long v = null;
+			try {
+				v = Long.parseLong(s);
+			} catch (Exception e) {}
+			return v;
+		} else {
+			return null;
+		}
+	}
+
 	/**
      * return integer and accepts Integer and String. Null returns 0
      * 
@@ -118,7 +148,7 @@ public class NumberUtil {
 			return 0;
 		}
 	}
-		
+
 	/**
      * return integer and accepts Numbers or String.
      * If the value is not a number, it returns null or 0
@@ -162,7 +192,7 @@ public class NumberUtil {
 			return null;
 		}
 	}
-		
+
 	/**
      * return Long and accepts Numbers or String.
      * If the value is not a number, it returns null or 0
@@ -202,6 +232,107 @@ public class NumberUtil {
 			}
 		} else if (notNull) {
 			return 0l;
+		} else {
+			return null;
+		}
+	}
+
+	/**
+     * return integer and accepts Integer and String. Null returns 0
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} int | Integer
+     * 
+     * {param} Integer(123) input: float pointing format.
+     * 
+     * {example} getNullSaveInt("123", "replacements) result: 123 ...
+     * 
+     */
+	public static int getNullSaveInt(Object input, String ...toRemoveString) {
+		if (input instanceof Number) {
+			return ((Number) input).intValue();
+		} else if (input instanceof String) {
+			String s = (String) input;
+			if (toRemoveString != null) {
+				for (String r : toRemoveString) {
+					s = s.replace(r, "");
+				}
+			}
+			if (s == null || s.isEmpty()) {
+				return 0;
+			}
+			return Integer.parseInt(s);
+		} else {
+			return 0;
+		}
+	}
+
+    /**
+     * return integer and accepts Integer and String. Null returns null
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} int | Integer
+     * 
+     * {param} Integer(123) input: float pointing format.
+     * 
+     * {example} getFailSaveInt("123", "replacements) result: 123 ...
+     * 
+     */
+	public static Integer getFailSaveInt(Object input, String ...toRemoveString) {
+		if (input instanceof Number) {
+			return ((Number) input).intValue();
+		} else if (input instanceof String) {
+			String s = (String) input;
+			if (toRemoveString != null) {
+				for (String r : toRemoveString) {
+					s = s.replace(r, "");
+				}
+			}
+			if (s == null || s.isEmpty()) {
+				return null;
+			}
+			try {
+				return Integer.parseInt(s);
+			} catch (Exception e) {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+
+    /**
+     * return integer and accepts Integer and String. Null returns null
+     * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} double | Double
+     * 
+     * {param} Double(123) input: float pointing format.
+     * 
+     * {example} getFailSaveDouble("123", "replacements) result: 123 ...
+     * 
+     */
+	public static Double getFailSaveDouble(Object input, String ...toRemoveString) {
+		if (input instanceof Number) {
+			return ((Number) input).doubleValue();
+		} else if (input instanceof String) {
+			String s = (String) input;
+			if (toRemoveString != null) {
+				for (String r : toRemoveString) {
+					s = s.replace(r, "");
+				}
+			}
+			if (s == null || s.isEmpty()) {
+				return null;
+			}
+			try {
+				return Double.parseDouble(s);
+			} catch (Exception e) {
+				return null;
+			}
 		} else {
 			return null;
 		}
@@ -252,37 +383,6 @@ public class NumberUtil {
 	}
 
 	/**
-     * return integer and accepts Integer and String. Null returns 0
-     * 
-     * {Category} NumberUtil
-     * 
-     * {talendTypes} int | Integer
-     * 
-     * {param} Integer(123) input: float pointing format.
-     * 
-     * {example} getNullSaveInt("123", "replacements) result: 123 ...
-     * 
-     */
-	public static int getNullSaveInt(Object input, String ...toRemoveString) {
-		if (input instanceof Number) {
-			return ((Number) input).intValue();
-		} else if (input instanceof String) {
-			String s = (String) input;
-			if (toRemoveString != null) {
-				for (String r : toRemoveString) {
-					s = s.replace(r, "");
-				}
-			}
-			if (s == null || s.isEmpty()) {
-				return 0;
-			}
-			return Integer.parseInt(s);
-		} else {
-			return 0;
-		}
-	}
-
-    /**
      * return double and accepts Double and String. Null returns 0
      * 
      * {Category} NumberUtil
@@ -317,6 +417,9 @@ public class NumberUtil {
 			input = input.replace("%", "").replace('"', ' ').trim();
 			if (input == null || input.isEmpty()) {
 				return 0d;
+			}
+			if (locale == null) {
+				locale = Locale.ENGLISH;
 			}
 			NumberFormat nf = NumberFormat.getInstance(locale);
 			Number n = null;
@@ -568,7 +671,7 @@ public class NumberUtil {
      */
 	public static String numberToString(Number number) {
 		if (number != null) {
-			NumberFormat nf = NumberFormat.getInstance(Locale.ENGLISH);
+			NumberFormat nf = NumberFormat.getInstance(Locale.GERMANY);
 			return nf.format(number);
 		} else {
 			return "";
@@ -600,7 +703,7 @@ public class NumberUtil {
 			return "";
 		}
 	}
-
+	
 	/**
      * formats the number
      * 
@@ -755,10 +858,13 @@ public class NumberUtil {
 		if (o instanceof Number) {
 			return true;
 		} else if (o instanceof String) {
+			if (((String) o).equalsIgnoreCase("NaN")) {
+				return false;
+			}
 			try {
 				Double.parseDouble((String) o);
 				return true;
-			} catch (NumberFormatException nfe) {
+			} catch (Throwable nfe) {
 				return false;
 			}
 		} else {
