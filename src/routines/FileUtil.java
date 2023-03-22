@@ -20,7 +20,7 @@ import java.security.MessageDigest;
 import java.io.PushbackInputStream;
 
 /**
- * Copyright 2021 Jan Lolling jan.lolling@gmail.de
+ * Copyright 2022 Jan Lolling jan.lolling@gmail.de
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -891,7 +891,7 @@ public class FileUtil {
 		FileInputStream fin = new FileInputStream(sourceFile);
 		UnicodeBOMInputStream inBOM = new UnicodeBOMInputStream(fin);
 		inBOM.skipBOM();
-		boolean hasBOM = (inBOM.getBOM() != null);
+		final boolean hasBOM = inBOM.hasBOM();
 		BufferedInputStream in = new BufferedInputStream(inBOM);
 		BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile));
 		try {
@@ -1110,6 +1110,14 @@ public class FileUtil {
 		public final BOM getBOM() {
 			// BOM type is immutable.
 			return bom;
+		}
+		
+		/**
+		 * Does this file has a BOM?
+		 * @return true if a BOM was found
+		 */
+		public boolean hasBOM() {
+			return (bom != null && bom != BOM.NONE);
 		}
 
 		/**
