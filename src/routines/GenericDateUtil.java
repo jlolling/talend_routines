@@ -33,6 +33,7 @@ import java.util.Locale;
 public class GenericDateUtil {
 	
 	public static final long ZERO_TIME = -62170160400000l;
+	public static final long VALIDATE_TIMESTAMP = -59011635600000l;
 	
     /**
      * parseDuration: returns the Date from the given text representation containing the time part as duration
@@ -163,11 +164,11 @@ public class GenericDateUtil {
 			datePatternList.add("yyyy");
 			timePatternList = new ArrayList<String>();
 			timePatternList.add(" mm''ss'\"'");
-			timePatternList.add(" mm''ss'“'");
-			timePatternList.add(" mm''ss'”'");
-			timePatternList.add(" mm'‘'ss'“'");
-			timePatternList.add(" mm'’'ss'”'");
-			timePatternList.add(" mm'′'ss'″'");
+			timePatternList.add(" mm''ss'â€œ'");
+			timePatternList.add(" mm''ss'â€�'");
+			timePatternList.add(" mm'â€˜'ss'â€œ'");
+			timePatternList.add(" mm'â€™'ss'â€�'");
+			timePatternList.add(" mm'â€²'ss'â€³'");
 			timePatternList.add(" HH'h'mm'm'ss's'");
 			timePatternList.add(" HH'h'mm'm'");
 			timePatternList.add(" mm'm'ss's'");
@@ -238,7 +239,11 @@ public class GenericDateUtil {
 									}
 								}
 							}
-							return dateValue;
+							if (dateValue.getTime() < VALIDATE_TIMESTAMP) {
+								return null;
+							} else {
+								return dateValue;
+							}
 						} catch (ParseException e) {
 							// the pattern obviously does not work
 							continue;

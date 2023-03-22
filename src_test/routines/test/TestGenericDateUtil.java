@@ -142,4 +142,17 @@ public class TestGenericDateUtil {
 		assertTrue(date1.before(date2));
 	}
 
+	@Test
+	public void testZeroDate() throws Exception {
+		String test = "0000-00-00";
+		Date actual = GenericDateUtil.parseDate(test);
+		if (actual != null) {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			System.out.println(sdf.format(actual));
+			assertTrue(false);
+		} else {
+			assertTrue(true);
+		}
+	}
+	
 }

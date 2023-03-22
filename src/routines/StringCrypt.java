@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.MessageDigest;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.DESedeKeySpec;
@@ -76,9 +77,9 @@ public class StringCrypt {
      * @throws GeneralSecurityException
      */
     private static final Cipher initCipher(final boolean encryptMode, final String passPhrase) throws IOException, GeneralSecurityException {
-        // Passwort-Hash berechnen und SchlÃ¼ssel aufbereiten
+        // Passwort-Hash berechnen und Schlüssel aufbereiten
         final byte[] rawKey = initSymmetricKey(passPhrase);
-        // Initialisierung des TripleDES-SchlÃ¼ssels
+        // Initialisierung des TripleDES-Schlüssels
         final Key key = new SecretKeySpec(new DESedeKeySpec(rawKey).getKey(), ENC_ALG);
         // Initialisierung des Cipher-Objekts   
         final Cipher cipher = Cipher.getInstance(ENC_ALG);
@@ -117,7 +118,7 @@ public class StringCrypt {
      */
     public static String cryptToBcase64(String clearData, String passPhrase) throws Exception {
         final byte[] encryptedData = encrypt(clearData.getBytes(), passPhrase);
-        return Base64.encodeToBase64String(encryptedData);
+        return Base64.getEncoder().encodeToString(encryptedData);
     }
     
     /**
@@ -128,7 +129,7 @@ public class StringCrypt {
      * @throws Exception (also if passPhrase wrong)
      */
     public static String decryptFromBase64(String cryptedBase64, String passPhrase) throws Exception {
-        byte[] receivedCryptedData = Base64.decodeFromBase64String(cryptedBase64);
+        byte[] receivedCryptedData = Base64.getDecoder().decode(cryptedBase64);
         return new String(decrypt(receivedCryptedData, passPhrase));
     }
 
