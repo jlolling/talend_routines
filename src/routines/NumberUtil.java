@@ -318,8 +318,14 @@ public class NumberUtil {
 			if (input == null || input.isEmpty()) {
 				return 0d;
 			}
+			if (locale == null) {
+				locale = Locale.ENGLISH;
+			}
 			NumberFormat nf = NumberFormat.getInstance(locale);
 			Number n = null;
+			if (input.endsWith("-")) {
+				input = "-" + input.substring(0, input.length() - 1);
+			}
 			try {
 				n = nf.parse(input);
 			} catch (Exception e) {
@@ -755,17 +761,35 @@ public class NumberUtil {
 		if (o instanceof Number) {
 			return true;
 		} else if (o instanceof String) {
+			if (((String) o).equalsIgnoreCase("NaN")) {
+				return false;
+			}
 			try {
 				Double.parseDouble((String) o);
 				return true;
-			} catch (NumberFormatException nfe) {
+			} catch (Throwable nfe) {
 				return false;
 			}
 		} else {
 			return false;
 		}
 	}
+
 	
+	/**
+	 * Returns a String representation of a integer
+	 * @param value
+	 * @param desiredLength
+	 * @return
+	 * 
+     * {Category} NumberUtil
+     * 
+     * {talendTypes} boolean
+     * 
+     * {param} Integer(value) number: number to format
+     * 
+     * {example} getNumberString(123,2)
+	 */
 	public static String getNumberString(Integer value, int desiredLength) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(Integer.toString(value));

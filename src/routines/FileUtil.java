@@ -1205,4 +1205,24 @@ public class FileUtil {
 		private boolean skipped = false;
 
 	}
+	
+    /**
+     * Makes the file executable under Unix
+     * @param file
+     * 
+     * {talendTypes} Void
+     * {Category} JobUtil
+     * {param} string(file) command: 
+     * {example} makeExecutable(file) # 0
+     */
+    public static void makeExecutable(String file) {
+    	if (JobUtil.isUnixSystem()) {
+    		try {
+        		java.nio.file.Files.setPosixFilePermissions(java.nio.file.Paths.get(file), java.nio.file.attribute.PosixFilePermissions.fromString("rwxr--r--"));
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
+    	}
+    }
+
 }
