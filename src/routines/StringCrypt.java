@@ -1,18 +1,3 @@
-/**
- * Copyright 2015 Jan Lolling jan.lolling@gmail.com
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package routines;
 
 
@@ -77,9 +62,9 @@ public class StringCrypt {
      * @throws GeneralSecurityException
      */
     private static final Cipher initCipher(final boolean encryptMode, final String passPhrase) throws IOException, GeneralSecurityException {
-        // Passwort-Hash berechnen und Schlüssel aufbereiten
+        // Passwort-Hash berechnen und Schlï¿½ssel aufbereiten
         final byte[] rawKey = initSymmetricKey(passPhrase);
-        // Initialisierung des TripleDES-Schlüssels
+        // Initialisierung des TripleDES-Schlï¿½ssels
         final Key key = new SecretKeySpec(new DESedeKeySpec(rawKey).getKey(), ENC_ALG);
         // Initialisierung des Cipher-Objekts   
         final Cipher cipher = Cipher.getInstance(ENC_ALG);

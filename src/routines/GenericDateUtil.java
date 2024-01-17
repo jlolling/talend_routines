@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Jan Lolling jan.lolling@gmail.com
+ * Copyright 2023 Jan Lolling jan.lolling@gmail.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,12 @@ public class GenericDateUtil {
      * 
      * @param source the formatted time as String
      * @return Date object representing the duration
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} string(source) fullPath: String.
+	 * 
+	 * {example} parseDuration(source) # ""
      */
 	public static Date parseDuration(String source) throws ParseException {
 		return parseDuration(source, (String[]) null);
@@ -53,6 +59,13 @@ public class GenericDateUtil {
      * @param source the formatted time as String
      * @param suggestedPattern an array of suggested patterns
      * @return Date object representing the duration
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} string(source) fullPath: String.
+	 * {param} string(suggestedPattern) suggestedPattern: String.
+	 * 
+	 * {example} parseDuration(source,suggestedPattern) # ""
      */
 	public static Date parseDuration(String source, String ...suggestedPattern) throws ParseException {
 		return getDateParser().parseDuration(source, suggestedPattern);
@@ -64,6 +77,12 @@ public class GenericDateUtil {
      * with build in patterns
      * @param source date or time as Double in which a 1 is one day
      * @return Long object representing the duration
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} Double(source) fullPath: String.
+	 * 
+	 * {example} parseDuration(source) # ""
      */
 	public static Long parseDuration(Double source) {
 		return getDateParser().getDuration(source);
@@ -75,6 +94,12 @@ public class GenericDateUtil {
      * 
      * @param source the formatted date as String
      * @return Date object representing the Date
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} String(source) fullPath: String.
+	 * 
+	 * {example} parseDate(source) # ""
      */
 	public static Date parseDate(String source) throws ParseException {
 		return parseDate(source, (String[]) null);
@@ -88,6 +113,13 @@ public class GenericDateUtil {
      * @param source the formatted time as String
      * @param suggestedPattern an array of suggested patterns
      * @return Date object representing the Date
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} String(source) fullPath: String.
+	 * {param} String(suggestedPattern) fullPath: String.
+	 * 
+	 * {example} parseDate(source,suggestedPattern) # ""
      */
 	public static Date parseDate(String source, String ...suggestedPattern) throws ParseException {
 		return getDateParser().parseDate(source, null, suggestedPattern);
@@ -101,6 +133,13 @@ public class GenericDateUtil {
      * @param source the formatted time as String
      * @param suggestedPattern an array of suggested patterns
      * @return Date object representing the Date
+     * 
+	 * {Category} GenericDateUtil
+	 * 
+	 * {param} String(source) fullPath: String.
+	 * {param} String(suggestedPattern) fullPath: String.
+	 * 
+	 * {example} parseDate(source,suggestedPattern) # ""
      */
 	public static Date parseDate(String source, Locale locale, String ...suggestedPattern) throws ParseException {
 		return getDateParser().parseDate(source, locale, suggestedPattern);
@@ -197,6 +236,17 @@ public class GenericDateUtil {
 				return true;
 			}
 		}
+		
+		private boolean isNullValue(String source, String pattern) {
+			if (source == null || source.trim().isEmpty()) {
+				return true;
+			}
+			String nullValue = pattern.replace('y', '0').replace('M', '0').replace('d', '0');
+			if (source.equals(nullValue)) {
+				return true;
+			}
+			return false;
+		}
 
 		public Date parseDate(String text, Locale locale, String ... userPattern) throws ParseException {
 			if (text != null && text.trim().isEmpty() == false) {
@@ -216,6 +266,9 @@ public class GenericDateUtil {
 				sdf.setLenient(lenient);
 				for (String pattern : datePatternList) {
 					if (pattern != null) {
+						if (isNullValue(text, pattern)) {
+							return null;
+						}
 						sdf.applyPattern(pattern.trim());
 						try {
 							if (lenient == false && checkTextLength(pattern, text) == false) {

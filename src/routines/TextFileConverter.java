@@ -24,6 +24,10 @@ public class TextFileConverter {
 	private long currentOutputLineNumber = 0;
 	private boolean readWholeText = false;
 	
+	public boolean isReadWholeText() {
+		return readWholeText;
+	}
+
 	public static class Replacement {
 		
 		String searchString = null;

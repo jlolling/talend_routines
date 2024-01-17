@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Jan Lolling jan.lolling@gmail.com
+ * Copyright 2015 Jan Lolling jan.lolling@gmail.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,13 +99,13 @@ public class StringUtil {
 	 * 
 	 * {example} getNullSaveStr(null) # ""
 	 */
-	public static String getNullSaveStr(String input) {
+	public static String getNullSaveStr(Object input) {
 		if (input == null) {
 			return "";
 		} else if ("null".equals(input)) {
 			return "";
 		} else {
-			return input;
+			return input.toString();
 		}
 	}
 
@@ -442,14 +442,12 @@ public class StringUtil {
 	 *         {example} getUTF_8(aString) # 2323133_18
 	 */
 	public static String getUTF_8(String text) {
-		if (text == null) {
-			return null;
+		if (text == null || text.isEmpty()) {
+			return text;
 		}
-		if (text.isEmpty()) {
-			return "";
-		}
-		return noneUtf8Pattern.matcher(text).replaceAll("?");
+		return noneUtf8Pattern.matcher(text).replaceAll("");
 	}
+
 
 	/**
 	 * This method ensures that the output String has only valid XML unicode
@@ -666,7 +664,7 @@ public class StringUtil {
 				} else if (cutPosition == 'b') {
 					return "..." + message.substring(message.length() - size);
 				} else {
-					throw new IllegalArgumentException("Unknown cutPosition: " + cutPosition);
+					throw new IllegalArgumentException("Unknown cutPosition (only b,m,e is allowed): " + cutPosition);
 				}
 			} else {
 				return message;
@@ -923,7 +921,7 @@ public class StringUtil {
 	 * 
 	 * {param} string(test) test: String.
 	 * 
-	 * {param} list(tokenList) posibleValues: String.
+	 * {param} list(tokenList) possibleValues: String.
 	 * 
 	 * {example} containsString(test, tokenList) # true
 	 */
@@ -938,30 +936,6 @@ public class StringUtil {
 		return null;
 	}
 	
-	/**
-	 * Checks if the test contains the tokens as whole word
-	 * 
-	 * {Category} StringUtil
-	 * 
-	 * {talendTypes} boolean | Boolean
-	 * 
-	 * {param} string(test) test: String.
-	 * 
-	 * {param} list(tokenList) posibleValues: String.
-	 * 
-	 * {example} containsStrings(test, tokenList) # true
-	 */
-	public static String containsStrings(String test, String ...strings) {
-		if (test != null && strings != null) {
-			for (String s : strings) {
-				if (test.toLowerCase().contains(s.toLowerCase())) {
-					return s;
-				}
-			}
-		}
-		return null;
-	}
-
 	/**
 	 * Checks if the test contains the token as whole word
 	 * 
@@ -1122,34 +1096,8 @@ public class StringUtil {
         }
         return sb.toString();
 	}
-    
-	/**
-     * Trims a text and also removes none-break-spaces
-     * '\u005Cu00A0','\u005Cu2007','\u005Cu202F'
-     * @param content to trim
-     * @return trimmed value
-     * 
-     * {Category} StringUtil
-     * 
-     * {talendTypes} String
-     * 
-     * {param} String(content) content
-     * 
-     * {example} trim(content)
-     */
-    public static String trim(String content) {
-    	if (content == null) {
-    		return null;
-    	} else {
-    		String s = content.trim();
-    		s = s.replaceAll("(^\\h*)|(\\h*$)","");
-    		return s;
-    	}
-    }
-	
-    public static final int INDEX_NOT_FOUND = -1;
-    
-	/**
+
+    /**
      * Converts a list of string delimited by ,;| into a SQL in expression
      * @param content the content to converted
      * @return sql in expression
@@ -1247,7 +1195,7 @@ public class StringUtil {
      * @param content
      * @param untilString
      * @param includeDelimiter
-     * @return The content before the untilString
+     * @return The content before the untilString or the whole content if not found
      * 
      * {Category} StringUtil
      * 
@@ -1271,7 +1219,7 @@ public class StringUtil {
     	// get position of searchString in whole string and deliver everything before
     	int pos = content.indexOf(untilString);
     	if (pos < 0) {
-    		return "";
+    		return content;
     	} else {
     		if (includeDelimiter) {
         		return content.substring(0, pos + untilString.length());
@@ -1305,7 +1253,7 @@ public class StringUtil {
      * @param content
      * @param beforeString
      * @param includeDelimiter 
-     * @return Content after the beforeString
+     * @return Content after the beforeString or the whole content if not found
      * 
      * {Category} StringUtil
      * 
@@ -1329,7 +1277,7 @@ public class StringUtil {
     	// get position of searchString in whole string and deliver everything after
     	int pos = content.indexOf(beforeString);
     	if (pos < 0) {
-    		return "";
+    		return content;
     	} else {
     		if (includeDelimiter) {
         		return content.substring(pos);
@@ -1344,7 +1292,7 @@ public class StringUtil {
      * @param content
      * @param before
      * @param includeDelimiter 
-     * @return Content after the beforeString
+     * @return Content between before and after, return empty if not found 
      * 
      * {Category} StringUtil
      * 
@@ -1388,5 +1336,28 @@ public class StringUtil {
     	}
     }
 
-    
+	/**
+     * Trims a text and also removes none-break-spaces
+     * '\u005Cu00A0','\u005Cu2007','\u005Cu202F'
+     * @param content to trim
+     * @return trimmed value
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * 
+     * {example} trim(content)
+     */
+    public static String trim(String content) {
+    	if (content == null) {
+    		return null;
+    	} else {
+    		String s = content.trim();
+    		s = s.replaceAll("(^\\h*)|(\\h*$)","");
+    		return s;
+    	}
+    }
+
 }
