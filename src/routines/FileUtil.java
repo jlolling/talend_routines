@@ -1371,6 +1371,7 @@ public class FileUtil {
 	 */
 	public static String getNativeFilePath(String path) {
 		if (path != null) {
+			path = path.trim();
 			if (isUnixSystem()) {
 				if (path.toLowerCase().startsWith("c:") || path.toLowerCase().startsWith("d:")) {
 					path = path.substring(2);

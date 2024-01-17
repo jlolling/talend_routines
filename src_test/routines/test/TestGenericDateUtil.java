@@ -141,5 +141,12 @@ public class TestGenericDateUtil {
 		System.out.println("date2: " + sdf.format(date2));
 		assertTrue(date1.before(date2));
 	}
+	
+	@Test
+	public void testDetectZeroAsNull() throws ParseException {
+		String test = "00000000";
+		Date actual = GenericDateUtil.parseDate(test);
+		assertTrue(actual == null);
+	}
 
 }

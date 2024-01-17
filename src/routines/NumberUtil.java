@@ -423,6 +423,9 @@ public class NumberUtil {
 			}
 			NumberFormat nf = NumberFormat.getInstance(locale);
 			Number n = null;
+			if (input.endsWith("-")) {
+				input = "-" + input.substring(0, input.length()-1);
+			}
 			try {
 				n = nf.parse(input);
 			} catch (Exception e) {

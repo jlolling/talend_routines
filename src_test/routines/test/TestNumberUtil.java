@@ -46,4 +46,13 @@ public class TestNumberUtil {
 		assertEquals("Format wrong", expected, actual);
 	}
 	
+	@Test
+	public void testStringToDouble() {
+		String test = "1234.567-";
+		double expected = -1234.567d;
+		double actual = NumberUtil.getNullSaveDouble(test);
+		System.out.println(actual);
+		assertEquals(expected, actual,0.001d);
+	}
+
 }
