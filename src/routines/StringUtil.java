@@ -331,6 +331,26 @@ public class StringUtil {
 	}
 
 	/**
+	 * returns the first not null object
+	 * 
+	 * {Category} StringUtil
+	 * 
+	 * {talendTypes} Object
+	 * 
+	 * {param} object("testMe1","testMe2") strings: String.
+	 * 
+	 * {example} coalesce(" test","hans"," TEST ","Tata") # "test"
+	 */
+	public static Object coalesce(Object... values) {
+		for (Object s : values) {
+			if (s != null) {
+				return s;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * shows if string substring from another string {Category} StringUtil
 	 * 
 	 * {Category} StringUtil
@@ -442,12 +462,11 @@ public class StringUtil {
 	 *         {example} getUTF_8(aString) # 2323133_18
 	 */
 	public static String getUTF_8(String text) {
-		if (text == null || text.isEmpty()) {
-			return text;
+		if (isEmpty(text)) {
+			return null;
 		}
 		return noneUtf8Pattern.matcher(text).replaceAll("");
 	}
-
 
 	/**
 	 * This method ensures that the output String has only valid XML unicode
@@ -649,7 +668,7 @@ public class StringUtil {
 	 * {example} enforceTextLength(message, 1000, 'm') # text
 	 */
 	public static String enforceTextLength(String message, int size, char cutPosition) {
-		if (message != null && message.trim().isEmpty() == false) {
+		if (isEmpty(message) == false) {
 			message = message.trim();
 			if (message.length() > size) {
 				size = size - 3; // to have space for "..."
@@ -766,7 +785,7 @@ public class StringUtil {
 		}
 		if (firstLoop) {
 			// there was no entry in the list
-			sb.append(" 1=0 ");
+			sb.append(" 1=1 ");
 		} else {
 			sb.append(")");
 		}
@@ -921,14 +940,14 @@ public class StringUtil {
 	 * 
 	 * {param} string(test) test: String.
 	 * 
-	 * {param} list(tokenList) possibleValues: String.
+	 * {param} list(tokenList) posibleValues: String.
 	 * 
 	 * {example} containsString(test, tokenList) # true
 	 */
 	public static String containsStrings(String test, List<String> stringList) {
 		if (test != null) {
 			for (String s : stringList) {
-				if (test.toLowerCase().contains(s.toLowerCase())) {
+				if (test.contains(s)) {
 					return s;
 				}
 			}
@@ -1096,8 +1115,8 @@ public class StringUtil {
         }
         return sb.toString();
 	}
-
-    /**
+	
+	/**
      * Converts a list of string delimited by ,;| into a SQL in expression
      * @param content the content to converted
      * @return sql in expression
@@ -1111,14 +1130,29 @@ public class StringUtil {
      * {example} makeSQLInListExpressionForText(content)
      */
     public static String makeSQLInListExpressionForText(String listOfValuesStr) {
-    	if (listOfValuesStr == null) {
-    		return "";
+    	if (listOfValuesStr == null || listOfValuesStr.trim().isEmpty()) {
+    		throw new IllegalArgumentException("listOfValuesStr cannot be null or empty");
     	} else {
-    		return " in ('" + listOfValuesStr.replace(",", "','").replace(";", "','") + "')"; 
+    		String[] values = listOfValuesStr.trim().split(",");
+    		StringBuilder sb = new StringBuilder();
+    		sb.append(" in (");
+    		boolean firstLoop = true;
+    		for (String v : values) {
+    			v = v.trim();
+    			if (firstLoop) {
+    				firstLoop = false;
+    			} else {
+    				sb.append(",");
+    			}
+    			sb.append("'");
+    			sb.append(v);
+    			sb.append("'");
+    		}
+    		sb.append(")");
+    		return sb.toString();
     	}
     }
-    
-    
+        
 	/**
      * Converts a camel case formatted string into a snake case formated string
      * @param content the content to qouted
@@ -1336,11 +1370,10 @@ public class StringUtil {
     	}
     }
 
-	/**
-     * Trims a text and also removes none-break-spaces
-     * '\u005Cu00A0','\u005Cu2007','\u005Cu202F'
-     * @param content to trim
-     * @return trimmed value
+    /**
+     * Function trims the string but ignores null values
+     * @param content
+     * @return Content trimmed
      * 
      * {Category} StringUtil
      * 
@@ -1348,16 +1381,38 @@ public class StringUtil {
      * 
      * {param} String(content) content
      * 
-     * {example} trim(content)
+     * {example} trim(content, beforeString)
      */
     public static String trim(String content) {
-    	if (content == null) {
-    		return null;
+    	if (content != null) {
+    		return content.trim();
     	} else {
-    		String s = content.trim();
-    		s = s.replaceAll("(^\\h*)|(\\h*$)","");
-    		return s;
+    		return null;
     	}
+    }
+
+    /**
+     * Function converts escape sequences in actual chars
+     * @param content
+     * @return Content unescaped
+     * 
+     * {Category} StringUtil
+     * 
+     * {talendTypes} String
+     * 
+     * {param} String(content) content
+     * 
+     * {example} unescapeJava(content)
+     */
+    public static String unescapeJava(String content) {
+    	content = content.replace("\\n", "\n");
+    	content = content.replace("\\r", "\r");
+    	content = content.replace("\\b", "\b");
+    	content = content.replace("\\t", "\t");
+    	content = content.replace("\\f", "\f");
+    	content = content.replace("\\\"", "\"");    	
+    	content = content.replace("\\\\", "\\");
+    	return content;
     }
 
 }
