@@ -1370,10 +1370,11 @@ public class StringUtil {
     	}
     }
 
-    /**
-     * Function trims the string but ignores null values
-     * @param content
-     * @return Content trimmed
+	/**
+     * Trims a text and also removes none-break-spaces
+     * '\u005Cu00A0','\u005Cu2007','\u005Cu202F'
+     * @param content to trim
+     * @return trimmed value
      * 
      * {Category} StringUtil
      * 
@@ -1381,13 +1382,15 @@ public class StringUtil {
      * 
      * {param} String(content) content
      * 
-     * {example} trim(content, beforeString)
+     * {example} trim(content)
      */
     public static String trim(String content) {
-    	if (content != null) {
-    		return content.trim();
-    	} else {
+    	if (content == null) {
     		return null;
+    	} else {
+    		String s = content.trim();
+    		s = s.replaceAll("(^\\h*)|(\\h*$)","");
+    		return s;
     	}
     }
 
