@@ -285,8 +285,6 @@ public class FileUtil {
 	 * 
 	 * {Category} FileUtil
 	 * 
-	 * {talendTypes} String
-	 * 
 	 * {param} String(fileName) fileName: String. 
 	 * {param} String(somethingToAdd) somethingToAdd: String.
 	 * 
@@ -308,8 +306,6 @@ public class FileUtil {
 	 * 
 	 * {Category} FileUtil
 	 * 
-	 * {talendTypes} boolean
-	 * 
 	 * {param} String(file) strings: String.
 	 * 
 	 * {example} isArchiveFile(context.currentFile) # 2323133_18
@@ -326,9 +322,9 @@ public class FileUtil {
 	 * Delete a dir recursively deleting anything inside it.
 	 * 
 	 * @param dir The dir to delete
-	 * @return true if the dir was successfully deleted {Category} FileUtil
-	 * 
-	 *         {talendTypes} boolean
+	 * @return true if the dir was successfully deleted 
+	 *         
+	 *         {Category} FileUtil
 	 * 
 	 *         {param} String(dir) strings: String.
 	 * 
@@ -353,9 +349,9 @@ public class FileUtil {
 	}
 
 	/**
-	 * Delete a file {Category} FileUtil
+	 * Delete a file
 	 * 
-	 * {talendTypes} boolean
+	 * {Category} FileUtil
 	 * 
 	 * {param} String(fileStr) strings: String.
 	 * 
@@ -378,8 +374,6 @@ public class FileUtil {
 	 * @param charset  if null UTF-8 will be used
 	 *
 	 *                 {Category} FileUtil
-	 * 
-	 *                 {talendTypes} void
 	 * 
 	 *                 {param} String(filePath) strings: String. 
 	 *                 {param} String(content) strings: String. 
@@ -410,8 +404,6 @@ public class FileUtil {
 	 *
 	 *                 {Category} FileUtil
 	 * 
-	 *                 {talendTypes} String
-	 * 
 	 *                 {param} String(filePath) strings: String. 
 	 *                 {param} String(charset) strings: String.
 	 * 
@@ -439,16 +431,58 @@ public class FileUtil {
 	}
 
 	/**
+	 * Tests if the file is an xml file
+	 * 
+	 * @param filePath the file path
+	 * @return content-type
+	 *
+	 *                 {Category} FileUtil
+	 * 
+	 *                 {param} String(filePath) strings: String. 
+	 * 
+	 *                 {example} isXMLFile(context.current_file)
+	 * 
+	 */
+	public static boolean isXMLFile(String filePath) throws Exception {
+		if (filePath == null) {
+			return false;
+		}
+		File f = new File(filePath);
+		if (f.exists() == false) {
+			throw new Exception("File: " + filePath + " does not exist.");
+		}
+		if (f.length() == 0) {
+			return false;
+		}
+		
+		RandomAccessFile rf = new RandomAccessFile(filePath, "r");
+		int bufferLength = Math.min(100, (int)f.length());
+		byte[] b = new byte[bufferLength];
+		rf.read(b, 0, bufferLength);
+		try {
+			String test = new String(b, "UTF-8");
+			if (test.trim().startsWith("<?xml")) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Throwable t) {
+			return false;
+		} finally {
+			try {
+				rf.close();
+			} catch (Throwable tc) {}
+		}
+	}
+
+	/**
 	 * Writes text content to a file if the content has been changed
 	 * 
 	 * @param filePath the file path
 	 * @param content
 	 * @param charset  if null UTF-8 will be used
 	 *
-	 *                 {Category} FileUtil
-	 * 
-	 *                 {talendTypes} void
-	 * 
+	 *                 {Category} FileUtil 
 	 *                 {param} String(filePath) strings: String. 
 	 *                 {param} String(content) strings: String. 
 	 *                 {param} String(charset) strings: String.
@@ -480,7 +514,6 @@ public class FileUtil {
 	 * @throws Exception
 	 * 
 	 *                   {Category} FileUtil 
-	 *                   {talendTypes} String
 	 * 
 	 *                   {param} String(filename)
 	 * 
@@ -521,7 +554,6 @@ public class FileUtil {
 	 * @throws Exception
 	 * 
 	 *                   {Category} FileUtil 
-	 *                   {talendTypes} String
 	 * 
 	 *                   {param} String(filename) 
 	 *                   {param} String(filename) 
@@ -570,7 +602,6 @@ public class FileUtil {
 	 * @throws Exception
 	 * 
 	 *                   {Category} FileUtil 
-	 *                   {talendTypes} String
 	 * 
 	 *                   {param} String(filePath) 
 	 *                   {param} String(targetDir)
@@ -623,7 +654,6 @@ public class FileUtil {
 	 * @throws Exception
 	 * 
 	 *                   {Category} FileUtil 
-	 *                   {talendTypes} String
 	 * 
 	 *                   {param} String(filePath) 
 	 *                   {param} String(targetPath)
@@ -681,7 +711,6 @@ public class FileUtil {
 	 * @return the unix style path
 	 * 
 	 *         {Category} FileUtil 
-	 *         {talendTypes} String
 	 * 
 	 *         {param} String(filePath)
 	 * 
@@ -703,7 +732,6 @@ public class FileUtil {
 	 * @return the Base64 encoded String
 	 * 
 	 *         {Category} FileUtil 
-	 *         {talendTypes} String
 	 * 
 	 *         {param} String(filePath)
 	 * 
@@ -734,7 +762,6 @@ public class FileUtil {
 	 * @return the the reverse file content
 	 * 
 	 *         {Category} FileUtil 
-	 *         {talendTypes} String
 	 * 
 	 *         {param} String(filePath) 
 	 *         {param} Integer(limitNumberLines) 
@@ -860,7 +887,6 @@ public class FileUtil {
 	 * @return the the reverse file content
 	 * 
 	 *         {Category} FileUtil 
-	 *         {talendTypes} String
 	 * 
 	 *         {param} String(filePath) 
 	 *         {param} String(contentAtTheEndOfFile)
@@ -927,7 +953,7 @@ public class FileUtil {
 	 * @param charset charset (null means UTF-8)
 	 * @return true if a BOM was detected
 	 * 
-	 *         {Category} FileUtil {talendTypes} String
+	 *         {Category} FileUtil
 	 * 
 	 *         {param} String(sourceFilePath) 
 	 *         {param} String(targetFilePath)
@@ -1301,7 +1327,6 @@ public class FileUtil {
 	 * @return true if file could be deleted
 	 * 
 	 *         {Category} FileUtil 
-	 *         {talendTypes} Boolean
 	 * 
 	 *         {param} String(filePath) 
 	 *         {param} int(attempts)
@@ -1335,8 +1360,6 @@ public class FileUtil {
     /**
      * Returns true if jobserver is a unix system
      * 
-     * {talendTypes} Boolean
-     * 
      * {Category} JobUtil
      * 
      * {example} isUnixSystem() # true.
@@ -1362,7 +1385,6 @@ public class FileUtil {
 	 * @return the native path
 	 * 
 	 *         {Category} FileUtil 
-	 *         {talendTypes} String
 	 * 
 	 *         {param} String(filePath) 
 	 * 
@@ -1397,7 +1419,6 @@ public class FileUtil {
 	 * @return the file length
 	 * 
 	 *         {Category} FileUtil 
-	 *         {talendTypes} Long
 	 * 
 	 *         {param} String(filePath) 
 	 * 
@@ -1447,7 +1468,6 @@ public class FileUtil {
 	 * 
 	 *         {param} String(sourcePath) 
 	 *         {param} String(targetName)
-	 *         {talendTypes} String
 	 *         {example} renameFile(context.sourceFile, context.targetName)
 	 * 
 	 */
@@ -1470,24 +1490,40 @@ public class FileUtil {
 		return t.getAbsolutePath();
 	}
 	
+	/**
+	 * Returns the absolute path of a file or folder
+	 * @param filePath - relative or absolute path
+	 * @param basePath if filePath is relative, this will the absolute anchor
+	 * @return the absolute path
+	 * 
+	 * {Category} FileUtil
+	 * {param} filePath - relative or absolute path
+	 * {param} basePath if filePath is relative, this will the absolute anchor
+	 * 
+	 */
+	public static String getAbsolutePath(String filePath, String basePath) {
+		String path = FileUtil.getNativeFilePath(filePath);
+		File f = new File(path);
+		if (f.isAbsolute()) {
+			return f.getAbsolutePath();
+		} else {
+			return buildPath(filePath, basePath);
+		}
+	}
 	
-    /**
-     * Makes the file executable under Unix
-     * @param file
-     * 
-     * {talendTypes} Void
-     * {Category} JobUtil
-     * {param} string(file) command: 
-     * {example} makeExecutable(file) # 0
-     */
-    public static void makeExecutable(String file) {
-    	if (JobUtil.isUnixSystem()) {
-    		try {
-        		java.nio.file.Files.setPosixFilePermissions(java.nio.file.Paths.get(file), java.nio.file.attribute.PosixFilePermissions.fromString("rwxr--r--"));
-    		} catch (Exception e) {
-    			e.printStackTrace();
-    		}
-    	}
-    }
+	/**
+	 * Returns the last folder
+	 * @param path - relative or absolute path
+	 * @return the name of the parent
+	 * 
+	 * {Category} FileUtil
+	 * {param} path - relative or absolute path
+	 * 
+	 */
+	public static String getParentName(String path) {
+		File f = new File(path);
+		String parent = f.getParent();
+		return parent;
+	}
 
 }

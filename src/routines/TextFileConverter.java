@@ -23,9 +23,26 @@ public class TextFileConverter {
 	private long maxLinesPerFile = 0;
 	private long currentOutputLineNumber = 0;
 	private boolean readWholeText = false;
+	private boolean unescapeJava = false;
+	private int countExpectedDelimitersPerLine = 0;
+	private char delimiter = '|';
+	private List<Long> suspectedLines = new ArrayList<>();
+	private boolean takeCountExpectedDelimitersFromHeaderLine = true;
 	
 	public boolean isReadWholeText() {
 		return readWholeText;
+	}
+	
+	public static class RegexReplacement extends Replacement {
+		
+		String searchFieldRegex = null;
+		boolean trimSpaces = true;
+	
+		public RegexReplacement(String searchString, String replaceString, String searchFieldRegex, boolean trimSpaces) {
+			super(searchString, replaceString);
+			this.searchFieldRegex = searchFieldRegex;
+			this.trimSpaces = trimSpaces;
+		}
 	}
 
 	public static class Replacement {
@@ -41,11 +58,31 @@ public class TextFileConverter {
 	}
 	
 	public void addReplacement(String searchStr, String replacement) {
-		if (searchStr != null) {
+		if (searchStr != null && searchStr.isEmpty() == false) {
 			if (replacement == null) {
 				replacement = "";
 			}
+			if (unescapeJava) {
+				searchStr = StringUtil.unescapeJava(searchStr);
+				replacement = StringUtil.unescapeJava(replacement);
+			}
 			list.add(new Replacement(searchStr, replacement));
+			if (searchStr.contains("\n")) {
+				readWholeText = true;
+			}
+		}
+	}
+
+	public void addReplacement(String searchStr, String replacement, String searchFieldRegex, boolean trimSpaces) {
+		if (searchStr != null && searchStr.isEmpty() == false) {
+			if (replacement == null) {
+				replacement = "";
+			}
+			if (unescapeJava) {
+				searchStr = StringUtil.unescapeJava(searchStr);
+				replacement = StringUtil.unescapeJava(replacement);
+			}
+			list.add(new RegexReplacement(searchStr, replacement, searchFieldRegex, trimSpaces));
 			if (searchStr.contains("\n")) {
 				readWholeText = true;
 			}
@@ -140,7 +177,22 @@ public class TextFileConverter {
 	
 	public String replace(String line) {
 		for (Replacement r : list) {
-			line = line.replace(r.searchString, r.replaceString);
+			if (r instanceof RegexReplacement) {
+				// extract the field content
+				RegexReplacement rr = (RegexReplacement) r;
+				String fieldContent = RegexUtil.extractByRegexGroup(line, rr.searchFieldRegex, 1);
+				if (StringUtil.isEmpty(fieldContent) == false) {
+					// fix the field
+					String newFieldContent = fieldContent.replace(rr.searchString, rr.replaceString);
+					if (rr.trimSpaces) {
+						newFieldContent = StringUtil.reduceMultipleSpacesToOne(newFieldContent);
+					}
+					// replace the old field by the new field content
+					line = line.replace(fieldContent, newFieldContent);
+				}
+			} else {
+				line = line.replace(r.searchString, r.replaceString);
+			}
 		}
 		return line;
 	}
@@ -174,16 +226,36 @@ public class TextFileConverter {
 								new FileOutputStream(currentTargetFile), targetEncoding));
 			}
 			if (firstLine) {
+				if (takeCountExpectedDelimitersFromHeaderLine) {
+					countExpectedDelimitersPerLine = countDelimiters(line);
+				}
 				firstLine = false;
 			} else {
 				out.write(targetLineSeparator);
 			}
-			out.write(replace(line));
+			line = replace(line);
+			out.write(line);
+			if (countExpectedDelimitersPerLine > 0) {
+				if (countDelimiters(line) != countExpectedDelimitersPerLine) {
+					suspectedLines.add(currentInputLineNumber);
+				}
+			}
 		}
 		out.flush();
 		out.close();
 		in.close();
 	}
+    
+    private int countDelimiters(String line) {
+    	char[] la = line.toCharArray();
+    	int count = 0;
+    	for (char c : la) {
+    		if (c == delimiter) {
+    			count++;
+    		}
+    	}
+    	return count;
+    }
 	
 	private void convertAllAtOnce(final File source, final File target, final String targetLineSeparator) throws IOException {
 		if (source.equals(target)) {
@@ -246,6 +318,30 @@ public class TextFileConverter {
 	public void setTargetLineSeparator(String targetLineSeparator) {
 		if (targetLineSeparator != null && targetLineSeparator.trim().isEmpty() == false) {
 			this.targetLineSeparator = targetLineSeparator;
+		}
+	}
+
+	public boolean isUnescapeJava() {
+		return unescapeJava;
+	}
+
+	public void setUnescapeJava(boolean unescapeJava) {
+		this.unescapeJava = unescapeJava;
+	}
+	
+	public String getInfoAboutSuspectedLines() {
+		if (suspectedLines.isEmpty() == false) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Following line numbers have invalid number of delimiters (expected: ");
+			sb.append(countExpectedDelimitersPerLine);
+			sb.append("): \n");
+			for (Long l : suspectedLines) {
+				sb.append(l);
+				sb.append("\n");
+			}
+			return sb.toString();
+		} else {
+			return "";
 		}
 	}
 	

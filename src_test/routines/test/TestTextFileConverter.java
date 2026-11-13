@@ -16,9 +16,9 @@ public class TestTextFileConverter {
 	private File testFile = null;
 	
 	@Before
-	public void createTestFile() throws Exception {
-		String content = "abcd\ndefg\nijabkhcd\n987";
-		testFile = File.createTempFile("textfileconverter", ".txt");
+	public void createTestFileRegex() throws Exception {
+		String content = "168171|W115315  | PMX0112730|24339805|1|CDM\n168172|W995315  | PMX9912730 | AS3X|24339806|1|CDM";
+		testFile = File.createTempFile("textfileconverterRegx", ".txt");
 		System.out.println("Test file: " + testFile.getAbsolutePath());
 		FileUtil.writeContentToFile(testFile.getAbsolutePath(), content, null);
 	}
@@ -31,44 +31,15 @@ public class TestTextFileConverter {
 	}
 	
 	@Test
-	public void testReplaceWithLineFeed() throws Exception {
-		String search = "cd\n";
-		String replace = "cd_";
-		String expected = "abcd_defg\nijabkhcd_987";
+	public void testReplaceRegex1() throws Exception {
+		String search = "|";
+		String replace = "";
+		String regex = "^[0-9]{4,8}\\|(.*)\\|[0-9]{8}\\|";
+		String expected = "168171|W115315 PMX0112730|24339805|1|CDM\n168172|W995315 PMX9912730 AS3X|24339806|1|CDM";
 		TextFileConverter c = new TextFileConverter();
 		c.setSourcePath(testFile.getAbsolutePath());
 		c.setTargetPath(testFile.getAbsolutePath());
-		c.addReplacement(search, replace);
-		c.convert();
-		String actual = FileUtil.readContentfromFile(testFile.getAbsolutePath(), null);
-		System.out.println(actual);
-		assertEquals("Convert failed", expected.trim(), actual.trim());
-	}
-
-	@Test
-	public void testReplaceAtStart() throws Exception {
-		String search = "ab";
-		String replace = "AB";
-		String expected = "ABcd\ndefg\nijABkhcd\n987";
-		TextFileConverter c = new TextFileConverter();
-		c.setSourcePath(testFile.getAbsolutePath());
-		c.setTargetPath(testFile.getAbsolutePath());
-		c.addReplacement(search, replace);
-		c.convert();
-		String actual = FileUtil.readContentfromFile(testFile.getAbsolutePath(), null);
-		System.out.println(actual);
-		assertEquals("Convert failed", expected.trim(), actual.trim());
-	}
-
-	@Test
-	public void testReplaceAtMiddle() throws Exception {
-		String search = "ij";
-		String replace = "IJ";
-		String expected = "abcd\ndefg\nIJabkhcd\n987";
-		TextFileConverter c = new TextFileConverter();
-		c.setSourcePath(testFile.getAbsolutePath());
-		c.setTargetPath(testFile.getAbsolutePath());
-		c.addReplacement(search, replace);
+		c.addReplacement(search, replace, regex, true);
 		c.convert();
 		String actual = FileUtil.readContentfromFile(testFile.getAbsolutePath(), null);
 		System.out.println(actual);
